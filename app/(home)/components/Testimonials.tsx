@@ -1,4 +1,36 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
 export default function Testimonials() {
+  const listRef = useRef<HTMLDivElement>(null);
+  const [index, setIndex] = useState(0);
+  const [maxIndex, setMaxIndex] = useState(0);
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const list = listRef.current;
+      if (!list) return;
+      const slides = Array.from(list.children) as HTMLElement[];
+      if (!slides.length) return;
+      const style = getComputedStyle(slides[0]);
+      const slideStep = slides[0].offsetWidth + parseFloat(style.marginRight || "0");
+      const visible = Math.max(1, Math.floor(list.clientWidth / slideStep));
+      setStep(slideStep);
+      setMaxIndex(Math.max(0, slides.length - visible));
+    };
+    measure();
+    addEventListener("resize", measure);
+    return () => removeEventListener("resize", measure);
+  }, []);
+
+  useEffect(() => {
+    setIndex((i) => Math.min(i, maxIndex));
+  }, [maxIndex]);
+
+  const goTo = (i: number) => setIndex(Math.max(0, Math.min(maxIndex, i)));
+
   return (
     <>
 <section className="testimonials_wrap u-section u-theme-dark relative overflow-clip u-container py-14 md:py-16">
@@ -15,48 +47,52 @@ export default function Testimonials() {
 <span className="text-[0.5rem] opacity-80">*Individual experiences vary</span>
 </div>
 <div className="slider_element mt-6">
-<div className="slider_list swiper-wrapper">
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<div
+  ref={listRef}
+  className="slider_list swiper-wrapper"
+  style={{ transform: `translateX(${-index * step}px)`, transition: "transform 0.6s cubic-bezier(0.45, 0, 0.55, 1)" }}
+>
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Anna</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“This treatment transformed my life. I feel like I found a missing link — myself.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Gayil</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“I felt better the very next day. I put this off for a long time but wish I had gone sooner.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Robert</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“Reyou&#x27;s ketamine treatment program saved my child&#x27;s life. The results far exceeded our expectations.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Jim</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“After just three treatments the results were outstanding. It&#x27;s like my brain got a reset, giving a new perspective.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Maria</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“The team made me feel safe from the first call. I finally feel like myself again.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">David</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“Years of medication never did what a few sessions here did. Grateful beyond words.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Sarah</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“Compassionate, professional, and truly intentional care. It changed everything for me.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Luis</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“I came in without hope and left with a plan and a lighter heart.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Karen</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“The integration sessions were the missing piece. This is real healing.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Michael</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“Insurance covered it, the staff guided me, and the results speak for themselves.”</blockquote>
 </figure>
-<figure className="glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
+<figure className="swiper-slide glass-dark flex min-h-[9.375rem] flex-col justify-between rounded-[3px] p-4 transition-colors duration-500 hover:bg-black/40">
 <figcaption className="text-[0.6875rem]">Elena</figcaption>
 <blockquote className="mt-8 font-heading text-[1rem] leading-[1.25]">“I wish I had found Reyou years ago. My family has their mom back.”</blockquote>
 </figure>
@@ -64,10 +100,19 @@ export default function Testimonials() {
 </div>
 <div className="mt-4 flex items-center justify-between">
 <div className="slider_bullet_list">
+{Array.from({ length: maxIndex + 1 }, (_, i) => (
+  <button
+    key={i}
+    type="button"
+    aria-label={`Go to slide ${i + 1}`}
+    className={`slider_bullet_item${i === index ? " is-active" : ""}`}
+    onClick={() => goTo(i)}
+  />
+))}
 </div>
 <div className="flex gap-1.5">
 <div data-slider="previous">
-<button type="button" aria-label="Previous" className="slider_arrow opacity-70">
+<button type="button" aria-label="Previous" onClick={() => goTo(index - 1)} className={`slider_arrow opacity-70${index === 0 ? " swiper-button-disabled" : ""}`}>
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
 <path d="M19 12H5M11 6l-6 6 6 6">
 </path>
@@ -75,7 +120,7 @@ export default function Testimonials() {
 </button>
 </div>
 <div data-slider="next">
-<button type="button" aria-label="Next" className="slider_arrow">
+<button type="button" aria-label="Next" onClick={() => goTo(index + 1)} className={`slider_arrow${index >= maxIndex ? " swiper-button-disabled" : ""}`}>
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
 <path d="M5 12h14M13 6l6 6-6 6">
 </path>

@@ -178,3 +178,70 @@ h4,
   to { transform: rotate(360deg); }
 }
 .ico-spin { border: 2px solid #ffffff4d; border-top-color: #fff; border-radius: 999px; width: 1.5rem; height: 1.5rem; animation: 0.8s linear infinite spin; }
+
+/* --- Button char animation (chars are generated on the client) --- */
+.button_main_char { position: relative; overflow: clip; }
+@keyframes call-wiggle {
+  0% { transform: rotate(0deg); }
+  40% { transform: rotate(-15deg); }
+  100% { transform: rotate(0deg); }
+}
+.button_main:hover .u-svg.is-call { animation: call-wiggle 0.7s cubic-bezier(0.45, 0, 0.55, 1) 0.3s; }
+@keyframes book-slide {
+  0% { transform: translateX(0); opacity: 1; }
+  49% { transform: translateX(100%); opacity: 0; }
+  51% { transform: translateX(-100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+.button_main:hover .u-svg.is-book { animation: book-slide 0.4s cubic-bezier(0.45, 0, 0.55, 1) 0.15s; }
+
+/* --- Marquee --- */
+@keyframes marquee-scroll {
+  to { transform: translateX(-50%); }
+}
+.marquee-4_layout { animation: marquee-scroll 28s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee-4_layout { animation: none; }
+}
+
+/* --- Nav menu open/hover states --- */
+.nav_menu_wrap { max-height: 3rem; transition: width 0.5s cubic-bezier(0.45, 0, 0.55, 1), max-height 0.5s cubic-bezier(0.45, 0, 0.55, 1); }
+.nav_menu_wrap.is-hover, .nav_menu_wrap.is-open { max-height: calc(100vh - 4rem); }
+.nav_menu_wrap.is-open { width: 50%; height: calc(100vh - 2rem); }
+@media (max-width: 1036px) {
+  .nav_menu_wrap.is-open { width: 100%; }
+}
+.nav_menu_icon_wrap { transition: transform 0.5s cubic-bezier(0.45, 0, 0.55, 1); }
+.nav_menu_wrap.is-open .nav_menu_icon_wrap { transform: rotate(45deg); }
+.nav_menu_label { transition: opacity 0.2s, visibility 0.2s; }
+.nav_menu_wrap.is-hover:not(.is-open) .nav_menu_label:not(.is-click):not(.is-close),
+.nav_menu_wrap.is-open .nav_menu_label:not(.is-click):not(.is-close),
+.nav_menu_wrap.is-open .nav_menu_label.is-click { opacity: 0; visibility: hidden; }
+.nav_menu_wrap.is-hover:not(.is-open) .nav_menu_label.is-click,
+.nav_menu_wrap.is-open .nav_menu_label.is-close { opacity: 1; visibility: visible; transition-delay: 0.05s; }
+@keyframes nav-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.nav_menu_wrap.is-hover .nav_menu_links_wrap, .nav_menu_wrap.is-open .nav_menu_links_wrap { display: flex; animation: nav-fade-in 0.5s cubic-bezier(0.45, 0, 0.55, 1) 0.1s both; }
+.nav_menu_wrap.is-hover .nav_menu_action_wrap, .nav_menu_wrap.is-open .nav_menu_action_wrap { display: block; animation: nav-fade-in 0.5s cubic-bezier(0.45, 0, 0.55, 1) 0.1s both; }
+.nav_menu_wrap.is-open .menu_links_item_wrap:not([data-menu="main"]) { display: inline-flex; animation: nav-fade-in 0.5s cubic-bezier(0.45, 0, 0.55, 1) 0.1s both; }
+@media (min-width: 768px) {
+  .nav_menu_wrap.is-open .nav_menu_bottom_wrap { display: grid; animation: nav-fade-in 0.5s cubic-bezier(0.45, 0, 0.55, 1) 0.1s both; }
+}
+.nav_menu_wrap.is-open .menu_links_item_wrap[data-menu="main"] .menu_links_text { max-width: 7.5rem; font-size: 0.85rem; line-height: 1.25; }
+.nav_component_overlay { transition: opacity 0.5s; }
+.nav_component_overlay.is-active { opacity: 1; pointer-events: auto; }
+
+/* --- Loader --- */
+.loader { z-index: 100; color: var(--color-light); display: none; position: fixed; inset: 0; }
+.loader__bg { background: #8a0f24; position: absolute; inset: 0; overflow: clip; }
+.loader__bg-bar { transform-origin: 0; background: #ffffffb3; width: 100%; height: 3px; position: absolute; top: 0; left: 0; transform: scaleX(0); }
+.loader__container { place-items: center; display: grid; position: absolute; inset: 0; }
+.loader__bg_wrap { place-items: center; display: grid; position: absolute; inset: 0; overflow: clip; }
+.loader__bg_svg { color: #730e1e; place-items: center; display: grid; position: absolute; inset: 0; }
+.loader__bg_svg svg { width: auto; height: 118vh; }
+.loader__logo-wrap { width: clamp(180px, 16vw, 260px); position: relative; }
+.loader__logo-item { position: absolute; inset: 0; }
+.loader__logo-item.is--base { opacity: 0.28; position: relative; }
+.loader__logo-item.is--top { clip-path: inset(0% 100% 0% 0%); }

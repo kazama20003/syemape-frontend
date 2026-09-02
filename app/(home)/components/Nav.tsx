@@ -1,8 +1,29 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 export default function Nav() {
+  const [open, setOpen] = useState(false);
+  const [hover, setHover] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    addEventListener("keydown", onKey);
+    return () => removeEventListener("keydown", onKey);
+  }, [open]);
+
+  const closeMenu = () => {
+    setOpen(false);
+    setHover(false);
+  };
+
   return (
     <>
 <div className="nav_component_wrap">
-<div className="nav_component_overlay">
+<div className={`nav_component_overlay${open ? " is-active" : ""}`} onClick={closeMenu}>
 </div>
 <header className="nav_wrap">
 <div className="nav_contain">
@@ -23,8 +44,26 @@ export default function Nav() {
 </path>
 </svg>
 </a>
-<nav aria-label="Main" className="nav_menu_wrap">
-<a href="#" aria-label="Open menu" className="nav_menu_top">
+<nav
+  aria-label="Main"
+  className={`nav_menu_wrap${open ? " is-open" : hover ? " is-hover" : ""}`}
+  onMouseEnter={() => setHover(true)}
+  onMouseLeave={() => setHover(false)}
+  onClick={(e) => {
+    const target = e.target as HTMLElement;
+    if (target.closest(".menu_links_link, .clickable_link") && open) closeMenu();
+  }}
+>
+<a
+  href="#"
+  aria-label={open ? "Close menu" : "Open menu"}
+  aria-expanded={open}
+  className="nav_menu_top"
+  onClick={(e) => {
+    e.preventDefault();
+    setOpen((v) => !v);
+  }}
+>
 <div className="nav_menu_icon_wrap">
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
 <path d="M12 5v14M5 12h14">
