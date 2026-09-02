@@ -65,7 +65,7 @@ h4,
 .u-theme-brand { --theme-bg: var(--color-brand); --theme-text: var(--color-light); background-color: var(--theme-bg); color: var(--theme-text); }
 .u-theme-transparent { background: 0 0; }
 
-.nav_logo_wrap { color: var(--color-light); transition: color 0.3s; }
+.nav_logo_wrap { color: var(--color-light); transition: color 0.3s; background: transparent !important; }
 .nav_logo_wrap.u-theme-light { color: var(--color-dark); }
 .nav_logo_wrap.u-theme-dark, .nav_logo_wrap.u-theme-brand { color: var(--color-light); }
 .eyebrow:before { content: ""; background: currentColor; border-radius: 999px; flex: none; width: 4px; height: 4px; }
@@ -91,7 +91,7 @@ h4,
 .nav_contain { padding: 1rem var(--spacing-gutter); }
 .nav_layout { justify-content: space-between; align-items: flex-start; height: calc(100vh - 2rem); display: flex; position: relative; }
 .nav_logo_wrap { width: 5.5rem; display: block; }
-.nav_menu_wrap { width: 20%; min-width: 300px; flex: none; color: var(--color-dark); background: #e9e6e0; border-radius: 4px; flex-direction: column; margin-left: auto; padding: 0.625rem 0.875rem; display: flex; position: relative; overflow: clip; box-shadow: 0 1px 2px #00000014; }
+.nav_menu_wrap { width: 20%; min-width: 300px; flex: none; color: var(--color-dark); background: #e9e6e0; border-radius: 4px; flex-direction: column; margin-left: 0; padding: 0.625rem 0.875rem; display: flex; position: relative; overflow: clip; box-shadow: 0 1px 2px #00000014; }
 .nav_menu_top { height: 1.75rem; color: inherit; justify-content: space-between; align-items: center; font-size: 0.9375rem; text-decoration: none; display: flex; }
 .nav_menu_icon_wrap { place-items: center; width: 1.125rem; height: 1.125rem; display: grid; }
 .nav_menu_label_wrap { text-align: right; min-width: 5rem; height: 1em; position: relative; }
@@ -249,8 +249,8 @@ h4,
 .logo-text { font-family: var(--font-heading); font-weight: 500; font-size: 2rem; line-height: 1; letter-spacing: -0.02em; display: block; white-space: nowrap; color: currentColor; }
 
 /* --- Enlaces del header (lado izquierdo), mismo diseño que el botón del menú --- */
-.nav_links_wrap { pointer-events: auto; display: none; align-items: stretch; gap: 0.5rem; margin-left: auto; margin-right: 0.5rem; }
+.nav_links_wrap { pointer-events: auto; display: none; align-items: center; gap: 1.75rem; margin-left: auto; margin-right: 0.5rem; background: #e9e6e0; color: var(--color-dark); border-radius: 4px; box-shadow: 0 1px 2px #00000014; padding: 0.625rem 1.25rem; min-height: 3rem; }
 @media (min-width: 48rem) { .nav_links_wrap { display: inline-flex; } }
-.nav_links_link { position: relative; display: inline-flex; align-items: center; background: #e9e6e0; color: var(--color-dark); border-radius: 4px; box-shadow: 0 1px 2px #00000014; padding: 0.625rem 0.875rem; min-height: 3rem; font-size: 0.9375rem; font-weight: 400; line-height: 1; text-decoration: none; transition: background-color 0.3s, color 0.3s; }
-.nav_links_link:hover { background: #fff; }
+.nav_links_link { position: relative; display: inline-flex; align-items: center; color: var(--color-dark); font-size: 0.9375rem; font-weight: 400; line-height: 1; text-decoration: none; transition: color 0.3s; }
+.nav_links_link:hover { color: var(--color-brand); }
 .nav_links_link:hover .button_main_char { transform: translateY(-100%); }
