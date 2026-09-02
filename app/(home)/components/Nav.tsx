@@ -31,6 +31,12 @@ export default function Nav() {
 <a href="#top" aria-label="Home Page" className="nav_logo_wrap u-theme-dark">
 <span className="logo-text">mape.</span>
 </a>
+<nav aria-label="Principal" className="nav_links_wrap">
+<a href="#top" className="nav_links_link"><span className="button_main_text" data-button-animate-text="true">Inicio</span></a>
+<a href="#about" className="nav_links_link"><span className="button_main_text" data-button-animate-text="true">Nosotros</span></a>
+<a href="#treatments" className="nav_links_link"><span className="button_main_text" data-button-animate-text="true">Servicios</span></a>
+<a href="#contact" className="nav_links_link"><span className="button_main_text" data-button-animate-text="true">Contacto</span></a>
+</nav>
 <nav
   aria-label="Main"
   className={`nav_menu_wrap${open ? " is-open" : hover ? " is-hover" : ""}`}

@@ -247,3 +247,11 @@ h4,
 .loader__logo-item.is--top { clip-path: inset(0% 100% 0% 0%); }
 
 .logo-text { font-family: var(--font-heading); font-weight: 500; font-size: 2rem; line-height: 1; letter-spacing: -0.02em; display: block; white-space: nowrap; color: currentColor; }
+
+/* --- Enlaces del header (lado izquierdo) --- */
+.nav_links_wrap { pointer-events: auto; display: none; align-items: center; gap: 2rem; margin-left: 3rem; padding-top: 0.5rem; }
+@media (min-width: 48rem) { .nav_links_wrap { display: inline-flex; } }
+.nav_links_link { position: relative; color: var(--color-light); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none; line-height: 1; padding-bottom: 0.35rem; }
+.nav_links_link:hover .button_main_char { transform: translateY(-100%); }
+.nav_links_link::after { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+.nav_links_link:hover::after { transform: scaleX(1); transform-origin: left; }
