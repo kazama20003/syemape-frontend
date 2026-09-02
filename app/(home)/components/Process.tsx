@@ -1,0 +1,61 @@
+export default function Process() {
+  return (
+    <>
+<section className="process_wrap u-section u-theme-light u-container py-20 md:py-24">
+<div className="process_contain">
+<div className="grid md:grid-cols-[16%_1fr]">
+<p className="eyebrow">Our process</p>
+<h2 className="text-[length:var(--text-fluid-h4)]">How to Get Started</h2>
+</div>
+<div data-animate="stagger-up" className="process_layout mt-8 grid gap-3 md:grid-cols-3">
+<div>
+<div className="step_rule">
+<span>Step</span>
+<span>
+</span>
+<span>01</span>
+</div>
+<article className="process_step_card u-theme-dark group relative mt-3 h-[31rem] overflow-clip rounded-[3px] !bg-transparent">
+<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgMTIwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgc2xpY2UiPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSI0OS45OTk5OTk5OTk5OTk5OSUiIHkxPSIwLjAlIiB4Mj0iNTAuMDAwMDAwMDAwMDAwMDElIiB5Mj0iMTAwLjAlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM0ZThiODYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3ZGIyYWQiLz48L2xpbmVhckdyYWRpZW50Pgo8ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9IjAuOCIgbnVtT2N0YXZlcz0iMiIgc2VlZD0iMyIvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgLjA2IDAiLz48L2ZpbHRlcj48L2RlZnM+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMTIwMCIgZmlsbD0idXJsKCNnKSIvPjxnIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuODUiPjxjaXJjbGUgY3g9IjIwMCIgY3k9IjY1MCIgcj0iNjAiLz48Y2lyY2xlIGN4PSIxMzQuMCIgY3k9IjY3MS4wIiByPSI0NS4wIi8+PGNpcmNsZSBjeD0iMjY5LjAiIGN5PSI2NjguMCIgcj0iNDguMCIvPjxjaXJjbGUgY3g9IjIyNC4wIiBjeT0iNjIwLjAiIHI9IjQyLjAiLz48cmVjdCB4PSIxMDQuMCIgeT0iNjYyLjAiIHdpZHRoPSIyMDQuMCIgaGVpZ2h0PSI1NC4wIiByeD0iMjQuMCIvPjwvZz48ZyBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjg1Ij48Y2lyY2xlIGN4PSI3MDAiIGN5PSI2MDAiIHI9IjcwIi8+PGNpcmNsZSBjeD0iNjIzLjAiIGN5PSI2MjQuNSIgcj0iNTIuNSIvPjxjaXJjbGUgY3g9Ijc4MC41IiBjeT0iNjIxLjAiIHI9IjU2LjAiLz48Y2lyY2xlIGN4PSI3MjguMCIgY3k9IjU2NS4wIiByPSI0OS4wIi8+PHJlY3QgeD0iNTg4LjAiIHk9IjYxNC4wIiB3aWR0aD0iMjM4LjAiIGhlaWdodD0iNjMuMCIgcng9IjI4LjAiLz48L2c+PHJlY3QgeD0iMTUwIiB5PSI5MjAiIHdpZHRoPSIyNDAiIGhlaWdodD0iMTIwIiByeD0iNDAiIGZpbGw9IiMyZjZiNWEiLz48cmVjdCB4PSI1MjAiIHk9IjkyMCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIxMjAiIHJ4PSI0MCIgZmlsbD0iIzJmNmI1YSIvPjxnIGZpbGw9IiNkZmU3ZWEiPjxjaXJjbGUgY3g9IjI3MCIgY3k9Ijc4MCIgcj0iMzkuNiIvPjxyZWN0IHg9IjIyMS42IiB5PSI4MTkuNiIgd2lkdGg9Ijk2LjgiIGhlaWdodD0iMTk4LjAiIHJ4PSIyMi4wIi8+PC9nPjxnIGZpbGw9IiNmMmVlZTYiPjxjaXJjbGUgY3g9IjY0MCIgY3k9Ijc4MCIgcj0iMzkuNiIvPjxyZWN0IHg9IjU5MS42IiB5PSI4MTkuNiIgd2lkdGg9Ijk2LjgiIGhlaWdodD0iMTk4LjAiIHJ4PSIyMi4wIi8+PC9nPgo8cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjEyMDAiIGZpbHRlcj0idXJsKCNuKSIvPgo8dGV4dCB4PSI0NTAuMCIgeT0iMTE4NiIgZm9udC1mYW1pbHk9InN5c3RlbS11aSIgZm9udC1zaXplPSIxMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwuNTUpIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5jb25zdWx0YXRpb24gcGhvdG8g4oCUIHJlcGxhY2Ugd2l0aCBwaG90bzwvdGV4dD4KPC9zdmc+" alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]" loading="lazy"/>
+<div data-animate="stagger-up-item" className="process_step_glass glass absolute inset-x-4 top-4 rounded-[3px] p-4 text-light">
+<h3 className="text-[1rem]">Schedule a Consultation</h3>
+<p className="mt-4 text-[0.66rem] leading-[1.55] text-white/95">Connect with our team for a free consultation. We&#x27;ll listen, answer questions, and help determine whether Spravato®, ketamine, or another approach may be appropriate. We can also verify insurance benefits prior to treatment.</p>
+</div>
+</article>
+</div>
+<div>
+<div className="step_rule">
+<span>Step</span>
+<span>
+</span>
+<span>02</span>
+</div>
+<article className="process_step_card u-theme-dark group relative mt-3 h-[31rem] overflow-clip rounded-[3px] !bg-transparent">
+<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgMTIwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgc2xpY2UiPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSI0OS45OTk5OTk5OTk5OTk5OSUiIHkxPSIwLjAlIiB4Mj0iNTAuMDAwMDAwMDAwMDAwMDElIiB5Mj0iMTAwLjAlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM2ZjdmOTciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNjNmJmYjUiLz48L2xpbmVhckdyYWRpZW50Pgo8ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9IjAuOCIgbnVtT2N0YXZlcz0iMiIgc2VlZD0iMyIvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgLjA2IDAiLz48L2ZpbHRlcj48L2RlZnM+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMTIwMCIgZmlsbD0idXJsKCNnKSIvPjxwYXRoIGQ9Ik0gNTYwIDM4MCBhIDMwMCAzMDAgMCAxIDAgLTMwMCAzMDAiIHN0cm9rZT0iI2U5ZTJkOCIgc3Ryb2tlLXdpZHRoPSI5MCIgZmlsbD0ibm9uZSIgb3BhY2l0eT0iLjgiLz48ZyBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjgiPjxjaXJjbGUgY3g9IjY1MCIgY3k9IjMwMCIgcj0iNzAiLz48Y2lyY2xlIGN4PSI1NzMuMCIgY3k9IjMyNC41IiByPSI1Mi41Ii8+PGNpcmNsZSBjeD0iNzMwLjUiIGN5PSIzMjEuMCIgcj0iNTYuMCIvPjxjaXJjbGUgY3g9IjY3OC4wIiBjeT0iMjY1LjAiIHI9IjQ5LjAiLz48cmVjdCB4PSI1MzguMCIgeT0iMzE0LjAiIHdpZHRoPSIyMzguMCIgaGVpZ2h0PSI2My4wIiByeD0iMjguMCIvPjwvZz48cmVjdCB4PSIyNjAiIHk9Ijk2MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIxMzAiIHJ4PSIzMCIgZmlsbD0iIzJmNmI1YSIvPjxnIGZpbGw9IiNlOWUyZDgiPjxjaXJjbGUgY3g9IjM2MCIgY3k9IjgyMCIgcj0iMzYuMCIvPjxyZWN0IHg9IjMxNi4wIiB5PSI4NTYuMCIgd2lkdGg9Ijg4LjAiIGhlaWdodD0iMTgwLjAiIHJ4PSIyMC4wIi8+PC9nPjxnIGZpbGw9IiNmNGYxZWEiPjxjaXJjbGUgY3g9IjYyMCIgY3k9Ijc2MCIgcj0iNDMuMTk5OTk5OTk5OTk5OTk2Ii8+PHJlY3QgeD0iNTY3LjIiIHk9IjgwMy4yIiB3aWR0aD0iMTA1LjYiIGhlaWdodD0iMjE2LjAiIHJ4PSIyNC4wIi8+PC9nPgo8cmVjdCB3aWR0aD0iOTAwIiBoZWlnaHQ9IjEyMDAiIGZpbHRlcj0idXJsKCNuKSIvPgo8dGV4dCB4PSI0NTAuMCIgeT0iMTE4NiIgZm9udC1mYW1pbHk9InN5c3RlbS11aSIgZm9udC1zaXplPSIxMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwuNTUpIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5ldmFsdWF0aW9uIHBob3RvIOKAlCByZXBsYWNlIHdpdGggcGhvdG88L3RleHQ+Cjwvc3ZnPg==" alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]" loading="lazy"/>
+<div data-animate="stagger-up-item" className="process_step_glass glass absolute inset-x-4 top-4 rounded-[3px] p-4 text-light">
+<h3 className="text-[1rem]">Thoughtful Evaluation</h3>
+<p className="mt-4 text-[0.66rem] leading-[1.55] text-white/95">We take time to understand your history, goals, and medical considerations so care is tailored, not rushed.</p>
+</div>
+</article>
+</div>
+<div>
+<div className="step_rule">
+<span>Step</span>
+<span>
+</span>
+<span>03</span>
+</div>
+<article className="process_step_card u-theme-dark group relative mt-3 h-[31rem] overflow-clip rounded-[3px] !bg-transparent">
+<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgMTIwMCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgc2xpY2UiPgo8ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSI0OS45OTk5OTk5OTk5OTk5OSUiIHkxPSIwLjAlIiB4Mj0iNTAuMDAwMDAwMDAwMDAwMDElIiB5Mj0iMTAwLjAlIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNkOGRhZDciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzYjNmNDUiLz48L2xpbmVhckdyYWRpZW50Pgo8ZmlsdGVyIGlkPSJuIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9IjAuOCIgbnVtT2N0YXZlcz0iMiIgc2VlZD0iMyIvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgLjA2IDAiLz48L2ZpbHRlcj48L2RlZnM+CjxyZWN0IHdpZHRoPSI5MDAiIGhlaWdodD0iMTIwMCIgZmlsbD0idXJsKCNnKSIvPjxnIGZpbGw9IiNlNmQ4YzciIG9wYWNpdHk9Ii45NSI+PHJlY3QgeD0iMzgwIiB5PSIzODAiIHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiByeD0iMTAiLz48cmVjdCB4PSI1MjAiIHk9IjQyMCIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIxMjAiIHJ4PSIxMCIvPjxyZWN0IHg9IjQwMCIgeT0iNTIwIiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgcng9IjEwIi8+PHJlY3QgeD0iNjQwIiB5PSIzMDAiIHdpZHRoPSIxMTAiIGhlaWdodD0iMTEwIiByeD0iMTAiLz48L2c+PHBhdGggZD0iTSAyMDAgMTIwMCBDIDIyMCA5MDAsIDcwMCA5MDAsIDcyMCAxMjAwIFoiIGZpbGw9IiMxZjIyMjYiLz4KPHJlY3Qgd2lkdGg9IjkwMCIgaGVpZ2h0PSIxMjAwIiBmaWx0ZXI9InVybCgjbikiLz4KPHRleHQgeD0iNDUwLjAiIHk9IjExODYiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWkiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsLjU1KSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+cHV6emxlIGhlYWQgcGhvdG8g4oCUIHJlcGxhY2Ugd2l0aCBwaG90bzwvdGV4dD4KPC9zdmc+" alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.04]" loading="lazy"/>
+<div data-animate="stagger-up-item" className="process_step_glass glass absolute inset-x-4 top-4 rounded-[3px] p-4 text-light">
+<h3 className="text-[1rem]">Treatment with Support</h3>
+<p className="mt-4 text-[0.66rem] leading-[1.55] text-white/95">If treatment is a fit, sessions are delivered in a calm, medically supervised environment with guidance before, during, and after.</p>
+</div>
+</article>
+</div>
+</div>
+</div>
+</section>
+    </>
+  );
+}
