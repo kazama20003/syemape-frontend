@@ -34,29 +34,53 @@ export default function Nav() {
 <div className="nav_links_wrap">
 <nav className="nav_menu_wrap is-link-pill">
 <a href="#top" className="nav_menu_top">
+<div className="nav_menu_icon_wrap">
+<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+<path d="M12 5v14M5 12h14">
+</path>
+</svg>
+</div>
 <div className="nav_menu_label_wrap">
-<div className="nav_menu_label">Inicio</div>
+<div className="nav_menu_label" data-label="Inicio">Inicio</div>
 </div>
 </a>
 </nav>
 <nav className="nav_menu_wrap is-link-pill">
 <a href="#about" className="nav_menu_top">
+<div className="nav_menu_icon_wrap">
+<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+<path d="M12 5v14M5 12h14">
+</path>
+</svg>
+</div>
 <div className="nav_menu_label_wrap">
-<div className="nav_menu_label">Nosotros</div>
+<div className="nav_menu_label" data-label="Nosotros">Nosotros</div>
 </div>
 </a>
 </nav>
 <nav className="nav_menu_wrap is-link-pill">
 <a href="#treatments" className="nav_menu_top">
+<div className="nav_menu_icon_wrap">
+<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+<path d="M12 5v14M5 12h14">
+</path>
+</svg>
+</div>
 <div className="nav_menu_label_wrap">
-<div className="nav_menu_label">Servicios</div>
+<div className="nav_menu_label" data-label="Servicios">Servicios</div>
 </div>
 </a>
 </nav>
 <nav className="nav_menu_wrap is-link-pill">
 <a href="#contact" className="nav_menu_top">
+<div className="nav_menu_icon_wrap">
+<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+<path d="M12 5v14M5 12h14">
+</path>
+</svg>
+</div>
 <div className="nav_menu_label_wrap">
-<div className="nav_menu_label">Contacto</div>
+<div className="nav_menu_label" data-label="Contacto">Contacto</div>
 </div>
 </a>
 </nav>
