@@ -249,8 +249,9 @@ h4,
 .logo-text { font-family: var(--font-heading); font-weight: 500; font-size: 2rem; line-height: 1; letter-spacing: -0.02em; display: block; white-space: nowrap; color: currentColor; }
 
 /* --- Enlaces del header (lado izquierdo), mismo diseño que el botón del menú --- */
-.nav_links_wrap { pointer-events: auto; display: none; align-items: center; gap: 1.75rem; margin-left: auto; margin-right: 0.5rem; background: #e9e6e0; color: var(--color-dark); border-radius: 4px; box-shadow: 0 1px 2px #00000014; padding: 0.625rem 1.25rem; min-height: 3rem; }
+.nav_links_wrap { pointer-events: auto; display: none; align-items: flex-start; gap: 0.5rem; margin-left: auto; margin-right: 0.5rem; }
 @media (min-width: 48rem) { .nav_links_wrap { display: inline-flex; } }
-.nav_links_link { position: relative; display: inline-flex; align-items: center; color: var(--color-dark); font-size: 0.9375rem; font-weight: 400; line-height: 1; text-decoration: none; transition: color 0.3s; }
-.nav_links_link:hover { color: var(--color-brand); }
-.nav_links_link:hover .button_main_char { transform: translateY(-100%); }
+.nav_menu_wrap.is-link-pill { width: auto; min-width: 0; margin-left: 0; }
+.nav_menu_wrap.is-link-pill .nav_menu_label_wrap { min-width: 0; height: auto; }
+.nav_menu_wrap.is-link-pill .nav_menu_label { position: static; }
+.nav_menu_wrap.is-link-pill .nav_menu_top:hover { color: var(--color-brand); }
