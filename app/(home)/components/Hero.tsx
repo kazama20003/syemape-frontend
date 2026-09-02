@@ -4,9 +4,9 @@ export default function Hero() {
 <section id="top" className="home_hero_wrap u-section u-theme-dark relative h-[100svh] min-h-[640px] overflow-clip bg-hero text-light">
 <div className="home_hero_bg absolute inset-0">
 <div data-parallax="trigger" className="parallax_hero_bg_wrap is-home-hero">
-<div className="bunny-bg" data-bunny-background-init="" data-player-status="idle" data-player-autoplay="true">
+<div className="bunny-bg" data-bunny-background-init="" data-player-status="playing" data-player-autoplay="true">
 <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIwIDEwODAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIHNsaWNlIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iNDkuOTk5OTk5OTk5OTk5OTklIiB5MT0iMC4wJSIgeDI9IjUwLjAwMDAwMDAwMDAwMDAxJSIgeTI9IjEwMC4wJSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNGI2MzkwIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjM2E0Zjc1Ii8+PC9saW5lYXJHcmFkaWVudD4KPGZpbHRlciBpZD0ibiI+PGZlVHVyYnVsZW5jZSBiYXNlRnJlcXVlbmN5PSIwLjgiIG51bU9jdGF2ZXM9IjIiIHNlZWQ9IjMiLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIC4wNiAwIi8+PC9maWx0ZXI+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiBmaWxsPSJ1cmwoI2cpIi8+PGcgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC44NSI+PGNpcmNsZSBjeD0iMTAwMCIgY3k9IjMyMCIgcj0iMTcwIi8+PGNpcmNsZSBjeD0iODEzLjAiIGN5PSIzNzkuNSIgcj0iMTI3LjUiLz48Y2lyY2xlIGN4PSIxMTk1LjUiIGN5PSIzNzEuMCIgcj0iMTM2LjAiLz48Y2lyY2xlIGN4PSIxMDY4LjAiIGN5PSIyMzUuMCIgcj0iMTE4Ljk5OTk5OTk5OTk5OTk5Ii8+PHJlY3QgeD0iNzI4LjAiIHk9IjM1NC4wIiB3aWR0aD0iNTc4LjAiIGhlaWdodD0iMTUzLjAiIHJ4PSI2OC4wIi8+PC9nPjxwYXRoIGQ9Ik03NjAgMTA4MCBDIDc4MCA3MjAsIDExODAgNzIwLCAxMjAwIDEwODAgWiIgZmlsbD0iI2Q5YTU4ZiIvPgo8cmVjdCB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiBmaWx0ZXI9InVybCgjbikiLz4KPHRleHQgeD0iOTYwLjAiIHk9IjEwNjYiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWkiIGZvbnQtc2l6ZT0iMjMiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsLjU1KSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+aGVybyB2aWRlbyBwb3N0ZXIg4oCUIHJlcGxhY2Ugd2l0aCBwaG90bzwvdGV4dD4KPC9zdmc+" alt="" className="bunny-bg__placeholder" loading="eager"/>
-<video className="bunny-bg__video" preload="auto" width="1920" height="1080" playsInline muted>
+<video className="bunny-bg__video" preload="auto" width="1920" height="1080" playsInline muted autoPlay loop src="https://res.cloudinary.com/demzflxgq/video/upload/v1788385315/16352581_2560_1440_60fps_jgr9ib.mp4">
 </video>
 </div>
 </div>
