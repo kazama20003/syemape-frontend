@@ -245,3 +245,5 @@ h4,
 .loader__logo-item { position: absolute; inset: 0; }
 .loader__logo-item.is--base { opacity: 0.28; position: relative; }
 .loader__logo-item.is--top { clip-path: inset(0% 100% 0% 0%); }
+
+.logo-text { font-family: var(--font-heading); font-weight: 500; font-size: 2rem; line-height: 1; letter-spacing: -0.02em; display: block; white-space: nowrap; color: currentColor; }
