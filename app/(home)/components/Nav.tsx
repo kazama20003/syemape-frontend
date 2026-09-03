@@ -88,7 +88,7 @@ export default function Nav() {
 <nav
   aria-label="Main"
   className={`nav_menu_wrap${open ? " is-open" : hover ? " is-hover" : ""}`}
-  onMouseEnter={() => setHover(true)}
+  onMouseEnter={() => matchMedia("(hover: hover)").matches && setHover(true)}
   onMouseLeave={() => setHover(false)}
   onClick={(e) => {
     const target = e.target as HTMLElement;

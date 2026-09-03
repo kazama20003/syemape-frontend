@@ -379,3 +379,50 @@ h4,
     @apply border-border outline-ring/50;
   }
 }
+/* --- Responsive movil (iPhone / Samsung / etc.) --- */
+@media (max-width: 47.99rem) {
+  /* Header: el menu ocupa el espacio disponible sin salirse */
+  .nav_menu_wrap { min-width: 0; flex: 1 1 auto; margin-left: 1rem; max-width: 16rem; }
+  .nav_logo_wrap { width: 4.25rem; }
+
+  /* Hero: sin salto forzado en el titulo, texto y botones contenidos */
+  .home_hero_wrap h1 br { display: none; }
+  .home_hero_wrap h1 { max-width: 100%; overflow-wrap: break-word; }
+  .home_hero_wrap .u-container { top: 20%; }
+  .home_hero_wrap .button_main { height: 3rem; font-size: 0.9rem; padding: 0 1rem 0 1.125rem; }
+
+  /* Tarjeta del video: proporcional a la pantalla, sin desbordar */
+  .showreel_card { width: min(72vw, 18rem); }
+
+  /* Botones clonados del menu ocultos ya por media query de .nav_links_wrap */
+}
+
+@media (max-width: 30rem) {
+  .nav_menu_wrap { max-width: 13rem; }
+  .home_hero_wrap .u-container { top: 17%; }
+}
+
+/* --- Menu expandido en movil: pantalla completa como en web --- */
+@media (max-width: 47.99rem) {
+  .nav_layout { position: relative; }
+  .nav_menu_wrap.is-open {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(100vw - 2 * var(--spacing-gutter));
+    max-width: none;
+    flex: none;
+    height: auto;
+    min-height: 60svh;
+    max-height: calc(100svh - 2rem);
+    overflow: auto;
+    z-index: 70;
+  }
+  .nav_menu_wrap.is-open .menu_links_wrap { grid-template-columns: 1fr 1.4fr; gap: 0 1.25rem; }
+  .nav_menu_wrap.is-open .menu_links_item_wrap[data-menu="main"] .menu_links_text { font-size: 1rem; }
+  /* sin estado hover en tactil: el menu solo abre/cierra con tap */
+  .nav_menu_wrap.is-hover:not(.is-open) { max-height: none; }
+}
+/* Boton interno del menu siempre legible con la paleta actual */
+.nav_menu_action_wrap .button_main { background: var(--color-brand); color: #fff; }
+.nav_menu_action_wrap .button_main:hover { background: #a8161c; }
