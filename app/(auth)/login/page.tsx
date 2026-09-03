@@ -1,29 +1,74 @@
 export default function LoginPage() {
   return (
-    <div className="w-full max-w-sm rounded-[var(--radius-main)] bg-light p-8 text-dark shadow-xl">
-      <p className="eyebrow text-brand">Bienvenido</p>
-      <h1 className="mt-3 text-[length:var(--text-fluid-h3)]">Iniciar sesión</h1>
-      <form className="mt-8 flex flex-col gap-4" action="#">
-        <label className="flex flex-col gap-1 text-xs font-bold uppercase tracking-wider">
-          Correo
-          <input
-            type="email"
-            placeholder="tu@correo.com"
-            className="h-11 rounded-[0.375rem] border border-dark/20 bg-white px-3 text-sm font-normal normal-case tracking-normal outline-none focus:border-brand"
+    <main className="u-container mx-auto grid min-h-screen max-w-[96rem] items-stretch gap-12 py-12 md:grid-cols-[1fr_1.1fr] md:gap-16">
+      <div className="flex flex-col">
+        <a href="/" className="logo-text text-dark">mape.</a>
+        <div className="relative mt-8 flex-1 overflow-clip rounded-[var(--radius-main)] bg-dark">
+          <video
+            src="https://res.cloudinary.com/demzflxgq/video/upload/v1788380445/15651883_1920_1080_60fps_s4lntf.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 h-full w-full object-cover opacity-80"
           />
-        </label>
-        <label className="flex flex-col gap-1 text-xs font-bold uppercase tracking-wider">
-          Contraseña
-          <input
-            type="password"
-            placeholder="••••••••"
-            className="h-11 rounded-[0.375rem] border border-dark/20 bg-white px-3 text-sm font-normal normal-case tracking-normal outline-none focus:border-brand"
-          />
-        </label>
-        <button type="submit" className="button_main is-dark mt-2 justify-center">
-          Entrar
-        </button>
-      </form>
-    </div>
+        </div>
+        <div className="mt-8">
+          <p className="flex items-center gap-3 text-[1.05rem]">
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-dark text-light">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z" />
+              </svg>
+            </span>
+            +51 990 297 657
+          </p>
+          <p className="mt-4 max-w-[36rem] text-[0.95rem] leading-[1.6] text-dark/80">
+            Accede a la plataforma de S&amp;E MAPE E.I.R.L. para gestionar tus operaciones de
+            transporte, supervisión y escolta en ruta. Si aún no tienes una cuenta, escríbenos y
+            te ayudamos a empezar.
+          </p>
+        </div>
+      </div>
+
+      <div className="flex flex-col justify-center md:pl-4">
+        <p className="eyebrow text-brand">Acceso</p>
+        <h1 className="mt-3 text-[length:var(--text-fluid-h2)] leading-[1.1]">Inicia sesión</h1>
+        <form className="mt-10" action="#">
+          <div className="grid gap-x-16 gap-y-10 md:grid-cols-2">
+            <label className="block">
+              <span className="block text-[0.95rem]">Correo electrónico</span>
+              <input
+                type="email"
+                placeholder="tu@correo.com"
+                className="mt-3 w-full border-b border-dark/40 bg-transparent pb-2 text-[0.95rem] outline-none placeholder:text-dark/35 focus:border-dark"
+              />
+            </label>
+            <label className="block">
+              <span className="block text-[0.95rem]">Contraseña</span>
+              <input
+                type="password"
+                placeholder="Tu contraseña"
+                className="mt-3 w-full border-b border-dark/40 bg-transparent pb-2 text-[0.95rem] outline-none placeholder:text-dark/35 focus:border-dark"
+              />
+            </label>
+          </div>
+          <div className="mt-8 flex items-center justify-between gap-4">
+            <label className="flex items-center gap-2 text-[0.8rem] text-dark/80">
+              <input type="checkbox" className="h-4 w-4 accent-[#d32027]" />
+              Recordarme en este equipo
+            </label>
+            <a href="#" className="text-[0.8rem] text-dark/80 underline-offset-4 hover:underline">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+          <button
+            type="submit"
+            className="mt-10 block h-14 w-full rounded-[2px] bg-dark text-center text-[0.95rem] text-light transition-colors duration-300 hover:bg-brand"
+          >
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
+    </main>
   );
 }
