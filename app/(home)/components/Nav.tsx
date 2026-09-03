@@ -33,7 +33,7 @@ export default function Nav() {
 </a>
 <div className="nav_links_wrap">
 <nav className="nav_menu_wrap is-link-pill">
-<a href="#top" className="nav_menu_top">
+<a href="/login" className="nav_menu_top">
 <div className="nav_menu_icon_wrap">
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
 <path d="M12 5v14M5 12h14">
@@ -41,7 +41,7 @@ export default function Nav() {
 </svg>
 </div>
 <div className="nav_menu_label_wrap">
-<div className="nav_menu_label" data-label="Inicio">Inicio</div>
+<div className="nav_menu_label" data-label="Ingresa">Ingresa</div>
 </div>
 </a>
 </nav>
