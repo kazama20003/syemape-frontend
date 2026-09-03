@@ -41,7 +41,7 @@ export default function Nav() {
 </svg>
 </div>
 <div className="nav_menu_label_wrap">
-<div className="nav_menu_label" data-label="Ingresa">Ingresa</div>
+<div className="nav_menu_label" data-label="Acceder">Acceder</div>
 </div>
 </a>
 </nav>

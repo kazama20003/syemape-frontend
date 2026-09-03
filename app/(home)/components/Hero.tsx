@@ -14,9 +14,9 @@ export default function Hero() {
 <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent">
 </div>
 <div className="u-container absolute left-0 top-[28%] w-full max-w-[44rem]">
-<span className="inline-block rounded-[4px] border border-white/45 bg-white/10 px-3.5 py-[8px] text-[0.85rem] backdrop-blur-sm">Spravato® &amp; Ketamine Treatments</span>
-<h1 className="mt-4 text-[length:var(--text-fluid-h1)] leading-[1.02]">Healing, Delivered<br/>With Intention</h1>
-<p className="mt-5 max-w-[26rem] text-[0.95rem] font-bold leading-[1.5] text-white/95">Insurance-covered care for depression, anxiety,<br/>trauma, and other conditions in New Jersey.</p>
+<span className="inline-block rounded-[4px] border border-white/45 bg-white/10 px-3.5 py-[8px] text-[0.85rem] backdrop-blur-sm">Transporte &amp; Servicios Especializados</span>
+<h1 className="mt-4 text-[length:var(--text-fluid-h1)] leading-[1.02]">Supervisión y transporte<br/>para rutas seguras</h1>
+<p className="mt-5 max-w-[26rem] text-[0.95rem] font-bold leading-[1.5] text-white/95">Somos S&amp;E MAPE E.I.R.L.: alquiler de vehículos livianos y pesados,<br/>escolta en ruta y transporte de carga para minería, construcción e industria.</p>
 <div className="mt-7 flex flex-wrap gap-2">
 <a href="#contact" className="button_main " data-button-animate="">
 <span className="button_main_text" data-button-animate-text="true">Book a Consultation</span>
