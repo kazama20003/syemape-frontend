@@ -257,8 +257,8 @@ h4,
 @media (min-width: 64rem) { .nav_links_wrap { display: inline-flex; } }
 .nav_menu_wrap.is-link-pill { flex: 1 1 0; width: auto; min-width: 0; max-width: 20rem; margin-left: 0; }
 .nav_menu_wrap.is-link-pill .nav_menu_top { gap: 1.25rem; }
-.nav_menu_wrap.is-link-pill .nav_menu_label_wrap { min-width: 0; overflow: clip; }
-.nav_menu_wrap.is-link-pill .nav_menu_label { position: relative; top: auto; right: auto; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+.nav_menu_wrap.is-link-pill .nav_menu_label_wrap { min-width: 0; overflow: clip; height: 1.35em; }
+.nav_menu_wrap.is-link-pill .nav_menu_label { position: relative; top: auto; right: auto; line-height: 1.35; transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
 .nav_menu_wrap.is-link-pill .nav_menu_label::after { content: attr(data-label); position: absolute; top: 100%; right: 0; }
 .nav_menu_wrap.is-link-pill .nav_menu_top:hover .nav_menu_label { transform: translateY(-100%); }
 .nav_menu_wrap.is-link-pill .nav_menu_top:hover .nav_menu_icon_wrap svg { transform: rotate(90deg); }
