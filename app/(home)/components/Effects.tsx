@@ -197,6 +197,9 @@ export default function Effects() {
       };
     };
 
+    const getCard = (id: string) =>
+      document.querySelector<HTMLElement>(`[data-mini-showreel-open="${id}"]`);
+
     const open = (id: string) => {
       if (!id || currentId || animating) return;
       const lightbox = document.querySelector<HTMLElement>(
@@ -207,57 +210,73 @@ export default function Effects() {
       );
       const target =
         lightbox?.querySelector<HTMLElement>("[data-mini-showreel-target]");
-      if (!lightbox || !player || !target) return;
+      const card = getCard(id);
+      if (!lightbox || !player || !target || !card) return;
       currentId = id;
       animating = true;
       savedCss = player.style.cssText;
       lightbox.style.zIndex = "999";
       setStatus(id, "active");
+      const from = card.getBoundingClientRect();
+      const to = fitRect(target.getBoundingClientRect(), 16 / 9);
+      gsap.set(card, { autoAlpha: 0 });
       player.querySelector("video")?.play().catch(() => undefined);
-      const state = Flip.getState(player);
-      const rect = fitRect(target.getBoundingClientRect(), 16 / 9);
-      gsap.set(player, {
-        position: "fixed",
-        left: rect.left,
-        top: rect.top,
-        width: rect.width,
-        height: rect.height,
-        margin: 0,
-        zIndex: 999,
-      });
-      Flip.from(state, {
-        duration,
-        ease: "expo.inOut",
-        absolute: true,
-        scale: false,
-        onComplete: () => (animating = false),
-      });
+      gsap.fromTo(
+        player,
+        {
+          position: "fixed",
+          left: from.left,
+          top: from.top,
+          width: from.width,
+          height: from.height,
+          margin: 0,
+          zIndex: 999,
+          opacity: 1,
+          visibility: "visible",
+        },
+        {
+          left: to.left,
+          top: to.top,
+          width: to.width,
+          height: to.height,
+          duration,
+          ease: "expo.inOut",
+          onComplete: () => (animating = false),
+        }
+      );
     };
 
     const close = () => {
       if (!currentId || animating || !player) return;
       animating = true;
       const id = currentId;
+      const card = getCard(id);
       player.querySelector("video")?.pause();
       setStatus(id, "not-active");
-      const state = Flip.getState(player);
-      player.style.cssText = savedCss;
-      player.style.zIndex = "999";
-      Flip.from(state, {
+      const finish = () => {
+        if (player) player.style.cssText = savedCss;
+        if (card) gsap.set(card, { autoAlpha: 1 });
+        const lightbox = document.querySelector<HTMLElement>(
+          `[data-mini-showreel-lightbox="${id}"]`
+        );
+        if (lightbox) lightbox.style.zIndex = "";
+        currentId = "";
+        player = null;
+        animating = false;
+      };
+      const from = card?.getBoundingClientRect();
+      if (!from) {
+        finish();
+        return;
+      }
+      gsap.to(player, {
+        left: from.left,
+        top: from.top,
+        width: from.width,
+        height: from.height,
         duration,
         ease: "expo.inOut",
-        absolute: true,
-        scale: false,
-        onComplete: () => {
-          if (player) player.style.zIndex = "";
-          const lightbox = document.querySelector<HTMLElement>(
-            `[data-mini-showreel-lightbox="${id}"]`
-          );
-          if (lightbox) lightbox.style.zIndex = "";
-          currentId = "";
-          player = null;
-          animating = false;
-        },
+        onComplete: finish,
       });
     };
 
