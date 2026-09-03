@@ -16,7 +16,7 @@ export default function Hero() {
 <div className="u-container absolute left-0 top-[28%] w-full max-w-[44rem]">
 <span className="inline-block rounded-[4px] border border-white/45 bg-white/10 px-3.5 py-[8px] text-[0.85rem] backdrop-blur-sm">Transporte &amp; Servicios Especializados</span>
 <h1 className="mt-4 text-[length:var(--text-fluid-h1)] leading-[1.02]">Supervisión y transporte<br/>para rutas seguras</h1>
-<p className="mt-5 max-w-[23rem] text-[0.95rem] font-bold leading-[1.6] text-white/95">Somos S&amp;E MAPE E.I.R.L.: alquiler de vehículos livianos y pesados, escolta en ruta y transporte de carga para minería, construcción e industria.</p>
+<p className="mt-5 max-w-[36rem] text-[0.95rem] font-bold leading-[1.6] text-white/95">Somos S&amp;E MAPE E.I.R.L.: alquiler de vehículos livianos y pesados, escolta en ruta y transporte de carga para minería, construcción e industria.</p>
 <div className="mt-7 flex flex-wrap gap-2">
 <a href="#contact" className="button_main " data-button-animate="">
 <span className="button_main_text" data-button-animate-text="true">Book a Consultation</span>
