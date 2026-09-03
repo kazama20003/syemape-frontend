@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
-import { Kufam, Overpass } from "next/font/google";
+import { Kufam, Overpass, Geist } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const kufam = Kufam({
   variable: "--font-kufam",
@@ -21,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${kufam.variable} ${overpass.variable} antialiased`}>
+    <html lang="en" className={cn("antialiased", kufam.variable, overpass.variable, "font-sans", geist.variable)}>
       <body>{children}</body>
     </html>
   );
