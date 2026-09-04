@@ -1,3 +1,11 @@
+import { Suspense } from "react";
+import LoginForm from "./login-form";
+
+export const metadata = {
+  title: "Iniciar sesión | MAPE",
+  description: "Accede a la plataforma de S&E MAPE E.I.R.L.",
+};
+
 export default function LoginPage() {
   return (
     <main className="u-container mx-auto grid min-h-screen max-w-[96rem] items-stretch gap-12 py-12 md:grid-cols-[1fr_1.1fr] md:gap-16">
@@ -10,6 +18,7 @@ export default function LoginPage() {
             muted
             loop
             playsInline
+            preload="none"
             className="absolute inset-0 h-full w-full object-cover opacity-80"
           />
         </div>
@@ -33,41 +42,9 @@ export default function LoginPage() {
       <div className="flex flex-col justify-center md:pl-4">
         <p className="eyebrow text-brand">Acceso</p>
         <h1 className="mt-3 text-[length:var(--text-fluid-h2)] leading-[1.1]">Inicia sesión</h1>
-        <form className="mt-10" action="#">
-          <div className="grid gap-x-16 gap-y-10 md:grid-cols-2">
-            <label className="block">
-              <span className="block text-[0.95rem]">Correo electrónico</span>
-              <input
-                type="email"
-                placeholder="tu@correo.com"
-                className="mt-3 w-full border-b border-dark/40 bg-transparent pb-2 text-[0.95rem] outline-none placeholder:text-dark/35 focus:border-dark"
-              />
-            </label>
-            <label className="block">
-              <span className="block text-[0.95rem]">Contraseña</span>
-              <input
-                type="password"
-                placeholder="Tu contraseña"
-                className="mt-3 w-full border-b border-dark/40 bg-transparent pb-2 text-[0.95rem] outline-none placeholder:text-dark/35 focus:border-dark"
-              />
-            </label>
-          </div>
-          <div className="mt-8 flex items-center justify-between gap-4">
-            <label className="flex items-center gap-2 text-[0.8rem] text-dark/80">
-              <input type="checkbox" className="h-4 w-4 accent-[#d32027]" />
-              Recordarme en este equipo
-            </label>
-            <a href="#" className="text-[0.8rem] text-dark/80 underline-offset-4 hover:underline">
-              ¿Olvidaste tu contraseña?
-            </a>
-          </div>
-          <button
-            type="submit"
-            className="mt-10 block h-14 w-full rounded-[2px] bg-dark text-center text-[0.95rem] text-light transition-colors duration-300 hover:bg-brand"
-          >
-            Iniciar sesión
-          </button>
-        </form>
+        <Suspense>
+          <LoginForm />
+        </Suspense>
       </div>
     </main>
   );
