@@ -46,7 +46,7 @@ export default function Nav() {
 </a>
 </nav>
 <nav className="nav_menu_wrap is-link-pill">
-<a href="#about" className="nav_menu_top">
+<a href="/nosotros" className="nav_menu_top">
 <div className="nav_menu_icon_wrap">
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
 <path d="M12 5v14M5 12h14">
@@ -59,7 +59,7 @@ export default function Nav() {
 </a>
 </nav>
 <nav className="nav_menu_wrap is-link-pill">
-<a href="#treatments" className="nav_menu_top">
+<a href="/servicios" className="nav_menu_top">
 <div className="nav_menu_icon_wrap">
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
 <path d="M12 5v14M5 12h14">
@@ -72,7 +72,7 @@ export default function Nav() {
 </a>
 </nav>
 <nav className="nav_menu_wrap is-link-pill">
-<a href="#contact" className="nav_menu_top">
+<a href="/contacto" className="nav_menu_top">
 <div className="nav_menu_icon_wrap">
 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
 <path d="M12 5v14M5 12h14">
@@ -120,22 +120,22 @@ export default function Nav() {
 <div role="list" className="nav_menu_links_wrap">
 <div role="presentation" className="menu_links_wrap">
 <div role="listitem" data-menu="main" className="menu_links_item_wrap">
-<a href="#treatments" className="menu_links_link">
+<a href="/servicios" className="menu_links_link">
 <div className="menu_links_text">Treatments</div>
 </a>
 </div>
 <div role="listitem" className="menu_links_item_wrap">
-<a href="#treatments" className="menu_links_link">
+<a href="/servicios" className="menu_links_link">
 <div className="menu_links_text u-text-small-caps">Spravato® Therapy</div>
 </a>
 </div>
 <div role="listitem" className="menu_links_item_wrap">
-<a href="#treatments" className="menu_links_link">
+<a href="/servicios" className="menu_links_link">
 <div className="menu_links_text u-text-small-caps">Ketamine Therapy</div>
 </a>
 </div>
 <div role="listitem" className="menu_links_item_wrap">
-<a href="#treatments" className="menu_links_link">
+<a href="/servicios" className="menu_links_link">
 <div className="menu_links_text u-text-small-caps">Reyou-To-You</div>
 </a>
 </div>
@@ -191,7 +191,7 @@ export default function Nav() {
 </div>
 <div role="presentation" className="menu_links_wrap">
 <div role="listitem" data-menu="main" className="menu_links_item_wrap">
-<a href="#about" className="menu_links_link">
+<a href="/nosotros" className="menu_links_link">
 <div className="menu_links_text">About Us</div>
 </a>
 </div>
@@ -222,7 +222,7 @@ export default function Nav() {
 </div>
 <div role="presentation" className="menu_links_wrap">
 <div role="listitem" data-menu="main" className="menu_links_item_wrap">
-<a href="#contact" className="menu_links_link">
+<a href="/contacto" className="menu_links_link">
 <div className="menu_links_text">Contact</div>
 </a>
 </div>
@@ -257,7 +257,7 @@ export default function Nav() {
 </div>
 <div className="flex flex-col items-end justify-between">
 <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAwIDEwMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIHNsaWNlIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iNDkuOTk5OTk5OTk5OTk5OTklIiB5MT0iMC4wJSIgeDI9IjUwLjAwMDAwMDAwMDAwMDAxJSIgeTI9IjEwMC4wJSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYzljM2I4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNmI2YTYzIi8+PC9saW5lYXJHcmFkaWVudD4KPGZpbHRlciBpZD0ibiI+PGZlVHVyYnVsZW5jZSBiYXNlRnJlcXVlbmN5PSIwLjgiIG51bU9jdGF2ZXM9IjIiIHNlZWQ9IjMiLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIC4wNiAwIi8+PC9maWx0ZXI+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTYwMCIgaGVpZ2h0PSIxMDAwIiBmaWxsPSJ1cmwoI2cpIi8+PHJlY3QgeD0iMTE1MCIgeT0iMTUwIiB3aWR0aD0iMzgwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iIzJmNWQ0ZCIgb3BhY2l0eT0iLjU1Ii8+PGNpcmNsZSBjeD0iMzYwIiBjeT0iNTIwIiByPSI5MCIgZmlsbD0iI2Y0ZWZlNiIgb3BhY2l0eT0iLjgiLz48ZyBmaWxsPSIjZThlNmUzIj48Y2lyY2xlIGN4PSI4MDAiIGN5PSIzODAiIHI9Ijc1LjYiLz48cmVjdCB4PSI3MDcuNiIgeT0iNDU1LjYiIHdpZHRoPSIxODQuOCIgaGVpZ2h0PSIzNzguMCIgcng9IjQyLjAiLz48L2c+CjxyZWN0IHdpZHRoPSIxNjAwIiBoZWlnaHQ9IjEwMDAiIGZpbHRlcj0idXJsKCNuKSIvPgo8dGV4dCB4PSI4MDAuMCIgeT0iOTg2IiBmb250LWZhbWlseT0ic3lzdGVtLXVpIiBmb250LXNpemU9IjE5IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LC41NSkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmNsaW5pYyBpbnRlcnZpZXcgdmlkZW8gdGh1bWJuYWlsIOKAlCByZXBsYWNlIHdpdGggcGhvdG88L3RleHQ+Cjwvc3ZnPg==" alt="" className="h-[5.375rem] w-[12.5rem] rounded-[2px] object-cover"/>
-<a href="#contact" className="link_arrow clickable_link !text-[0.65rem]">Book a consultation<span className="button_main_icon !h-5 !w-5">
+<a href="/contacto" className="link_arrow clickable_link !text-[0.65rem]">Book a consultation<span className="button_main_icon !h-5 !w-5">
 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
 <path d="M5 12h14M13 6l6 6-6 6">
 </path>
