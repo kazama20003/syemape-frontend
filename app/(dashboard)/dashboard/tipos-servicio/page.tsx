@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
+import FormDialog from "@/components/form-dialog";
 
 interface TipoServicio {
   id: number;
@@ -30,6 +31,19 @@ export default function Page() {
       descripcion="Catálogo de servicios que presta la empresa."
       endpoint="/tipos-servicio"
       columnas={columnas}
+      acciones={
+        <FormDialog
+          recurso="Tipo de servicio"
+          descripcion="Categoría de servicio que presta la empresa."
+          endpoint="/tipos-servicio"
+          textoBoton="Nuevo tipo"
+          campos={[
+            { name: "nombre", label: "Nombre", requerido: true, placeholder: "Supervisión en ruta", ancho: "full" },
+            { name: "codigo", label: "Código (opcional)", placeholder: "Se genera del nombre", ancho: "full" },
+            { name: "descripcion", label: "Descripción", ancho: "full" },
+          ]}
+        />
+      }
     />
   );
 }

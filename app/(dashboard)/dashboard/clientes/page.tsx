@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
+import FormDialog from "@/components/form-dialog";
 
 interface Cliente {
   id: number;
@@ -37,6 +38,31 @@ export default function Page() {
       descripcion="Empresas a las que se les presta servicio."
       endpoint="/clientes"
       columnas={columnas}
+      acciones={
+        <FormDialog
+          recurso="Cliente"
+          descripcion="Empresa a la que se le presta servicio."
+          endpoint="/clientes"
+          campos={[
+            { name: "razonSocial", label: "Razón social", requerido: true, placeholder: "HAGEMSA S.A.C.", ancho: "full" },
+            {
+              name: "tipoDocumento",
+              label: "Tipo de documento",
+              tipo: "select",
+              opciones: [
+                { valor: "RUC", etiqueta: "RUC" },
+                { valor: "DNI", etiqueta: "DNI" },
+              ],
+            },
+            { name: "numeroDocumento", label: "N° de documento", placeholder: "20100038146" },
+            { name: "cuenta", label: "Cuenta / proyecto", placeholder: "CERRO VERDE" },
+            { name: "email", label: "Email", tipo: "email" },
+            { name: "contactoNombre", label: "Contacto" },
+            { name: "contactoTelefono", label: "Teléfono de contacto", tipo: "tel" },
+            { name: "direccion", label: "Dirección", ancho: "full" },
+          ]}
+        />
+      }
     />
   );
 }

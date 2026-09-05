@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api";
+import UnidadForm from "@/components/unidad-form";
 
 interface Unidad {
   id: number;
@@ -168,13 +169,16 @@ export default function UnidadesPage() {
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Unidades</h1>
-        <p className="text-muted-foreground text-sm">
-          Flota de vehículos: categoría vehicular MTC, acoples con doble placa y
-          estado operativo.
-          {isFetching && !isLoading && <span className="ml-2 text-xs">Actualizando…</span>}
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Unidades</h1>
+          <p className="text-muted-foreground text-sm">
+            Flota de vehículos: categoría vehicular MTC, acoples con doble placa y
+            estado operativo.
+            {isFetching && !isLoading && <span className="ml-2 text-xs">Actualizando…</span>}
+          </p>
+        </div>
+        <UnidadForm />
       </div>
 
       {/* Leyenda de categorias presentes */}

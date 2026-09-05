@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
+import FormDialog from "@/components/form-dialog";
 
 interface Ubicacion {
   id: number;
@@ -42,6 +43,36 @@ export default function Page() {
       descripcion="Bases, orígenes, destinos y puestos de control con GPS."
       endpoint="/ubicaciones"
       columnas={columnas}
+      acciones={
+        <FormDialog
+          recurso="Ubicación"
+          descripcion="Punto geográfico con coordenadas para rutas y manifiestos."
+          endpoint="/ubicaciones"
+          campos={[
+            { name: "nombre", label: "Nombre", requerido: true, placeholder: "Base Arequipa", ancho: "full" },
+            {
+              name: "tipo",
+              label: "Tipo",
+              tipo: "select",
+              opciones: [
+                { valor: "BASE", etiqueta: "Base" },
+                { valor: "ORIGEN", etiqueta: "Origen" },
+                { valor: "DESTINO", etiqueta: "Destino" },
+                { valor: "PUESTO_CONTROL", etiqueta: "Puesto de control" },
+                { valor: "SUCURSAL", etiqueta: "Sucursal" },
+                { valor: "GENERAL", etiqueta: "General" },
+              ],
+            },
+            { name: "direccion", label: "Dirección", placeholder: "Av. Ejército 123" },
+            { name: "latitud", label: "Latitud", tipo: "number", placeholder: "-16.409047", ayuda: "Entre -90 y 90" },
+            { name: "longitud", label: "Longitud", tipo: "number", placeholder: "-71.537451", ayuda: "Entre -180 y 180" },
+            { name: "distrito", label: "Distrito" },
+            { name: "provincia", label: "Provincia" },
+            { name: "departamento", label: "Departamento", placeholder: "Arequipa" },
+            { name: "referencia", label: "Referencia", ancho: "full", placeholder: "Frente al grifo…" },
+          ]}
+        />
+      }
     />
   );
 }

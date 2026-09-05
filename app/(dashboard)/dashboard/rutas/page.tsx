@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
+import FormDialog from "@/components/form-dialog";
 
 interface Ruta {
   id: number;
@@ -26,6 +27,21 @@ export default function Page() {
       descripcion="Trayectos origen → destino reutilizables."
       endpoint="/rutas"
       columnas={columnas}
+      acciones={
+        <FormDialog
+          recurso="Ruta"
+          descripcion="Trayecto reutilizable para los manifiestos."
+          endpoint="/rutas"
+          campos={[
+            { name: "nombre", label: "Nombre", requerido: true, placeholder: "Arequipa - Quellaveco", ancho: "full" },
+            { name: "origen", label: "Origen", requerido: true, placeholder: "Arequipa" },
+            { name: "destino", label: "Destino", requerido: true, placeholder: "Quellaveco" },
+            { name: "distanciaKm", label: "Distancia (km)", tipo: "number", placeholder: "245" },
+            { name: "duracionEstimadaHoras", label: "Duración estimada (h)", tipo: "number", placeholder: "5.5" },
+            { name: "descripcion", label: "Descripción", ancho: "full", placeholder: "Vía Imata - Crucero Alto…" },
+          ]}
+        />
+      }
     />
   );
 }
