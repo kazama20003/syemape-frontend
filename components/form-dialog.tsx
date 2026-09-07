@@ -75,6 +75,12 @@ export default function FormDialog({
 
   const enviar = (e: React.FormEvent) => {
     e.preventDefault();
+    const faltante = campos.find((campo) => campo.requerido && !valores[campo.name]?.trim());
+    if (faltante) {
+      toast.error(`Completa el campo obligatorio: ${faltante.label}.`);
+      document.getElementById(`form-${faltante.name}`)?.focus();
+      return;
+    }
     const body: Record<string, unknown> = {};
     for (const campo of campos) {
       const bruto = valores[campo.name];
@@ -101,7 +107,7 @@ export default function FormDialog({
                 key={campo.name}
                 className={`grid gap-2 ${campo.ancho === "full" ? "sm:col-span-2" : ""}`}
               >
-                <Label htmlFor={campo.name}>
+                <Label htmlFor={`form-${campo.name}`}>
                   {campo.label}
                   {campo.requerido && <span className="text-primary"> *</span>}
                 </Label>
@@ -112,7 +118,7 @@ export default function FormDialog({
                       setValores((prev) => ({ ...prev, [campo.name]: v ?? "" }))
                     }
                   >
-                    <SelectTrigger id={campo.name}>
+                    <SelectTrigger id={`form-${campo.name}`}>
                       <SelectValue placeholder={campo.placeholder ?? "Seleccionar…"} />
                     </SelectTrigger>
                     <SelectContent>
@@ -125,7 +131,7 @@ export default function FormDialog({
                   </Select>
                 ) : (
                   <Input
-                    id={campo.name}
+                    id={`form-${campo.name}`}
                     type={campo.tipo ?? "text"}
                     required={campo.requerido}
                     placeholder={campo.placeholder}
@@ -150,7 +156,7 @@ export default function FormDialog({
               <Button type="button" variant="outline" onClick={() => setAbierto(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" disabled={crear.isPending}>
+              <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>
                 {crear.isPending ? "Guardando…" : "Registrar"}
               </Button>
             </DialogFooter>

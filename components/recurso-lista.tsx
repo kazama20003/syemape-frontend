@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 
 export interface Columna<T> {
   titulo: string;
@@ -50,7 +50,7 @@ export default function RecursoLista<T extends { id: number }>({
   const [busqueda, setBusqueda] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: [endpoint, { busqueda, page }],
     queryFn: () => {
       const q = new URLSearchParams();
@@ -76,7 +76,7 @@ export default function RecursoLista<T extends { id: number }>({
           <p className="text-muted-foreground text-sm">
             {descripcion}
             {isFetching && !isLoading && (
-              <span className="ml-2 text-xs">Actualizando…</span>
+              <span className="ml-2 text-xs" aria-live="polite">Actualizando…</span>
             )}
           </p>
         </div>
@@ -98,6 +98,16 @@ export default function RecursoLista<T extends { id: number }>({
         </div>
       )}
 
+      {error ? (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3" role="alert">
+          <p className="text-sm text-destructive">
+            {error instanceof ApiError ? error.message : "No se pudieron cargar los registros."}
+          </p>
+          <Button className="mt-3" variant="outline" size="sm" onClick={() => refetch()}>
+            Reintentar
+          </Button>
+        </div>
+      ) : (
       <div className="overflow-hidden rounded-lg border">
         <Table>
           <TableHeader>
@@ -139,6 +149,7 @@ export default function RecursoLista<T extends { id: number }>({
           </TableBody>
         </Table>
       </div>
+      )}
 
       {paginacion && paginacion.totalPaginas > 1 && (
         <div className="flex items-center justify-between">

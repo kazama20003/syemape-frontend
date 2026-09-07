@@ -57,6 +57,12 @@ export default function ActivoForm() {
             className="grid gap-4"
             onSubmit={(event) => {
               event.preventDefault();
+              if (!codigo.trim() || !nombre.trim() || !tipo) {
+                const id = !codigo.trim() ? "activo-codigo" : !nombre.trim() ? "activo-nombre" : "activo-tipo";
+                toast.error("Completa todos los campos obligatorios.");
+                document.getElementById(id)?.focus();
+                return;
+              }
               crear.mutate();
             }}
           >
@@ -69,9 +75,9 @@ export default function ActivoForm() {
               <Input id="activo-nombre" required value={nombre} onChange={(event) => setNombre(event.target.value)} placeholder="Radio portátil Motorola" />
             </div>
             <div className="grid gap-2">
-              <Label>Tipo</Label>
+              <Label htmlFor="activo-tipo">Tipo</Label>
               <Select value={tipo} onValueChange={(value) => setTipo(value ?? "")}>
-                <SelectTrigger><SelectValue placeholder="Seleccionar..." /></SelectTrigger>
+                <SelectTrigger id="activo-tipo"><SelectValue placeholder="Seleccionar..." /></SelectTrigger>
                 <SelectContent>
                   {TIPOS.map((item) => <SelectItem key={item} value={item}>{item.replace("_", " ")}</SelectItem>)}
                 </SelectContent>
@@ -83,7 +89,7 @@ export default function ActivoForm() {
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setAbierto(false)}>Cancelar</Button>
-              <Button type="submit" disabled={crear.isPending || !tipo}>{crear.isPending ? "Guardando..." : "Registrar activo"}</Button>
+              <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>{crear.isPending ? "Guardando..." : "Registrar activo"}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
