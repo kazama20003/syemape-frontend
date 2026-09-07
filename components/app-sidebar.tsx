@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   AlertTriangleIcon,
+  PackageIcon,
   Building2Icon,
   ChartColumnIcon,
   HistoryIcon,
@@ -58,6 +59,7 @@ const OPERACION: ItemNav[] = [
 ];
 
 const MAESTROS: ItemNav[] = [
+  { title: "Activos", url: "/dashboard/activos", icon: <PackageIcon />, roles: STAFF },
   { title: "Unidades", url: "/dashboard/unidades", icon: <TruckIcon />, roles: STAFF },
   { title: "Personal", url: "/dashboard/personal", icon: <UsersIcon />, roles: STAFF },
   { title: "Clientes", url: "/dashboard/clientes", icon: <Building2Icon />, roles: STAFF },

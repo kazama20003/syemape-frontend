@@ -3,19 +3,12 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ImageIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ImageIcon, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -55,8 +48,19 @@ interface FormUnidad {
   cuenta: string;
   clienteAsociado: string;
   capacidadCarga: string;
+  pesoBrutoVehicular: string;
+  tara: string;
+  capacidadPasajeros: string;
+  volumenCarga: string;
+  tipoCarroceria: string;
+  numeroSerieCarroceria: string;
   tipoCombustible: string;
   kilometraje: string;
+  ultimoMantenimientoFecha: string;
+  ultimoMantenimientoKilometraje: string;
+  proximoMantenimientoFecha: string;
+  proximoMantenimientoKilometraje: string;
+  mantenimientoObservacion: string;
 }
 
 const VACIO: FormUnidad = {
@@ -78,8 +82,19 @@ const VACIO: FormUnidad = {
   cuenta: "",
   clienteAsociado: "",
   capacidadCarga: "",
+  pesoBrutoVehicular: "",
+  tara: "",
+  capacidadPasajeros: "",
+  volumenCarga: "",
+  tipoCarroceria: "",
+  numeroSerieCarroceria: "",
   tipoCombustible: "",
   kilometraje: "",
+  ultimoMantenimientoFecha: "",
+  ultimoMantenimientoKilometraje: "",
+  proximoMantenimientoFecha: "",
+  proximoMantenimientoKilometraje: "",
+  mantenimientoObservacion: "",
 };
 
 function Seccion({ titulo }: { titulo: string }) {
@@ -93,12 +108,10 @@ function Seccion({ titulo }: { titulo: string }) {
   );
 }
 
-// Formulario de alta del maestro de unidades. El maestro es la fuente de
-// verdad para futuras apps (p. ej. mantenimiento): identificacion completa,
-// caracteristicas, registro MTC, datos de mantenimiento y fotos.
+// Formulario de alta del maestro de unidades con sus características y resumen de mantenimiento.
 export default function UnidadForm() {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const [abierto, setAbierto] = useState(false);
   const [form, setForm] = useState<FormUnidad>(VACIO);
   const [fotos, setFotos] = useState<string[]>([]);
   const [fotoNueva, setFotoNueva] = useState("");
@@ -111,10 +124,8 @@ export default function UnidadForm() {
       api("/unidades", { method: "POST", body: JSON.stringify(body) }),
     onSuccess: () => {
       toast.success(`Unidad ${form.placa.toUpperCase()} registrada.`);
-      setAbierto(false);
-      setForm(VACIO);
-      setFotos([]);
       queryClient.invalidateQueries({ queryKey: ["unidades"] });
+      router.push("/dashboard/unidades");
     },
     onError: (e) =>
       toast.error(e instanceof ApiError ? e.message : "Error inesperado."),
@@ -152,8 +163,19 @@ export default function UnidadForm() {
       cuenta: form.cuenta || undefined,
       clienteAsociado: form.clienteAsociado || undefined,
       capacidadCarga: num(form.capacidadCarga),
+      pesoBrutoVehicular: num(form.pesoBrutoVehicular),
+      tara: num(form.tara),
+      capacidadPasajeros: num(form.capacidadPasajeros),
+      volumenCarga: num(form.volumenCarga),
+      tipoCarroceria: form.tipoCarroceria || undefined,
+      numeroSerieCarroceria: form.numeroSerieCarroceria || undefined,
       tipoCombustible: form.tipoCombustible || undefined,
       kilometraje: num(form.kilometraje),
+      ultimoMantenimientoFecha: form.ultimoMantenimientoFecha || undefined,
+      ultimoMantenimientoKilometraje: num(form.ultimoMantenimientoKilometraje),
+      proximoMantenimientoFecha: form.proximoMantenimientoFecha || undefined,
+      proximoMantenimientoKilometraje: num(form.proximoMantenimientoKilometraje),
+      mantenimientoObservacion: form.mantenimientoObservacion || undefined,
       fotos,
     });
   };
@@ -181,20 +203,7 @@ export default function UnidadForm() {
   );
 
   return (
-    <>
-      <Button onClick={() => setAbierto(true)}>
-        <PlusIcon /> Nueva unidad
-      </Button>
-      <Dialog open={abierto} onOpenChange={setAbierto}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Nueva unidad</DialogTitle>
-            <DialogDescription>
-              Maestro de la flota: mientras más completo, mejor servirá a
-              operaciones y a la futura app de mantenimiento.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={enviar} className="grid gap-4 sm:grid-cols-2">
+    <form onSubmit={enviar} className="grid gap-4 sm:grid-cols-2">
             <Seccion titulo="Identificación" />
             {campoTexto("placa", "Placa", { placeholder: "VCA-821", requerido: true })}
             <div className="grid gap-2">
@@ -242,6 +251,12 @@ export default function UnidadForm() {
             {campoTexto("color", "Color", { placeholder: "BLANCO" })}
             {campoTexto("numeroEjes", "N° de ejes", { tipo: "number" })}
             {campoTexto("capacidadCarga", "Capacidad de carga (t)", { tipo: "number", placeholder: "30" })}
+            {campoTexto("pesoBrutoVehicular", "Peso bruto vehicular (t)", { tipo: "number" })}
+            {campoTexto("tara", "Tara (t)", { tipo: "number" })}
+            {campoTexto("capacidadPasajeros", "Capacidad de pasajeros", { tipo: "number" })}
+            {campoTexto("volumenCarga", "Volumen de carga (m³)", { tipo: "number" })}
+            {campoTexto("tipoCarroceria", "Tipo de carrocería", { placeholder: "FURGON, CISTERNA…" })}
+            {campoTexto("numeroSerieCarroceria", "N° de serie de carrocería")}
             <div className="grid gap-2">
               <Label>Combustible</Label>
               <Select
@@ -268,6 +283,13 @@ export default function UnidadForm() {
             {campoTexto("mtcVigencia", "Vigencia MTC", { tipo: "date" })}
             {campoTexto("materialesPeligrosos", "MATPEL", { placeholder: "NC si no aplica" })}
             {campoTexto("kilometraje", "Kilometraje actual", { tipo: "number", placeholder: "45200" })}
+
+            <Seccion titulo="Resumen de mantenimiento" />
+            {campoTexto("ultimoMantenimientoFecha", "Fecha de último mantenimiento", { tipo: "date" })}
+            {campoTexto("ultimoMantenimientoKilometraje", "Kilometraje de último mantenimiento", { tipo: "number" })}
+            {campoTexto("proximoMantenimientoFecha", "Fecha de próximo mantenimiento", { tipo: "date" })}
+            {campoTexto("proximoMantenimientoKilometraje", "Kilometraje de próximo mantenimiento", { tipo: "number" })}
+            {campoTexto("mantenimientoObservacion", "Observación de mantenimiento", { placeholder: "Cambio de aceite y filtros" })}
 
             <Seccion titulo="Asignación" />
             {campoTexto("cuenta", "Cuenta / proyecto", { placeholder: "CERRO VERDE" })}
@@ -316,17 +338,14 @@ export default function UnidadForm() {
               )}
             </div>
 
-            <DialogFooter className="sm:col-span-2">
-              <Button type="button" variant="outline" onClick={() => setAbierto(false)}>
+            <div className="flex justify-end gap-2 sm:col-span-2">
+              <Button type="button" variant="outline" onClick={() => router.push("/dashboard/unidades")}>
                 Cancelar
               </Button>
               <Button type="submit" disabled={crear.isPending || !form.clase}>
                 {crear.isPending ? "Guardando…" : "Registrar unidad"}
               </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
+            </div>
+    </form>
   );
 }

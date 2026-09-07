@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Link2Icon, SearchIcon } from "lucide-react";
+import Link from "next/link";
+import { Link2Icon, PlusIcon, SearchIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +29,6 @@ import {
 } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api";
-import UnidadForm from "@/components/unidad-form";
 
 interface Unidad {
   id: number;
@@ -178,7 +178,9 @@ export default function UnidadesPage() {
             {isFetching && !isLoading && <span className="ml-2 text-xs">Actualizando…</span>}
           </p>
         </div>
-        <UnidadForm />
+        <Button render={<Link href="/dashboard/unidades/nueva" />}>
+          <PlusIcon /> Nueva unidad
+        </Button>
       </div>
 
       {/* Leyenda de categorias presentes */}
