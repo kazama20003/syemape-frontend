@@ -5,7 +5,8 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { Link2Icon, PlusIcon, SearchIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "cn";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -28,7 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 
 interface Unidad {
   id: number;
@@ -105,9 +106,14 @@ function chipColor(nombre: string | null) {
     <span
       className="border-border inline-block size-3 shrink-0 rounded-full border align-middle"
       style={{ backgroundColor: css }}
-      title={nombre}
+      aria-hidden="true"
     />
   );
+}
+
+function fechaLocal(valor: string) {
+  const [anio, mes, dia] = valor.slice(0, 10).split("-").map(Number);
+  return new Date(anio, mes - 1, dia).toLocaleDateString("es-PE");
 }
 
 function BadgeCategoria({ categoria }: { categoria: string | null }) {
@@ -140,7 +146,7 @@ export default function UnidadesPage() {
   const [estado, setEstado] = useState("TODOS");
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, isFetching } = useQuery({
+  const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["unidades", { placa, clase, estado, page }],
     queryFn: () => {
       const q = new URLSearchParams();
@@ -175,12 +181,12 @@ export default function UnidadesPage() {
           <p className="text-muted-foreground text-sm">
             Flota de vehículos: categoría vehicular MTC, acoples con doble placa y
             estado operativo.
-            {isFetching && !isLoading && <span className="ml-2 text-xs">Actualizando…</span>}
+            {isFetching && !isLoading && <span className="ml-2 text-xs" aria-live="polite">Actualizando…</span>}
           </p>
         </div>
-        <Button nativeButton={false} render={<Link href="/dashboard/unidades/nueva" />}>
+        <Link href="/dashboard/unidades/nueva" className={cn(buttonVariants())}>
           <PlusIcon /> Nueva unidad
-        </Button>
+        </Link>
       </div>
 
       {/* Leyenda de categorias presentes */}
@@ -242,6 +248,16 @@ export default function UnidadesPage() {
         </Select>
       </div>
 
+      {error ? (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3" role="alert">
+          <p className="text-sm text-destructive">
+            {error instanceof ApiError ? error.message : "No se pudieron cargar las unidades."}
+          </p>
+          <Button className="mt-3" variant="outline" size="sm" onClick={() => refetch()}>
+            Reintentar
+          </Button>
+        </div>
+      ) : (
       <div className="overflow-hidden rounded-lg border">
         <Table>
           <TableHeader>
@@ -282,7 +298,7 @@ export default function UnidadesPage() {
                         {esAcople && (
                           <Tooltip>
                             <TooltipTrigger render={<span className="inline-flex" />}>
-                              <Link2Icon className="text-muted-foreground size-3.5" />
+                              <Link2Icon className="text-muted-foreground size-3.5" aria-hidden="true" />
                             </TooltipTrigger>
                             <TooltipContent>
                               Acople: circula enganchado a un tracto — el
@@ -290,6 +306,7 @@ export default function UnidadesPage() {
                             </TooltipContent>
                           </Tooltip>
                         )}
+                        {esAcople && <span className="text-muted-foreground text-xs">Acople</span>}
                       </div>
                       <span className="text-muted-foreground text-xs">
                         {u.clase.charAt(0) + u.clase.slice(1).toLowerCase()}
@@ -306,15 +323,16 @@ export default function UnidadesPage() {
                             {[u.marca, u.modelo].filter(Boolean).join(" ") || "—"}
                           </div>
                           <div className="text-muted-foreground text-xs">
-                            {[u.tipoVehiculo, u.anio, u.numeroEjes && `${u.numeroEjes} ejes`]
-                              .filter(Boolean)
+                            {[u.tipoVehiculo, u.anio?.toString(), u.numeroEjes === null ? null : `${u.numeroEjes} ejes`]
+                              .filter((detalle): detalle is string => Boolean(detalle))
                               .join(" · ")}
                           </div>
+                          {u.color && <div className="text-muted-foreground text-xs">Color: {u.color}</div>}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      {u.capacidadCarga ? (
+                      {u.capacidadCarga !== null ? (
                         <span className="tabular-nums">{u.capacidadCarga} t</span>
                       ) : (
                         "—"
@@ -326,7 +344,7 @@ export default function UnidadesPage() {
                           <div className="text-sm">{u.registroMtc}</div>
                           {u.mtcVigencia && (
                             <div className="text-muted-foreground text-xs">
-                              vence {new Date(u.mtcVigencia).toLocaleDateString("es-PE")}
+                              vence {fechaLocal(u.mtcVigencia)}
                             </div>
                           )}
                         </div>
@@ -348,6 +366,7 @@ export default function UnidadesPage() {
           </TableBody>
         </Table>
       </div>
+      )}
 
       {paginacion && paginacion.totalPaginas > 1 && (
         <div className="flex items-center justify-between">

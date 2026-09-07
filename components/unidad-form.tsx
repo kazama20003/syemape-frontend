@@ -143,6 +143,12 @@ export default function UnidadForm() {
 
   const enviar = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.placa.trim() || !form.clase) {
+      const id = !form.placa.trim() ? "placa" : "clase";
+      toast.error("Completa todos los campos obligatorios.");
+      document.getElementById(id)?.focus();
+      return;
+    }
     const num = (v: string) => (v === "" ? undefined : Number(v));
     crear.mutate({
       placa: form.placa,
@@ -207,11 +213,11 @@ export default function UnidadForm() {
             <Seccion titulo="Identificación" />
             {campoTexto("placa", "Placa", { placeholder: "VCA-821", requerido: true })}
             <div className="grid gap-2">
-              <Label>
+              <Label htmlFor="clase">
                 Clase<span className="text-primary"> *</span>
               </Label>
               <Select value={form.clase} onValueChange={(v) => set("clase")(v ?? "")}>
-                <SelectTrigger>
+                <SelectTrigger id="clase">
                   <SelectValue placeholder="Seleccionar…" />
                 </SelectTrigger>
                 <SelectContent>
@@ -224,12 +230,12 @@ export default function UnidadForm() {
               </Select>
             </div>
             <div className="grid gap-2">
-              <Label>Categoría vehicular (MTC)</Label>
+              <Label htmlFor="categoriaVehicular">Categoría vehicular (MTC)</Label>
               <Select
                 value={form.categoriaVehicular}
                 onValueChange={(v) => set("categoriaVehicular")(v ?? "")}
               >
-                <SelectTrigger>
+                <SelectTrigger id="categoriaVehicular">
                   <SelectValue placeholder="N1, N3, O4…" />
                 </SelectTrigger>
                 <SelectContent>
@@ -258,12 +264,12 @@ export default function UnidadForm() {
             {campoTexto("tipoCarroceria", "Tipo de carrocería", { placeholder: "FURGON, CISTERNA…" })}
             {campoTexto("numeroSerieCarroceria", "N° de serie de carrocería")}
             <div className="grid gap-2">
-              <Label>Combustible</Label>
+              <Label htmlFor="tipoCombustible">Combustible</Label>
               <Select
                 value={form.tipoCombustible}
                 onValueChange={(v) => set("tipoCombustible")(v ?? "")}
               >
-                <SelectTrigger>
+                <SelectTrigger id="tipoCombustible">
                   <SelectValue placeholder="Seleccionar…" />
                 </SelectTrigger>
                 <SelectContent>
@@ -329,6 +335,7 @@ export default function UnidadForm() {
                         size="icon"
                         className="size-6 shrink-0"
                         onClick={() => setFotos((prev) => prev.filter((_, j) => j !== i))}
+                        aria-label={`Quitar foto ${i + 1}`}
                       >
                         <Trash2Icon className="size-3.5" />
                       </Button>
@@ -342,7 +349,7 @@ export default function UnidadForm() {
               <Button type="button" variant="outline" onClick={() => router.push("/dashboard/unidades")}>
                 Cancelar
               </Button>
-              <Button type="submit" disabled={crear.isPending || !form.clase}>
+              <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>
                 {crear.isPending ? "Guardando…" : "Registrar unidad"}
               </Button>
             </div>
