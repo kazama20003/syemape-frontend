@@ -57,8 +57,10 @@ export default function Page() {
           endpoint="/personal"
           textoBoton="Nuevo personal"
           campos={[
-            { name: "nombres", label: "Nombres", requerido: true },
-            { name: "apellidos", label: "Apellidos", requerido: true },
+            { name: "primerNombre", label: "Primer nombre", requerido: true, mayusculas: true },
+            { name: "segundoNombre", label: "Segundo nombre", mayusculas: true },
+            { name: "primerApellido", label: "Primer apellido", requerido: true, mayusculas: true },
+            { name: "segundoApellido", label: "Segundo apellido", mayusculas: true },
             {
               name: "tipoDocumento",
               label: "Tipo de documento",

@@ -34,6 +34,7 @@ export interface CampoForm {
   // Ocupa las dos columnas del grid.
   ancho?: "full";
   ayuda?: string;
+  mayusculas?: boolean;
 }
 
 function mensajeDe(error: unknown): string {
@@ -131,7 +132,12 @@ export default function FormDialog({
                     value={valores[campo.name] ?? ""}
                     step={campo.tipo === "number" ? "any" : undefined}
                     onChange={(e) =>
-                      setValores((prev) => ({ ...prev, [campo.name]: e.target.value }))
+                      setValores((prev) => ({
+                        ...prev,
+                        [campo.name]: campo.mayusculas
+                          ? e.target.value.toUpperCase()
+                          : e.target.value,
+                      }))
                     }
                   />
                 )}

@@ -178,7 +178,7 @@ export default function UnidadesPage() {
             {isFetching && !isLoading && <span className="ml-2 text-xs">Actualizando…</span>}
           </p>
         </div>
-        <Button render={<Link href="/dashboard/unidades/nueva" />}>
+        <Button nativeButton={false} render={<Link href="/dashboard/unidades/nueva" />}>
           <PlusIcon /> Nueva unidad
         </Button>
       </div>
