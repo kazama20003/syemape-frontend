@@ -433,3 +433,6 @@ h4,
 .menu_links_text { font-family: var(--font-grotesk), sans-serif; }
 .home_hero_wrap h1 { font-family: var(--font-archivo), 'Arial Black', sans-serif; font-weight: 400; letter-spacing: -0.02em; line-height: 0.95; }
 .home_hero_wrap p, .home_hero_wrap .u-container span { font-family: var(--font-grotesk), sans-serif; }
+.nav_menu_label { font-family: var(--font-grotesk), sans-serif; font-weight: 500; }
+.nav_menu_bottom_links a, .nav_menu_bottom_card { font-family: var(--font-grotesk), sans-serif; }
+.nav_wrap .button_main_text { font-family: var(--font-grotesk), sans-serif; }
