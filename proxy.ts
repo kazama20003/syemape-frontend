@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Protege el dashboard: sin cookie de sesion se redirige a /login guardando la
 // pagina solicitada en ?next= para volver exactamente ahi tras iniciar sesion.
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("mape_token")?.value;
   const { pathname, search } = request.nextUrl;
 
