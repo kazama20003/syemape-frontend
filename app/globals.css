@@ -94,7 +94,7 @@ h4,
 .nav_logo_wrap, .nav_menu_wrap { pointer-events: auto; }
 .nav_contain { padding: 1rem var(--spacing-gutter); }
 .nav_layout { justify-content: space-between; align-items: flex-start; height: calc(100vh - 2rem); display: flex; position: relative; }
-.nav_logo_wrap { width: 5.5rem; display: block; }
+.nav_logo_wrap { width: 9rem; display: block; }
 .nav_menu_wrap { width: 20%; min-width: 300px; flex: none; color: var(--color-dark); background: #f4f4f4; border-radius: 4px; flex-direction: column; margin-left: 0; padding: 0.625rem 0.875rem; display: flex; position: relative; overflow: clip; box-shadow: 0 1px 2px #00000014; }
 .nav_menu_top { height: 1.75rem; color: inherit; justify-content: space-between; align-items: center; font-size: 0.9375rem; text-decoration: none; display: flex; }
 .nav_menu_icon_wrap { place-items: center; width: 1.125rem; height: 1.125rem; display: grid; }
@@ -388,7 +388,7 @@ h4,
 @media (max-width: 47.99rem) {
   /* Header: el menu ocupa el espacio disponible sin salirse */
   
-  .nav_logo_wrap { width: 4.25rem; }
+  .nav_logo_wrap { width: 6.5rem; }
 
   /* Hero: sin salto forzado en el titulo, texto y botones contenidos */
   .home_hero_wrap h1 br { display: none; }
