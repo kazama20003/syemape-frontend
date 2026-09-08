@@ -1,20 +1,64 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const HIDE_AFTER_MS = 2600;
-const FADE_MS = 600;
+// Duraciones (ms) — mismas del diseño original: contador 2.9s, cortina a los 3.05s
+const COUNT_MS = 2900;
+const CURTAIN_AT_MS = 3050;
+const UNMOUNT_AT_MS = 4200;
+
+// SVG del logo MAPE (vectores importados del diseño claude.ai/design)
+const LOGO_SVG = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="200 350 1090 900" style="width:min(70vw,58vh);height:auto;font-family:'Archivo Black','Arial Black',sans-serif;transform-box:fill-box;transform-origin:center;animation:plSettle 3.1s cubic-bezier(.22,1,.36,1) 0s both">
+<g style="clip-path:inset(0 100% 0 0);animation:plRoad 1.1s cubic-bezier(.22,1,.36,1) .35s both"><path fill="#000000" fill-rule="evenodd" transform="matrix(1.665 0 0 1.665 239.32 456.939)" d="M0 285.035C159.031 216.695 327.34 182.059 500.75 176.676C412.734 212.02 303.352 288.227 240.719 370.289C247.531 320.91 234.734 288.145 202.133 271.969C220.469 263.906 239.117 256.09 257.988 248.602L244.063 243.23C223.41 250.27 203.246 257.578 183.645 265.121C143.309 254.367 82.164 261.008 0 285.035ZM256.184 239.148C266.074 235.855 276.07 232.633 286.176 229.477L297.07 233.68C287.754 237.098 278.473 240.598 269.238 244.184L256.184 239.148ZM298.789 225.59C309.188 222.426 319.691 219.336 330.281 216.328L338.074 219.332C328.281 222.598 318.516 225.969 308.785 229.445L298.789 225.59ZM341.07 213.301C389.012 200.02 438.816 188.387 489.805 178.945C442.949 187.977 395.289 200.691 348.129 216.02L341.07 213.301"></path></g>
+<g style="clip-path:circle(0% at 60% 45%);animation:plDisc 1.2s cubic-bezier(.22,1,.36,1) 0s both"><path fill="#ed0404" transform="matrix(1.665 0 0 1.665 239.32 456.939)" d="M369.121 0C315.086 0 266.152 21.914 230.73 57.332C195.309 92.758 173.395 141.688 173.395 195.719C173.395 202.277 173.719 208.762 174.352 215.16C274.391 188.223 383.863 174.438 493.828 172.16C411.43 160.367 313.98 155.375 229.25 166.902C230.793 159.387 232.926 152.086 235.598 145.047C321.898 133.012 410.164 144.727 491.332 163.699C418.867 132.594 330.383 110.352 252.324 113.582C257.063 106.855 262.363 100.566 268.16 94.766C269.316 93.613 270.484 92.484 271.676 91.375C353.234 96.586 416.801 113.609 489.688 154.52C433.012 101.762 371.816 77.949 308.672 66.336C327.031 57.742 347.512 52.941 369.121 52.941C450.469 52.941 511.566 116.102 511.184 192.563C510.688 291.465 408.09 370.594 297.012 333.246C404.246 398.785 563.758 337.078 565.207 192.066C566.254 86.848 484.363 0 369.121 0"></path></g>
+<g style="clip-path:inset(0 0 100% 0);animation:plMape .9s cubic-bezier(.22,1,.36,1) 1.75s both"><g style="transform-box:fill-box;transform-origin:center;animation:plRise .9s cubic-bezier(.22,1,.36,1) 1.75s both"><text fill="#000000" font-family="Archivo Black" font-size="127.43" transform="matrix(0.968 0 0 0.968 650.404 1187.816)">M</text></g></g>
+<g style="clip-path:inset(0 0 100% 0);animation:plMape .9s cubic-bezier(.22,1,.36,1) 1.83s both"><g style="transform-box:fill-box;transform-origin:center;animation:plRise .9s cubic-bezier(.22,1,.36,1) 1.83s both"><text fill="#000000" font-family="Archivo Black" font-size="127.43" transform="matrix(0.968 0 0 0.968 766.836 1187.816)">A</text></g></g>
+<g style="clip-path:inset(0 0 100% 0);animation:plMape .9s cubic-bezier(.22,1,.36,1) 1.91s both"><g style="transform-box:fill-box;transform-origin:center;animation:plRise .9s cubic-bezier(.22,1,.36,1) 1.91s both"><text fill="#000000" font-family="Archivo Black" font-size="127.43" transform="matrix(0.968 0 0 0.968 862.794 1187.816)">P</text></g></g>
+<g style="clip-path:inset(0 0 100% 0);animation:plMape .9s cubic-bezier(.22,1,.36,1) 1.99s both"><g style="transform-box:fill-box;transform-origin:center;animation:plRise .9s cubic-bezier(.22,1,.36,1) 1.99s both"><text fill="#000000" font-family="Archivo Black" font-size="127.43" transform="matrix(0.968 0 0 0.968 951.845 1187.816)">E</text></g></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 0.65s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.043 -0.967 0.967 0.043 519.721 793.381)">S</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 0.70s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.18 -0.951 0.951 0.18 522.309 746.901)">U</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 0.75s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.313 -0.916 0.916 0.313 532.896 695.871)">P</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 0.80s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.434 -0.865 0.865 0.434 548.649 651.953)">E</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 0.85s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.549 -0.797 0.797 0.549 570.072 610.563)">R</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 0.90s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.657 -0.711 0.711 0.657 598.668 570.333)">V</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 0.95s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.735 -0.63 0.63 0.735 633.289 534.602)">I</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.00s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.8 -0.545 0.545 0.8 656.35 514.983)">S</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.05s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.856 -0.452 0.452 0.856 695.796 489.43)">I</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.10s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.904 -0.347 0.347 0.904 722.46 475.313)">Ó</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.15s both"><text fill="#004aad" font-family="Archivo Black" font-size="52" transform="matrix(0.945 -0.207 0.207 0.945 771.288 457.399)">N</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.25s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.934 0.254 -0.254 0.934 930.244 443.423)">E</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.30s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.886 0.389 -0.389 0.886 974.124 455.974)">M</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.35s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.819 0.516 -0.516 0.819 1024.504 479.55)">E</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.40s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.741 0.623 -0.623 0.741 1062.79 504.622)">R</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.45s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.643 0.723 -0.723 0.643 1099.116 536.303)">G</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.50s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.535 0.807 -0.807 0.535 1131.981 574.93)">E</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.55s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.416 0.874 -0.874 0.416 1156.625 613.444)">N</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.60s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.286 0.925 -0.925 0.286 1177.476 659.629)">C</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.65s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.176 0.952 -0.952 0.176 1190.577 706.392)">I</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.70s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(0.065 0.966 -0.966 0.065 1195.968 736.959)">A</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.75s both"><text fill="#ebb000" font-family="Archivo Black" font-size="46.66" transform="matrix(-0.068 0.966 -0.966 -0.068 1198.198 785.195)">S</text></g>
+<g style="transform-box:fill-box;transform-origin:center;animation:plLetter .7s cubic-bezier(.22,1,.36,1) 1.20s both"><text fill="#ff1616" font-family="Poppins" font-weight="900" font-size="50" transform="matrix(0.967 0.045 -0.045 0.967 845.904 440.859)">&amp;</text></g>
+</svg>`;
 
 export default function Preloader() {
-  const [fading, setFading] = useState(false);
+  const [pct, setPct] = useState(0);
   const [hidden, setHidden] = useState(false);
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setFading(true), HIDE_AFTER_MS);
-    const hideTimer = setTimeout(() => setHidden(true), HIDE_AFTER_MS + FADE_MS);
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const x = Math.min(1, (now - t0) / COUNT_MS);
+      const e = 1 - Math.pow(1 - x, 3);
+      setPct(Math.round(e * 100));
+      if (x < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    const unmountTimer = setTimeout(() => setHidden(true), UNMOUNT_AT_MS);
     return () => {
-      clearTimeout(fadeTimer);
-      clearTimeout(hideTimer);
+      cancelAnimationFrame(rafRef.current);
+      clearTimeout(unmountTimer);
     };
   }, []);
 
@@ -23,269 +67,61 @@ export default function Preloader() {
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[999] grid place-items-center bg-white"
-      style={{ opacity: fading ? 0 : 1, transition: `opacity ${FADE_MS}ms ease` }}
+      className="fixed inset-0 z-[999] flex items-center justify-center bg-white text-[#111]"
+      style={{
+        animation: `plCurtain 1s cubic-bezier(.76,0,.24,1) ${CURTAIN_AT_MS / 1000}s both`,
+        fontFamily: "'Archivo Black','Arial Black',sans-serif",
+      }}
     >
+      <link
+        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Poppins:wght@900&display=swap"
+        rel="stylesheet"
+      />
       <style>{`
-        .mape-preloader { width: 88vw; max-width: 560px; height: auto; max-height: 80vh; overflow: visible; transform-origin: 50% 50%; }
-
-        .anim-crescent-body { transform-origin: 500px 330px; animation: crescentMotion 4.8s cubic-bezier(0.35, 0, 0.25, 1) infinite; }
-        @keyframes crescentMotion {
-          0% { opacity: 0; transform: scale(0.85) rotate(-25deg); }
-          14% { opacity: 1; transform: scale(1) rotate(0deg); }
-          54% { opacity: 1; transform: scale(1.02) rotate(2deg); }
-          68% { opacity: 0.95; transform: scale(1.06) rotate(38deg) translate(20px, -15px); }
-          86% { opacity: 0.45; transform: scale(1.22) rotate(115deg) translate(140px, -120px); }
-          94%, 100% { opacity: 0; transform: scale(1.35) rotate(160deg) translate(260px, -200px); }
-        }
-
-        .anim-crescent-stroke { stroke-dasharray: 1500; stroke-dashoffset: 1500; animation: crescentStrokeDraw 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
-        @keyframes crescentStrokeDraw {
-          0% { stroke-dashoffset: 1500; opacity: 0; }
-          12% { opacity: 1; }
-          48% { stroke-dashoffset: 0; opacity: 1; }
-          68% { stroke-dashoffset: -200; opacity: 0.8; }
-          85%, 100% { stroke-dashoffset: -1500; opacity: 0; }
-        }
-
-        .anim-wing-1 { transform-origin: 660px 334px; animation: wingOneCycle 4.8s cubic-bezier(0.35, 0, 0.25, 1) infinite; }
-        .anim-wing-2 { transform-origin: 660px 334px; animation: wingTwoCycle 4.8s cubic-bezier(0.35, 0, 0.25, 1) infinite; }
-        .anim-wing-3 { transform-origin: 660px 334px; animation: wingThreeCycle 4.8s cubic-bezier(0.35, 0, 0.25, 1) infinite; }
-        @keyframes wingOneCycle {
-          0% { opacity: 0; transform: translateX(-40px) scale(0.7); }
-          14% { opacity: 1; transform: translateX(0) scale(1); }
-          35% { transform: translateX(4px) scale(1.02); }
-          54% { opacity: 1; transform: translateX(0) scale(1); }
-          68% { opacity: 0.9; transform: rotate(24deg) translate(30px, -20px) scale(1.05); }
-          86% { opacity: 0.35; transform: rotate(85deg) translate(180px, -90px) scale(1.15); }
-          94%, 100% { opacity: 0; transform: rotate(130deg) translate(310px, -150px) scale(1.3); }
-        }
-        @keyframes wingTwoCycle {
-          0% { opacity: 0; transform: translateX(-35px) scale(0.75); }
-          16% { opacity: 1; transform: translateX(0) scale(1); }
-          38% { transform: translateX(5px) scale(1.03); }
-          54% { opacity: 1; transform: translateX(0) scale(1); }
-          68% { opacity: 0.85; transform: rotate(32deg) translate(40px, 0px) scale(1.06); }
-          86% { opacity: 0.3; transform: rotate(95deg) translate(210px, -40px) scale(1.2); }
-          94%, 100% { opacity: 0; transform: rotate(140deg) translate(340px, -70px) scale(1.35); }
-        }
-        @keyframes wingThreeCycle {
-          0% { opacity: 0; transform: translateX(-30px) scale(0.8); }
-          18% { opacity: 1; transform: translateX(0) scale(1); }
-          40% { transform: translateX(6px) scale(1.03); }
-          54% { opacity: 1; transform: translateX(0) scale(1); }
-          68% { opacity: 0.8; transform: rotate(40deg) translate(45px, 20px) scale(1.07); }
-          86% { opacity: 0.25; transform: rotate(110deg) translate(230px, 20px) scale(1.22); }
-          94%, 100% { opacity: 0; transform: rotate(155deg) translate(360px, 30px) scale(1.4); }
-        }
-
-        .anim-highway-group { transform-origin: 360px 480px; animation: highwayMotion 4.8s cubic-bezier(0.35, 0, 0.25, 1) infinite; }
-        @keyframes highwayMotion {
-          0% { opacity: 0; transform: translateX(-60px) scale(0.9); }
-          16% { opacity: 1; transform: translateX(0) scale(1); }
-          54% { opacity: 1; transform: scale(1.01); }
-          68% { opacity: 0.95; transform: rotate(-18deg) translate(-25px, 15px); }
-          86% { opacity: 0.4; transform: rotate(-55deg) translate(-170px, 110px) scale(1.15); }
-          94%, 100% { opacity: 0; transform: rotate(-85deg) translate(-290px, 200px) scale(1.3); }
-        }
-
-        .highway-dash-run { stroke-dasharray: 42 38; stroke-dashoffset: 0; animation: highwayDashes 0.55s linear infinite; }
-        @keyframes highwayDashes { 0% { stroke-dashoffset: 80; } 100% { stroke-dashoffset: 0; } }
-
-        .anim-text-arc-group { transform-origin: 500px 330px; animation: textArcCycle 4.8s cubic-bezier(0.35, 0, 0.25, 1) infinite; }
-        @keyframes textArcCycle {
-          0% { opacity: 0; transform: scale(0.8) rotate(-15deg); }
-          14% { opacity: 1; transform: scale(1) rotate(0deg); }
-          38% { transform: scale(1.015) rotate(0deg); }
-          54% { opacity: 1; transform: scale(1) rotate(0deg); }
-          68% { opacity: 0.95; transform: rotate(-28deg) translate(-25px, -15px) scale(1.04); }
-          86% { opacity: 0.35; transform: rotate(-80deg) translate(-160px, -90px) scale(1.2); }
-          94%, 100% { opacity: 0; transform: rotate(-125deg) translate(-280px, -160px) scale(1.38); }
-        }
-
-        .anim-mape-wordmark { transform-origin: 500px 700px; animation: mapeWordmarkCycle 4.8s cubic-bezier(0.35, 0, 0.25, 1) infinite; }
-        @keyframes mapeWordmarkCycle {
-          0% { opacity: 0; transform: translateY(35px) scale(0.9); }
-          16% { opacity: 1; transform: translateY(0) scale(1); }
-          54% { opacity: 1; transform: scale(1.01); }
-          68% { opacity: 0.92; transform: rotate(20deg) translate(30px, 20px) scale(1.06); }
-          86% { opacity: 0.3; transform: rotate(60deg) translate(180px, 120px) scale(1.22); }
-          94%, 100% { opacity: 0; transform: rotate(95deg) translate(300px, 210px) scale(1.4); }
-        }
-
-        .anim-orbit-sweeper { transform-origin: 500px 330px; animation: orbitSpin 4.8s linear infinite; }
-        @keyframes orbitSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .anim-burst-arrow-1 { transform-origin: 500px 330px; animation: burstOne 4.8s cubic-bezier(0.2, 0.8, 0.4, 1.2) infinite; }
-        .anim-burst-arrow-2 { transform-origin: 500px 330px; animation: burstTwo 4.8s cubic-bezier(0.2, 0.8, 0.4, 1.2) infinite; }
-        .anim-burst-arrow-3 { transform-origin: 500px 330px; animation: burstThree 4.8s cubic-bezier(0.2, 0.8, 0.4, 1.2) infinite; }
-        @keyframes burstOne {
-          0%, 55% { opacity: 0; transform: scale(0.6) rotate(0deg) translate(0, 0); }
-          68% { opacity: 1; transform: scale(1.1) rotate(45deg) translate(50px, -40px); }
-          88% { opacity: 0.4; transform: scale(1.4) rotate(110deg) translate(160px, -110px); }
-          95%, 100% { opacity: 0; transform: scale(1.7) rotate(160deg) translate(260px, -180px); }
-        }
-        @keyframes burstTwo {
-          0%, 55% { opacity: 0; transform: scale(0.6) rotate(0deg) translate(0, 0); }
-          68% { opacity: 1; transform: scale(1.1) rotate(-35deg) translate(-40px, -50px); }
-          88% { opacity: 0.4; transform: scale(1.4) rotate(-90deg) translate(-140px, -130px); }
-          95%, 100% { opacity: 0; transform: scale(1.7) rotate(-140deg) translate(-240px, -200px); }
-        }
-        @keyframes burstThree {
-          0%, 55% { opacity: 0; transform: scale(0.6) rotate(0deg) translate(0, 0); }
-          68% { opacity: 1; transform: scale(1.1) rotate(70deg) translate(60px, 30px); }
-          88% { opacity: 0.4; transform: scale(1.4) rotate(130deg) translate(170px, 90px); }
-          95%, 100% { opacity: 0; transform: scale(1.7) rotate(180deg) translate(270px, 150px); }
-        }
-
-        .anim-loader-dots { animation: dotsFade 4.8s ease-in-out infinite; }
-        @keyframes dotsFade { 0%, 15% { opacity: 0; } 22%, 58% { opacity: 1; } 72%, 100% { opacity: 0; } }
-
-        @media (prefers-reduced-motion: reduce) {
-          .mape-preloader * { animation: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; transform: none !important; }
-        }
+        @keyframes plDisc{from{clip-path:circle(0% at 60% 45%)}to{clip-path:circle(75% at 60% 45%)}}
+        @keyframes plRoad{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 -5% 0 0)}}
+        @keyframes plLetter{from{opacity:0;transform:scale(.4) translateY(6px)}to{opacity:1;transform:none}}
+        @keyframes plMape{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(-10% 0 -10% 0)}}
+        @keyframes plRise{from{transform:translateY(110px)}to{transform:none}}
+        @keyframes plSettle{0%,78%{transform:scale(1)}100%{transform:scale(.94)}}
+        @keyframes plCurtain{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+        @keyframes plLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
       `}</style>
 
-      <svg
-        className="mape-preloader"
-        viewBox="0 0 920 800"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        role="img"
-        aria-label="MAPE Supervisión & Emergencias"
+      <div dangerouslySetInnerHTML={{ __html: LOGO_SVG }} />
+
+      <div
+        className="absolute flex items-baseline gap-2"
+        style={{
+          left: "clamp(24px,5vw,72px)",
+          bottom: "clamp(24px,5vw,72px)",
+          fontSize: "clamp(40px,7vw,96px)",
+          lineHeight: 1,
+          letterSpacing: "-.03em",
+          fontVariantNumeric: "tabular-nums",
+        }}
       >
-        <defs>
-          <linearGradient id="orbitGlowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFC72C" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FF2A36" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#0055A5" stopOpacity="1" />
-          </linearGradient>
+        <span>{String(pct).padStart(3, "0")}</span>
+        <span style={{ fontSize: ".35em", color: "#ed0404" }}>%</span>
+      </div>
 
-          <filter id="softGlowRed" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="5" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
+      <div
+        className="absolute uppercase"
+        style={{
+          right: "clamp(24px,5vw,72px)",
+          bottom: "clamp(30px,5.5vw,84px)",
+          fontSize: 12,
+          letterSpacing: ".2em",
+          color: "#777",
+        }}
+      >
+        {pct < 100 ? "Cargando" : "Listo"}
+      </div>
 
-          {/* Arco del texto: sigue la curva exterior del aro */}
-          <path id="textHaloArc" d="M 234 411 A 278 278 0 1 1 766 411" fill="none" />
-        </defs>
-
-        {/* Anillos orbitales sutiles de fondo */}
-        <g className="anim-orbit-sweeper" opacity="0.25">
-          <circle cx="500" cy="330" r="345" stroke="url(#orbitGlowGrad)" strokeWidth="2" strokeDasharray="10 35" fill="none" />
-          <path d="M 500 -15 A 345 345 0 0 1 845 330" fill="none" stroke="url(#orbitGlowGrad)" strokeWidth="4" strokeLinecap="round" strokeDasharray="85 320" />
-        </g>
-
-        {/* Flechas de dispersión (solo en la fase final) */}
-        <g filter="url(#softGlowRed)">
-          <g className="anim-burst-arrow-1">
-            <path d="M 700 150 L 750 125 L 725 175 L 732 152 Z" fill="#E30613" />
-          </g>
-          <g className="anim-burst-arrow-2">
-            <path d="M 300 150 L 250 125 L 275 175 L 268 152 Z" fill="#0055A5" />
-          </g>
-          <g className="anim-burst-arrow-3">
-            <path d="M 745 330 L 800 335 L 755 365 L 765 342 Z" fill="#F5A623" />
-          </g>
-        </g>
-
-        {/* 1. ARO ROJO: círculo grueso abierto abajo-izquierda (por donde sale la carretera) */}
-        <g className="anim-crescent-body">
-          <path
-            d="M 294 449 A 238 238 0 1 1 438 560"
-            fill="none"
-            stroke="#E30613"
-            strokeWidth="48"
-            strokeLinecap="butt"
-          />
-          <path
-            className="anim-crescent-stroke"
-            d="M 294 449 A 238 238 0 1 1 438 560"
-            fill="none"
-            stroke="#FFFFFF"
-            strokeWidth="4"
-            strokeLinecap="round"
-          />
-        </g>
-
-        {/* 2. TRES ALAS ROJAS convergiendo al punto de fuga (658, 334) */}
-        <g>
-          <path
-            className="anim-wing-1"
-            d="M 658 334 C 570 235, 465 178, 355 170 C 385 218, 480 275, 658 334 Z"
-            fill="#E30613"
-          />
-          <path
-            className="anim-wing-2"
-            d="M 658 334 C 545 278, 430 252, 328 252 C 362 297, 490 322, 658 334 Z"
-            fill="#E30613"
-          />
-          <path
-            className="anim-wing-3"
-            d="M 658 334 C 530 332, 418 340, 322 356 C 362 394, 505 372, 658 334 Z"
-            fill="#E30613"
-          />
-        </g>
-
-        {/* 3. CARRETERA NEGRA con línea discontinua, del extremo izquierdo al punto de fuga */}
-        <g className="anim-highway-group">
-          <path
-            d="M 70 522 C 250 465, 435 425, 656 336 C 548 420, 458 492, 446 588 C 420 505, 262 508, 70 522 Z"
-            fill="#0D0D10"
-          />
-          <path
-            className="highway-dash-run"
-            d="M 195 502 C 320 468, 450 430, 618 362"
-            fill="none"
-            stroke="#FFFFFF"
-            strokeWidth="9"
-            strokeLinecap="round"
-          />
-        </g>
-
-        {/* 4. TEXTO EN ARCO: SUPERVISIÓN (azul) & (rojo) EMERGENCIAS (amarillo) */}
-        <g className="anim-text-arc-group">
-          <text fontFamily="'Montserrat', 'Arial Black', -apple-system, sans-serif" fontWeight="900" fontSize="40" letterSpacing="6px">
-            <textPath href="#textHaloArc" startOffset="50%" textAnchor="middle">
-              <tspan fill="#0055A5">SUPERVISIÓN </tspan>
-              <tspan fill="#E30613" fontSize="44">&amp; </tspan>
-              <tspan fill="#F5A623">EMERGENCIAS</tspan>
-            </textPath>
-          </text>
-        </g>
-
-        {/* 5. MAPE centrado abajo */}
-        <g className="anim-mape-wordmark">
-          <text
-            x="500"
-            y="722"
-            textAnchor="middle"
-            fontFamily="'Arial Black', 'Impact', -apple-system, sans-serif"
-            fontWeight="900"
-            fontSize="108"
-            letterSpacing="8px"
-            fill="#0D0D10"
-          >
-            MAPE
-          </text>
-        </g>
-
-        {/* 6. Puntos de carga */}
-        <g className="anim-loader-dots" transform="translate(460, 775)">
-          <circle cx="0" cy="0" r="4" fill="#0055A5">
-            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.1s" repeatCount="indefinite" begin="0s" />
-            <animate attributeName="r" values="3.5;5;3.5" dur="1.1s" repeatCount="indefinite" begin="0s" />
-          </circle>
-          <circle cx="25" cy="0" r="4" fill="#E30613">
-            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.1s" repeatCount="indefinite" begin="0.22s" />
-            <animate attributeName="r" values="3.5;5;3.5" dur="1.1s" repeatCount="indefinite" begin="0.22s" />
-          </circle>
-          <circle cx="50" cy="0" r="4" fill="#F5A623">
-            <animate attributeName="opacity" values="0.3;1;0.3" dur="1.1s" repeatCount="indefinite" begin="0.44s" />
-            <animate attributeName="r" values="3.5;5;3.5" dur="1.1s" repeatCount="indefinite" begin="0.44s" />
-          </circle>
-        </g>
-      </svg>
+      <div
+        className="absolute inset-x-0 bottom-0 h-[3px] bg-[#ed0404] origin-left"
+        style={{ animation: "plLine 2.9s cubic-bezier(.65,0,.35,1) 0s both" }}
+      />
     </div>
   );
 }
