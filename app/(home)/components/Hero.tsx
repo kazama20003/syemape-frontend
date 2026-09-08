@@ -1,7 +1,7 @@
 export default function Hero() {
   return (
     <>
-<section id="top" className="home_hero_wrap u-section u-theme-dark relative h-[100svh] min-h-[640px] overflow-clip bg-hero text-light">
+<section id="top" className="home_hero_wrap u-section u-theme-dark relative h-[100svh] min-h-[640px] overflow-clip rounded-b-xl bg-hero text-light">
 <div className="home_hero_bg absolute inset-0">
 <div className="absolute inset-0">
 <div className="bunny-bg" data-bunny-background-init="" data-player-status="playing" data-player-autoplay="true">
@@ -14,7 +14,7 @@ export default function Hero() {
 <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent">
 </div>
 <div className="u-container absolute left-0 top-[28%] w-full max-w-[44rem]">
-<span className="inline-block rounded-[4px] border border-white/45 bg-white/10 px-3.5 py-[8px] text-[0.85rem] backdrop-blur-sm">Transporte &amp; Servicios Especializados</span>
+<span className="inline-block rounded-lg border border-white/45 bg-white/10 px-3.5 py-[8px] text-[0.85rem] backdrop-blur-sm">Transporte &amp; Servicios Especializados</span>
 <h1 className="mt-4 text-[length:var(--text-fluid-h1)] leading-[1.02]">Supervisión y transporte <br/>para rutas seguras</h1>
 <p className="mt-5 max-w-[36rem] text-[0.95rem] font-bold leading-[1.6] text-white/95">Somos S&amp;E MAPE E.I.R.L.: alquiler de vehículos livianos y pesados, escolta en ruta y transporte de carga para minería, construcción e industria.</p>
 <div className="mt-7 flex flex-wrap gap-2">

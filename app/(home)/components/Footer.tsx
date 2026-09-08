@@ -2,14 +2,14 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="u-theme-dark u-container bg-dark pb-7 pt-20 md:pt-28">
-      <div className="grid gap-16 border-b border-white/20 pb-16 lg:grid-cols-[1.25fr_1.8fr_0.8fr_0.7fr] lg:gap-10">
+    <footer className="u-theme-dark u-container rounded-t-xl bg-dark pb-7 pt-20 md:pt-28">
+      <div className="grid gap-10 border-b border-white/20 pb-16 sm:grid-cols-2 lg:grid-cols-[1.25fr_1.8fr_0.8fr_0.7fr] lg:gap-10">
         <div>
           <p className="text-sm font-bold">Mantente informado</p>
           <form className="mt-5 flex max-w-md gap-3" action="#">
             <label className="sr-only" htmlFor="footer-email">Correo electrónico</label>
-            <input id="footer-email" type="email" placeholder="correo@empresa.com" className="h-11 min-w-0 flex-1 rounded-sm border border-white/45 bg-transparent px-4 text-sm placeholder:text-white/45 focus:border-white focus:outline-none" />
-            <button type="submit" className="h-11 rounded-sm bg-white px-5 text-sm text-dark transition-colors hover:bg-white/80">Suscribirme</button>
+            <input id="footer-email" type="email" placeholder="correo@empresa.com" className="h-11 min-w-0 flex-1 rounded-lg border border-white/45 bg-transparent px-4 text-sm placeholder:text-white/45 focus:border-white focus:outline-none" />
+            <button type="submit" className="h-11 rounded-lg bg-white px-5 text-sm text-dark transition-colors hover:bg-white/80">Suscribirme</button>
           </form>
           <div className="mt-16">
             <p className="text-sm font-bold">Síguenos en</p>

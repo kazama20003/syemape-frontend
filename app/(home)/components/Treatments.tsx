@@ -23,7 +23,7 @@ export default function Treatments() {
 </div>
 <div className="treatments_layout relative mt-16 px-4">
 <div data-animate="stagger-up" className="treatments_grid_layout grid gap-3 md:grid-cols-3">
-<article data-animate="stagger-up-item" className="treatment_card_wrap glass-dark flex min-h-[230px] flex-col rounded-[3px] p-5 transition-colors duration-500 hover:bg-black/40">
+<article data-animate="stagger-up-item" className="treatment_card_wrap glass-dark flex min-h-[230px] flex-col rounded-lg p-5 transition-colors duration-500 hover:bg-black/40">
 <div className="flex items-start justify-between">
 <h3 className="text-[0.95rem] font-normal">Spravato® Therapy</h3>
 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">
@@ -42,7 +42,7 @@ export default function Treatments() {
 </span>
 </a>
 </article>
-<article data-animate="stagger-up-item" className="treatment_card_wrap glass-dark flex min-h-[230px] flex-col rounded-[3px] p-5 transition-colors duration-500 hover:bg-black/40">
+<article data-animate="stagger-up-item" className="treatment_card_wrap glass-dark flex min-h-[230px] flex-col rounded-lg p-5 transition-colors duration-500 hover:bg-black/40">
 <div className="flex items-start justify-between">
 <h3 className="text-[0.95rem] font-normal">Ketamine Therapy</h3>
 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">
@@ -61,7 +61,7 @@ export default function Treatments() {
 </span>
 </a>
 </article>
-<article data-animate="stagger-up-item" className="treatment_card_wrap glass-dark flex min-h-[230px] flex-col rounded-[3px] p-5 transition-colors duration-500 hover:bg-black/40">
+<article data-animate="stagger-up-item" className="treatment_card_wrap glass-dark flex min-h-[230px] flex-col rounded-lg p-5 transition-colors duration-500 hover:bg-black/40">
 <div className="flex items-start justify-between">
 <h3 className="text-[0.95rem] font-normal">Treatment at Home</h3>
 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" className="opacity-90">

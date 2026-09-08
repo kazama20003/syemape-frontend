@@ -1,22 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ImageIcon, Trash2Icon } from "lucide-react";
+import {
+  CameraIcon,
+  FileBadgeIcon,
+  IdCardIcon,
+  ImageIcon,
+  SlidersHorizontalIcon,
+  Trash2Icon,
+  WrenchIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { ApiError, api } from "@/lib/api";
+import { COLORES_VEHICULO, MuestraColor } from "@/lib/colores-vehiculo";
 
 const CLASES = [
   { valor: "LIVIANO", etiqueta: "Liviano (camioneta, auto)" },
@@ -27,6 +44,16 @@ const CLASES = [
 ];
 
 const CATEGORIAS = ["N1", "N2", "N3", "M1", "M2", "M3", "O1", "O2", "O3", "O4"];
+
+// Tipo del maestro administrable /tipos-vehiculo. Trae la clase y la
+// categoría MTC sugeridas para autocompletarlas al seleccionarlo.
+interface TipoVehiculoMaestro {
+  id: number;
+  codigo: string;
+  nombre: string;
+  claseSugerida: string | null;
+  categoriaSugerida: string | null;
+}
 const COMBUSTIBLES = ["DIESEL", "GASOLINA", "GLP", "GNV", "ELECTRICO", "HIBRIDO"];
 
 interface FormUnidad {
@@ -97,14 +124,38 @@ const VACIO: FormUnidad = {
   mantenimientoObservacion: "",
 };
 
-function Seccion({ titulo }: { titulo: string }) {
+function SeccionCard({
+  icono,
+  titulo,
+  descripcion,
+  children,
+  columnas = "sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+  className,
+}: {
+  icono: React.ReactNode;
+  titulo: string;
+  descripcion: string;
+  children: React.ReactNode;
+  columnas?: string;
+  className?: string;
+}) {
   return (
-    <div className="sm:col-span-2">
-      <p className="text-muted-foreground text-xs font-semibold uppercase tracking-[0.14em]">
-        {titulo}
-      </p>
-      <Separator className="mt-1" />
-    </div>
+    <Card className={className}>
+      <CardHeader className="border-b">
+        <div className="flex items-center gap-3">
+          <div className="bg-primary/10 text-primary grid size-9 shrink-0 place-items-center rounded-lg [&_svg]:size-4.5">
+            {icono}
+          </div>
+          <div>
+            <CardTitle>{titulo}</CardTitle>
+            <CardDescription>{descripcion}</CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-5">
+        <FieldGroup className={`grid gap-x-5 gap-y-4 ${columnas}`}>{children}</FieldGroup>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -115,9 +166,37 @@ export default function UnidadForm() {
   const [form, setForm] = useState<FormUnidad>(VACIO);
   const [fotos, setFotos] = useState<string[]>([]);
   const [fotoNueva, setFotoNueva] = useState("");
+  const [invalidos, setInvalidos] = useState<Set<string>>(new Set());
 
-  const set = (campo: keyof FormUnidad) => (valor: string) =>
+  const set = (campo: keyof FormUnidad) => (valor: string) => {
+    setInvalidos((prev) => {
+      if (!prev.has(campo)) return prev;
+      const sig = new Set(prev);
+      sig.delete(campo);
+      return sig;
+    });
     setForm((prev) => ({ ...prev, [campo]: valor }));
+  };
+
+  const { data: tiposData } = useQuery({
+    queryKey: ["tipos-vehiculo", "catalogo"],
+    queryFn: () =>
+      api<{ datos: TipoVehiculoMaestro[] }>("/tipos-vehiculo?pageSize=200"),
+    staleTime: 60_000,
+  });
+  const tiposVehiculo = tiposData?.datos ?? [];
+
+  // Al elegir un tipo del maestro se autocompletan clase y categoría MTC
+  // (siguen siendo editables para casos excepcionales).
+  const setTipoVehiculo = (valor: string) => {
+    const tipo = tiposVehiculo.find((t) => t.codigo === valor);
+    setForm((prev) => ({
+      ...prev,
+      tipoVehiculo: valor,
+      clase: tipo?.claseSugerida ?? prev.clase,
+      categoriaVehicular: tipo?.categoriaSugerida || prev.categoriaVehicular,
+    }));
+  };
 
   const crear = useMutation({
     mutationFn: (body: Record<string, unknown>) =>
@@ -143,12 +222,19 @@ export default function UnidadForm() {
 
   const enviar = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.placa.trim() || !form.clase) {
-      const id = !form.placa.trim() ? "placa" : "clase";
+    const sinValor = [
+      ["placa", form.placa.trim()],
+      ["clase", form.clase],
+    ]
+      .filter(([, v]) => !v)
+      .map(([k]) => k as string);
+    if (sinValor.length > 0) {
+      setInvalidos(new Set(sinValor));
       toast.error("Completa todos los campos obligatorios.");
-      document.getElementById(id)?.focus();
+      document.getElementById(sinValor[0])?.focus();
       return;
     }
+    setInvalidos(new Set());
     const num = (v: string) => (v === "" ? undefined : Number(v));
     crear.mutate({
       placa: form.placa,
@@ -191,168 +277,229 @@ export default function UnidadForm() {
     label: string,
     props: { placeholder?: string; requerido?: boolean; tipo?: string } = {},
   ) => (
-    <div className="grid gap-2">
-      <Label htmlFor={campo}>
+    <Field data-invalid={invalidos.has(campo) || undefined}>
+      <FieldLabel htmlFor={campo}>
         {label}
         {props.requerido && <span className="text-primary"> *</span>}
-      </Label>
+      </FieldLabel>
       <Input
         id={campo}
         type={props.tipo ?? "text"}
-        required={props.requerido}
+        aria-invalid={invalidos.has(campo) || undefined}
         placeholder={props.placeholder}
         value={form[campo]}
         step={props.tipo === "number" ? "any" : undefined}
         onChange={(e) => set(campo)(e.target.value)}
       />
-    </div>
+      {invalidos.has(campo) && <FieldError>Este campo es obligatorio.</FieldError>}
+    </Field>
   );
 
+  const campoSelect = (
+    campo: keyof FormUnidad,
+    label: string,
+    opciones: { valor: string; etiqueta: string }[],
+    props: {
+      requerido?: boolean;
+      onChange?: (v: string) => void;
+      renderItem?: (o: { valor: string; etiqueta: string }) => React.ReactNode;
+    } = {},
+  ) => {
+    // Sentinela para poder limpiar un select opcional ya seleccionado.
+    const NINGUNO = "__NINGUNO__";
+    const conNinguno = props.requerido
+      ? opciones
+      : [{ valor: NINGUNO, etiqueta: "— Ninguno —" }, ...opciones];
+    const onChange = (v: string) =>
+      (props.onChange ?? set(campo))(v === NINGUNO ? "" : v);
+    return (
+      <Field data-invalid={invalidos.has(campo) || undefined}>
+        <FieldLabel htmlFor={campo}>
+          {label}
+          {props.requerido && <span className="text-primary"> *</span>}
+        </FieldLabel>
+        <Select
+          value={form[campo]}
+          onValueChange={(v) => onChange(v ?? "")}
+          items={conNinguno.map((o) => ({ value: o.valor, label: o.etiqueta }))}
+        >
+          <SelectTrigger
+            id={campo}
+            className="w-full"
+            aria-invalid={invalidos.has(campo) || undefined}
+          >
+            <SelectValue placeholder="Seleccionar…" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {conNinguno.map((o) => (
+                <SelectItem key={o.valor} value={o.valor}>
+                  {o.valor === NINGUNO ? (
+                    <span className="text-muted-foreground">{o.etiqueta}</span>
+                  ) : props.renderItem ? (
+                    props.renderItem(o)
+                  ) : (
+                    o.etiqueta
+                  )}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        {invalidos.has(campo) && <FieldError>Este campo es obligatorio.</FieldError>}
+      </Field>
+    );
+  };
+
   return (
-    <form onSubmit={enviar} className="grid gap-4 sm:grid-cols-2">
-            <Seccion titulo="Identificación" />
-            {campoTexto("placa", "Placa", { placeholder: "VCA-821", requerido: true })}
-            <div className="grid gap-2">
-              <Label htmlFor="clase">
-                Clase<span className="text-primary"> *</span>
-              </Label>
-              <Select value={form.clase} onValueChange={(v) => set("clase")(v ?? "")}>
-                <SelectTrigger id="clase">
-                  <SelectValue placeholder="Seleccionar…" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CLASES.map((c) => (
-                    <SelectItem key={c.valor} value={c.valor}>
-                      {c.etiqueta}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="categoriaVehicular">Categoría vehicular (MTC)</Label>
-              <Select
-                value={form.categoriaVehicular}
-                onValueChange={(v) => set("categoriaVehicular")(v ?? "")}
-              >
-                <SelectTrigger id="categoriaVehicular">
-                  <SelectValue placeholder="N1, N3, O4…" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIAS.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {campoTexto("tipoVehiculo", "Tipo de vehículo", { placeholder: "CAMIONETA, TRACTO, CISTERNA…" })}
+    <form onSubmit={enviar} className="flex w-full flex-col gap-5 pb-20">
+      <SeccionCard
+        icono={<IdCardIcon />}
+        titulo="Identificación"
+        descripcion="Placa, tipo y clasificación vehicular de la unidad."
+      >
+        {campoTexto("placa", "Placa", { placeholder: "VCA-821", requerido: true })}
+        {campoSelect(
+          "tipoVehiculo",
+          "Tipo de vehículo",
+          tiposVehiculo.map((t) => ({ valor: t.codigo, etiqueta: t.nombre })),
+          { onChange: setTipoVehiculo },
+        )}
+        {campoSelect("clase", "Clase", CLASES, { requerido: true })}
+        {campoSelect(
+          "categoriaVehicular",
+          "Categoría vehicular (MTC)",
+          CATEGORIAS.map((c) => ({ valor: c, etiqueta: c })),
+        )}
+      </SeccionCard>
 
-            <Seccion titulo="Características" />
-            {campoTexto("marca", "Marca", { placeholder: "TOYOTA" })}
-            {campoTexto("modelo", "Modelo", { placeholder: "HILUX 4X4" })}
-            {campoTexto("anio", "Año (modelo)", { tipo: "number", placeholder: "2024" })}
-            {campoTexto("anioFabricacion", "Año de fabricación", { tipo: "number" })}
-            {campoTexto("color", "Color", { placeholder: "BLANCO" })}
-            {campoTexto("numeroEjes", "N° de ejes", { tipo: "number" })}
-            {campoTexto("capacidadCarga", "Capacidad de carga (t)", { tipo: "number", placeholder: "30" })}
-            {campoTexto("pesoBrutoVehicular", "Peso bruto vehicular (t)", { tipo: "number" })}
-            {campoTexto("tara", "Tara (t)", { tipo: "number" })}
-            {campoTexto("capacidadPasajeros", "Capacidad de pasajeros", { tipo: "number" })}
-            {campoTexto("volumenCarga", "Volumen de carga (m³)", { tipo: "number" })}
-            {campoTexto("tipoCarroceria", "Tipo de carrocería", { placeholder: "FURGON, CISTERNA…" })}
-            {campoTexto("numeroSerieCarroceria", "N° de serie de carrocería")}
-            <div className="grid gap-2">
-              <Label htmlFor="tipoCombustible">Combustible</Label>
-              <Select
-                value={form.tipoCombustible}
-                onValueChange={(v) => set("tipoCombustible")(v ?? "")}
-              >
-                <SelectTrigger id="tipoCombustible">
-                  <SelectValue placeholder="Seleccionar…" />
-                </SelectTrigger>
-                <SelectContent>
-                  {COMBUSTIBLES.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <SeccionCard
+        icono={<SlidersHorizontalIcon />}
+        titulo="Características"
+        descripcion="Datos técnicos y capacidades del vehículo."
+      >
+        {campoTexto("marca", "Marca", { placeholder: "TOYOTA" })}
+        {campoTexto("modelo", "Modelo", { placeholder: "HILUX 4X4" })}
+        {campoTexto("anio", "Año (modelo)", { tipo: "number", placeholder: "2024" })}
+        {campoTexto("anioFabricacion", "Año de fabricación", { tipo: "number" })}
+        {campoSelect(
+          "color",
+          "Color",
+          COLORES_VEHICULO.map((c) => ({ valor: c.nombre, etiqueta: c.nombre })),
+          {
+            renderItem: (o) => (
+              <span className="flex items-center gap-2">
+                <MuestraColor nombre={o.valor} />
+                {o.etiqueta}
+              </span>
+            ),
+          },
+        )}
+        {campoTexto("numeroEjes", "N° de ejes", { tipo: "number" })}
+        {campoTexto("capacidadCarga", "Capacidad de carga (t)", { tipo: "number", placeholder: "30" })}
+        {campoTexto("pesoBrutoVehicular", "Peso bruto vehicular (t)", { tipo: "number" })}
+        {campoTexto("tara", "Tara (t)", { tipo: "number" })}
+        {campoTexto("capacidadPasajeros", "Capacidad de pasajeros", { tipo: "number" })}
+        {campoTexto("volumenCarga", "Volumen de carga (m³)", { tipo: "number" })}
+        {campoTexto("tipoCarroceria", "Tipo de carrocería", { placeholder: "FURGON, CISTERNA…" })}
+        {campoTexto("numeroSerieCarroceria", "N° de serie de carrocería")}
+        {campoSelect(
+          "tipoCombustible",
+          "Combustible",
+          COMBUSTIBLES.map((c) => ({ valor: c, etiqueta: c })),
+        )}
+      </SeccionCard>
 
-            <Seccion titulo="Series y registro" />
-            {campoTexto("numeroMotor", "N° de motor", { placeholder: "1GDG353796" })}
-            {campoTexto("numeroVin", "VIN / N° de chasis", { placeholder: "8AJBA3CD5P1748414" })}
-            {campoTexto("registroMtc", "Registro MTC", { placeholder: "MTC-004512 o NC" })}
-            {campoTexto("mtcVigencia", "Vigencia MTC", { tipo: "date" })}
-            {campoTexto("materialesPeligrosos", "MATPEL", { placeholder: "NC si no aplica" })}
-            {campoTexto("kilometraje", "Kilometraje actual", { tipo: "number", placeholder: "45200" })}
+      <SeccionCard
+        icono={<FileBadgeIcon />}
+        titulo="Series y registro"
+        descripcion="Números de serie y registro ante el MTC."
+      >
+        {campoTexto("numeroMotor", "N° de motor", { placeholder: "1GDG353796" })}
+        {campoTexto("numeroVin", "VIN / N° de chasis", { placeholder: "8AJBA3CD5P1748414" })}
+        {campoTexto("registroMtc", "Registro MTC", { placeholder: "MTC-004512 o NC" })}
+        {campoTexto("mtcVigencia", "Vigencia MTC", { tipo: "date" })}
+        {campoTexto("materialesPeligrosos", "MATPEL", { placeholder: "NC si no aplica" })}
+        {campoTexto("kilometraje", "Kilometraje actual", { tipo: "number", placeholder: "45200" })}
+      </SeccionCard>
 
-            <Seccion titulo="Resumen de mantenimiento" />
-            {campoTexto("ultimoMantenimientoFecha", "Fecha de último mantenimiento", { tipo: "date" })}
-            {campoTexto("ultimoMantenimientoKilometraje", "Kilometraje de último mantenimiento", { tipo: "number" })}
-            {campoTexto("proximoMantenimientoFecha", "Fecha de próximo mantenimiento", { tipo: "date" })}
-            {campoTexto("proximoMantenimientoKilometraje", "Kilometraje de próximo mantenimiento", { tipo: "number" })}
-            {campoTexto("mantenimientoObservacion", "Observación de mantenimiento", { placeholder: "Cambio de aceite y filtros" })}
+      <SeccionCard
+        icono={<WrenchIcon />}
+        titulo="Mantenimiento"
+        descripcion="Último y próximo mantenimiento programado."
+      >
+        {campoTexto("ultimoMantenimientoFecha", "Fecha de último mantenimiento", { tipo: "date" })}
+        {campoTexto("ultimoMantenimientoKilometraje", "Kilometraje de último mantenimiento", { tipo: "number" })}
+        {campoTexto("proximoMantenimientoFecha", "Fecha de próximo mantenimiento", { tipo: "date" })}
+        {campoTexto("proximoMantenimientoKilometraje", "Kilometraje de próximo mantenimiento", { tipo: "number" })}
+        <div className="sm:col-span-2 lg:col-span-3 xl:col-span-4">
+          {campoTexto("mantenimientoObservacion", "Observación de mantenimiento", { placeholder: "Cambio de aceite y filtros" })}
+        </div>
+      </SeccionCard>
 
-            <Seccion titulo="Asignación" />
-            {campoTexto("cuenta", "Cuenta / proyecto", { placeholder: "CERRO VERDE" })}
-            {campoTexto("clienteAsociado", "Cliente asociado", { placeholder: "HAGEMSA" })}
+      <SeccionCard
+        icono={<CameraIcon />}
+        titulo="Asignación y fotos"
+        descripcion="Cuenta o proyecto donde opera y registro fotográfico."
+      >
+        {campoTexto("cuenta", "Cuenta / proyecto", { placeholder: "CERRO VERDE" })}
+        {campoTexto("clienteAsociado", "Cliente asociado", { placeholder: "HAGEMSA" })}
+        <div className="flex flex-col gap-2 sm:col-span-2 lg:col-span-3 xl:col-span-4">
+          <FieldLabel htmlFor="foto">URL de foto (frontal, lateral, interior…)</FieldLabel>
+          <div className="flex gap-2">
+            <Input
+              id="foto"
+              placeholder="https://…"
+              value={fotoNueva}
+              onChange={(e) => setFotoNueva(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  agregarFoto();
+                }
+              }}
+            />
+            <Button type="button" variant="outline" onClick={agregarFoto}>
+              <ImageIcon data-icon="inline-start" /> Agregar
+            </Button>
+          </div>
+          {fotos.length > 0 && (
+            <ul className="flex flex-col gap-1">
+              {fotos.map((f, i) => (
+                <li
+                  key={i}
+                  className="bg-muted flex items-center justify-between gap-2 rounded-md px-2 py-1 text-xs"
+                >
+                  <span className="truncate">{f}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="size-6 shrink-0"
+                    onClick={() => setFotos((prev) => prev.filter((_, j) => j !== i))}
+                    aria-label={`Quitar foto ${i + 1}`}
+                  >
+                    <Trash2Icon className="size-3.5" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </SeccionCard>
 
-            <Seccion titulo="Fotos" />
-            <div className="grid gap-2 sm:col-span-2">
-              <Label htmlFor="foto">URL de foto (frontal, lateral, interior…)</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="foto"
-                  placeholder="https://…"
-                  value={fotoNueva}
-                  onChange={(e) => setFotoNueva(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      agregarFoto();
-                    }
-                  }}
-                />
-                <Button type="button" variant="outline" onClick={agregarFoto}>
-                  <ImageIcon /> Agregar
-                </Button>
-              </div>
-              {fotos.length > 0 && (
-                <ul className="grid gap-1">
-                  {fotos.map((f, i) => (
-                    <li
-                      key={i}
-                      className="bg-muted flex items-center justify-between gap-2 rounded-md px-2 py-1 text-xs"
-                    >
-                      <span className="truncate">{f}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="size-6 shrink-0"
-                        onClick={() => setFotos((prev) => prev.filter((_, j) => j !== i))}
-                        aria-label={`Quitar foto ${i + 1}`}
-                      >
-                        <Trash2Icon className="size-3.5" />
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-2 sm:col-span-2">
-              <Button type="button" variant="outline" onClick={() => router.push("/dashboard/unidades")}>
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>
-                {crear.isPending ? "Guardando…" : "Registrar unidad"}
-              </Button>
-            </div>
+      <div className="bg-background/90 sticky bottom-0 z-10 -mx-4 flex items-center justify-end gap-2 border-t px-4 py-3 backdrop-blur lg:-mx-6 lg:px-6">
+        <p className="text-muted-foreground mr-auto hidden text-xs sm:block">
+          <span className="text-primary">*</span> Campos obligatorios: placa y clase.
+        </p>
+        <Button type="button" variant="outline" onClick={() => router.push("/dashboard/unidades")}>
+          Cancelar
+        </Button>
+        <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>
+          {crear.isPending && <Spinner data-icon="inline-start" />}
+          {crear.isPending ? "Guardando…" : "Registrar unidad"}
+        </Button>
+      </div>
     </form>
   );
 }

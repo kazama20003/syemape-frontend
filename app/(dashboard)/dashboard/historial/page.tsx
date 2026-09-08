@@ -1,5 +1,7 @@
 "use client";
 
+import { HistoryIcon } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
 
@@ -33,6 +35,7 @@ const columnas: Columna<Evento>[] = [
 export default function Page() {
   return (
     <RecursoLista<Evento>
+      icono={<HistoryIcon />}
       titulo="Historial"
       descripcion="Auditoría: todo lo creado, modificado o anulado, y por quién."
       endpoint="/historial"

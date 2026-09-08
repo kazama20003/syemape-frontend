@@ -1,5 +1,7 @@
 "use client";
 
+import { TagsIcon } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
 import FormDialog from "@/components/form-dialog";
@@ -27,6 +29,7 @@ const columnas: Columna<TipoServicio>[] = [
 export default function Page() {
   return (
     <RecursoLista<TipoServicio>
+      icono={<TagsIcon />}
       titulo="Tipos de servicio"
       descripcion="Catálogo de servicios que presta la empresa."
       endpoint="/tipos-servicio"

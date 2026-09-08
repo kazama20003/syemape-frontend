@@ -1,5 +1,7 @@
 "use client";
 
+import { Building2Icon } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
 import FormDialog from "@/components/form-dialog";
@@ -34,6 +36,7 @@ const columnas: Columna<Cliente>[] = [
 export default function Page() {
   return (
     <RecursoLista<Cliente>
+      icono={<Building2Icon />}
       titulo="Clientes"
       descripcion="Empresas a las que se les presta servicio."
       endpoint="/clientes"

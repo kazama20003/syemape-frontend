@@ -9,9 +9,9 @@ export default function ContactPage() {
   return (
     <main className="bg-[#f7f5f1] text-dark">
       <section className="grid min-h-[100svh] lg:grid-cols-[minmax(23rem,1fr)_minmax(35rem,1fr)]">
-        <div className="relative min-h-[34rem] overflow-hidden bg-[#263e42] text-white">
+        <div className="relative m-3 min-h-[34rem] overflow-hidden rounded-lg bg-[#263e42] text-white lg:m-4 lg:mr-0">
           <img
-            src="https://res.cloudinary.com/demzflxgq/image/upload/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png"
+            src="https://res.cloudinary.com/demzflxgq/image/upload/f_auto,q_auto,w_1600/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png"
             alt="Camioneta 4x4 de S&E MAPE"
             className="absolute inset-0 h-full w-full object-cover object-[60%_center]"
             loading="eager"

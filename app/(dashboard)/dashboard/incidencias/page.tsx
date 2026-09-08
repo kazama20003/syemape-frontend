@@ -1,5 +1,7 @@
 "use client";
 
+import { AlertTriangleIcon } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
 
@@ -41,6 +43,7 @@ const columnas: Columna<Incidencia>[] = [
 export default function Page() {
   return (
     <RecursoLista<Incidencia>
+      icono={<AlertTriangleIcon />}
       titulo="Incidencias"
       descripcion="Accidentes, fallas y eventos reportados en ruta."
       endpoint="/incidencias"
