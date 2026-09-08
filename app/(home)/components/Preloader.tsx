@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Archivo_Black, Poppins } from "next/font/google";
+
+const archivoBlack = Archivo_Black({ weight: "400", subsets: ["latin"], display: "block" });
+const poppinsBlack = Poppins({ weight: "900", subsets: ["latin"], display: "block" });
 
 // Duraciones (ms) — mismas del diseño original: contador 2.9s, cortina a los 3.05s
 const COUNT_MS = 2900;
@@ -44,9 +48,30 @@ const LOGO_SVG = `
 export default function Preloader() {
   const [pct, setPct] = useState(0);
   const [hidden, setHidden] = useState(false);
+  const [ready, setReady] = useState(false);
   const rafRef = useRef<number>(0);
 
+  // La animación arranca solo cuando las fuentes reales ya están disponibles,
+  // para que las letras nunca se vean con la fuente fallback.
   useEffect(() => {
+    let cancelled = false;
+    const waitFonts = Promise.race([
+      Promise.all([
+        document.fonts.load(`400 52px ${archivoBlack.style.fontFamily}`),
+        document.fonts.load(`900 50px ${poppinsBlack.style.fontFamily}`),
+      ]),
+      new Promise((resolve) => setTimeout(resolve, 800)),
+    ]);
+    waitFonts.then(() => {
+      if (!cancelled) setReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
     const t0 = performance.now();
     const tick = (now: number) => {
       const x = Math.min(1, (now - t0) / COUNT_MS);
@@ -60,24 +85,23 @@ export default function Preloader() {
       cancelAnimationFrame(rafRef.current);
       clearTimeout(unmountTimer);
     };
-  }, []);
+  }, [ready]);
 
   if (hidden) return null;
 
   return (
     <div
       aria-hidden="true"
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-white text-[#111]"
-      style={{
-        animation: `plCurtain 1s cubic-bezier(.76,0,.24,1) ${CURTAIN_AT_MS / 1000}s both`,
-        fontFamily: "'Archivo Black','Arial Black',sans-serif",
-      }}
+      className={`pl-root fixed inset-0 z-[999] flex items-center justify-center bg-white text-[#111] ${archivoBlack.className}`}
+      style={
+        ready
+          ? { animation: `plCurtain 1s cubic-bezier(.76,0,.24,1) ${CURTAIN_AT_MS / 1000}s both` }
+          : undefined
+      }
     >
-      <link
-        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Poppins:wght@900&display=swap"
-        rel="stylesheet"
-      />
       <style>{`
+        .pl-root svg text { font-family: ${archivoBlack.style.fontFamily} !important; }
+        .pl-root svg text[font-family="Poppins"] { font-family: ${poppinsBlack.style.fontFamily} !important; }
         @keyframes plDisc{from{clip-path:circle(0% at 60% 45%)}to{clip-path:circle(75% at 60% 45%)}}
         @keyframes plRoad{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 -5% 0 0)}}
         @keyframes plLetter{from{opacity:0;transform:scale(.4) translateY(6px)}to{opacity:1;transform:none}}
@@ -88,7 +112,7 @@ export default function Preloader() {
         @keyframes plLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
       `}</style>
 
-      <div dangerouslySetInnerHTML={{ __html: LOGO_SVG }} />
+      {ready && <div dangerouslySetInnerHTML={{ __html: LOGO_SVG }} />}
 
       <div
         className="absolute flex items-baseline gap-2"
@@ -118,10 +142,12 @@ export default function Preloader() {
         {pct < 100 ? "Cargando" : "Listo"}
       </div>
 
-      <div
-        className="absolute inset-x-0 bottom-0 h-[3px] bg-[#ed0404] origin-left"
-        style={{ animation: "plLine 2.9s cubic-bezier(.65,0,.35,1) 0s both" }}
-      />
+      {ready && (
+        <div
+          className="absolute inset-x-0 bottom-0 h-[3px] bg-[#ed0404] origin-left"
+          style={{ animation: "plLine 2.9s cubic-bezier(.65,0,.35,1) 0s both" }}
+        />
+      )}
     </div>
   );
 }
