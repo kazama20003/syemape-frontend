@@ -427,3 +427,9 @@ h4,
 /* Boton interno del menu siempre legible con la paleta actual */
 .nav_menu_action_wrap .button_main { background: var(--color-brand); color: #fff; }
 .nav_menu_action_wrap .button_main:hover { background: #a8161c; }
+
+/* Tipografia del diseno MAPE (claude.ai/design) aplicada al header y al hero */
+.logo-text { font-family: var(--font-archivo), 'Arial Black', sans-serif; font-weight: 400; }
+.menu_links_text { font-family: var(--font-grotesk), sans-serif; }
+.home_hero_wrap h1 { font-family: var(--font-archivo), 'Arial Black', sans-serif; font-weight: 400; letter-spacing: -0.02em; line-height: 0.95; }
+.home_hero_wrap p, .home_hero_wrap .u-container span { font-family: var(--font-grotesk), sans-serif; }
