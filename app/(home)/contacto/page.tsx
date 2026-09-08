@@ -1,8 +1,16 @@
 import { ArrowUpRight, Mail, Phone } from "lucide-react";
 
 export const metadata = {
-  title: "Contacto | MAPE",
-  description: "Comunícate con S&E MAPE E.I.R.L. para supervisión y transporte especializado.",
+  title: "Contacto — Cotiza Transporte, Escolta o Alquiler de Vehículos",
+  description:
+    "Solicita una cotización de S&E MAPE E.I.R.L.: transporte de carga, escolta en ruta, alquiler de vehículos y supervisión de operaciones. Tel. +51 990 297 657.",
+  alternates: { canonical: "/contacto" },
+  openGraph: {
+    title: "Contacto | MAPE Supervisión & Emergencias",
+    description:
+      "Cotiza transporte de carga, escolta en ruta o alquiler de vehículos con MAPE. Tel. +51 990 297 657.",
+    url: "/contacto",
+  },
 };
 
 export default function ContactPage() {

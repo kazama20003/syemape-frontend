@@ -2,8 +2,16 @@ import { ArrowRight, BadgeCheck, FileCheck2, Gauge, MapPinned, Radar, ShieldChec
 import Link from "next/link";
 
 export const metadata = {
-  title: "Nosotros | MAPE",
-  description: "Conoce a S&E MAPE E.I.R.L., empresa arequipeña de transporte y servicios especializados.",
+  title: "Nosotros — Empresa Arequipeña de Transporte Especializado",
+  description:
+    "S&E MAPE E.I.R.L. es una empresa arequipeña de transporte y servicios especializados: unidades homologadas para minería, monitoreo GPS, estándares ISO 9001:2015 y personal con experiencia en ruta.",
+  alternates: { canonical: "/nosotros" },
+  openGraph: {
+    title: "Nosotros | MAPE Supervisión & Emergencias",
+    description:
+      "Empresa arequipeña de transporte y servicios especializados con unidades homologadas para minería e industria.",
+    url: "/nosotros",
+  },
 };
 
 const values = [

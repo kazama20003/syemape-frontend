@@ -2,8 +2,16 @@ import { ArrowRight, CarFront, Check, FileCheck2, ShieldCheck, Truck } from "luc
 import Link from "next/link";
 
 export const metadata = {
-  title: "Servicios | MAPE",
-  description: "Servicios de transporte, escolta y supervisión especializada de S&E MAPE E.I.R.L.",
+  title: "Servicios de Transporte, Escolta y Alquiler de Vehículos",
+  description:
+    "Alquiler de camionetas 4x4 y flota pesada, transporte de carga nacional (MATPEL y sobredimensionada) y supervisión, escolta y resguardo en ruta para minería, construcción e industria.",
+  alternates: { canonical: "/servicios" },
+  openGraph: {
+    title: "Servicios | MAPE Supervisión & Emergencias",
+    description:
+      "Alquiler de vehículos livianos y pesados, transporte de carga nacional y escolta en ruta para minería e industria.",
+    url: "/servicios",
+  },
 };
 
 const services = [

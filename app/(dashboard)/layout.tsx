@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import Providers from "@/components/providers";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 // Cascaron comun del panel: sidebar + header + React Query. Cada pagina del
 // dashboard renderiza solo su contenido.

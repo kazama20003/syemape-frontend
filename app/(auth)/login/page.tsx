@@ -3,8 +3,9 @@ import Link from "next/link";
 import LoginForm from "./login-form";
 
 export const metadata = {
-  title: "Iniciar sesión | MAPE",
+  title: "Iniciar sesión",
   description: "Accede a la plataforma de S&E MAPE E.I.R.L.",
+  robots: { index: false, follow: false },
 };
 
 export default function LoginPage() {
