@@ -29,7 +29,7 @@ export default function Nav() {
 <div className="nav_contain">
 <div className="nav_layout">
 <a href="#top" aria-label="Home Page" className="nav_logo_wrap u-theme-dark">
-<img src="/mape-logo.svg" alt="MAPE Supervisión & Emergencias" className="block h-12 w-auto" />
+<img src="/mape-logo.svg" alt="MAPE Supervisión & Emergencias" className="block h-16 w-auto -my-3" />
 </a>
 <div className="nav_links_wrap">
 <nav className="nav_menu_wrap is-link-pill">
