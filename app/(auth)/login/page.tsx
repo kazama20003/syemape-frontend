@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import LoginForm from "./login-form";
 
 export const metadata = {
@@ -12,7 +13,17 @@ export default function LoginPage() {
   return (
     <main className="u-container mx-auto grid min-h-screen max-w-[96rem] items-stretch gap-8 py-8 md:grid-cols-[1fr_1.1fr] md:gap-16 md:py-12">
       <div className="flex flex-col">
-        <Link href="/" className="logo-text text-dark">mape.</Link>
+        <Link href="/" aria-label="Ir al inicio de MAPE" className="inline-flex w-fit">
+          <Image
+            src="/mape-logo.svg"
+            alt="MAPE Supervisión & Emergencias"
+            width={1090}
+            height={960}
+            unoptimized
+            fetchPriority="high"
+            className="h-20 w-auto"
+          />
+        </Link>
         <div className="relative mt-8 min-h-[13rem] flex-1 overflow-clip rounded-lg bg-dark">
           <img
             src="https://res.cloudinary.com/demzflxgq/image/upload/f_auto,q_auto,w_1200/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png"

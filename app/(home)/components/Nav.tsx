@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -29,7 +30,7 @@ export default function Nav() {
 <div className="nav_contain">
 <div className="nav_layout">
 <a href="#top" aria-label="Home Page" className="nav_logo_wrap u-theme-dark">
-<img src="/mape-logo.svg" alt="MAPE Supervisión & Emergencias" className="block h-24 w-auto" />
+<Image src="/mape-logo.svg" alt="MAPE Supervisión & Emergencias" width={1090} height={960} unoptimized fetchPriority="high" className="block h-24 w-auto" />
 </a>
 <div className="nav_links_wrap">
 <nav className="nav_menu_wrap is-link-pill">
