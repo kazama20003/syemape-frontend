@@ -1,24 +1,22 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import LoginForm from "./login-form";
 
 export const metadata = {
-  title: "Iniciar sesión | MAPE",
+  title: "Iniciar sesión",
   description: "Accede a la plataforma de S&E MAPE E.I.R.L.",
+  robots: { index: false, follow: false },
 };
 
 export default function LoginPage() {
   return (
-    <main className="u-container mx-auto grid min-h-screen max-w-[96rem] items-stretch gap-12 py-12 md:grid-cols-[1fr_1.1fr] md:gap-16">
+    <main className="u-container mx-auto grid min-h-screen max-w-[96rem] items-stretch gap-8 py-8 md:grid-cols-[1fr_1.1fr] md:gap-16 md:py-12">
       <div className="flex flex-col">
-        <a href="/" className="logo-text text-dark">mape.</a>
-        <div className="relative mt-8 flex-1 overflow-clip rounded-[var(--radius-main)] bg-dark">
-          <video
-            src="https://res.cloudinary.com/demzflxgq/video/upload/v1788380445/15651883_1920_1080_60fps_s4lntf.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="none"
+        <Link href="/" className="logo-text text-dark">mape.</Link>
+        <div className="relative mt-8 min-h-[13rem] flex-1 overflow-clip rounded-lg bg-dark">
+          <img
+            src="https://res.cloudinary.com/demzflxgq/image/upload/f_auto,q_auto,w_1200/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png"
+            alt="Camioneta 4x4 de S&E MAPE"
             className="absolute inset-0 h-full w-full object-cover opacity-80"
           />
         </div>

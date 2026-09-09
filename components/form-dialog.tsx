@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Dialog,
   DialogContent,
@@ -29,12 +30,54 @@ export interface CampoForm {
   label: string;
   tipo?: "text" | "number" | "date" | "select" | "tel" | "email";
   opciones?: { valor: string; etiqueta: string }[];
+  // Select con opciones cargadas desde un maestro de la API: usa el `id` como
+  // valor y `nombre` como etiqueta; el valor se envia como numero.
+  opcionesEndpoint?: string;
   requerido?: boolean;
   placeholder?: string;
   // Ocupa las dos columnas del grid.
   ancho?: "full";
   ayuda?: string;
   mayusculas?: boolean;
+}
+
+// Select cuyas opciones vienen de un endpoint paginado del backend.
+function SelectRemoto({
+  campo,
+  valor,
+  onChange,
+}: {
+  campo: CampoForm;
+  valor: string;
+  onChange: (v: string) => void;
+}) {
+  const { data } = useQuery({
+    queryKey: [campo.opcionesEndpoint, "opciones"],
+    queryFn: () =>
+      api<{ datos: { id: number; nombre: string }[] }>(
+        `${campo.opcionesEndpoint}?pageSize=200`,
+      ),
+    staleTime: 60_000,
+  });
+  const opciones = data?.datos ?? [];
+  return (
+    <Select
+      value={valor}
+      onValueChange={(v) => onChange(v ?? "")}
+      items={opciones.map((o) => ({ value: String(o.id), label: o.nombre }))}
+    >
+      <SelectTrigger id={`form-${campo.name}`}>
+        <SelectValue placeholder={campo.placeholder ?? "Seleccionar…"} />
+      </SelectTrigger>
+      <SelectContent>
+        {opciones.map((o) => (
+          <SelectItem key={o.id} value={String(o.id)}>
+            {o.nombre}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
 }
 
 function mensajeDe(error: unknown): string {
@@ -60,6 +103,7 @@ export default function FormDialog({
   const queryClient = useQueryClient();
   const [abierto, setAbierto] = useState(false);
   const [valores, setValores] = useState<Record<string, string>>({});
+  const [invalidos, setInvalidos] = useState<Set<string>>(new Set());
 
   const crear = useMutation({
     mutationFn: (body: Record<string, unknown>) =>
@@ -75,17 +119,22 @@ export default function FormDialog({
 
   const enviar = (e: React.FormEvent) => {
     e.preventDefault();
-    const faltante = campos.find((campo) => campo.requerido && !valores[campo.name]?.trim());
-    if (faltante) {
-      toast.error(`Completa el campo obligatorio: ${faltante.label}.`);
-      document.getElementById(`form-${faltante.name}`)?.focus();
+    const faltantes = campos.filter(
+      (campo) => campo.requerido && !valores[campo.name]?.trim(),
+    );
+    if (faltantes.length > 0) {
+      setInvalidos(new Set(faltantes.map((c) => c.name)));
+      toast.error(`Completa el campo obligatorio: ${faltantes[0].label}.`);
+      document.getElementById(`form-${faltantes[0].name}`)?.focus();
       return;
     }
+    setInvalidos(new Set());
     const body: Record<string, unknown> = {};
     for (const campo of campos) {
       const bruto = valores[campo.name];
       if (bruto === undefined || bruto === "") continue;
-      body[campo.name] = campo.tipo === "number" ? Number(bruto) : bruto;
+      body[campo.name] =
+        campo.tipo === "number" || campo.opcionesEndpoint ? Number(bruto) : bruto;
     }
     crear.mutate(body);
   };
@@ -101,22 +150,45 @@ export default function FormDialog({
             <DialogTitle>Nuevo {recurso.toLowerCase()}</DialogTitle>
             <DialogDescription>{descripcion}</DialogDescription>
           </DialogHeader>
-          <form onSubmit={enviar} className="grid gap-4 sm:grid-cols-2">
+          <form onSubmit={enviar}>
+            <FieldGroup className="grid gap-4 sm:grid-cols-2">
             {campos.map((campo) => (
-              <div
+              <Field
                 key={campo.name}
-                className={`grid gap-2 ${campo.ancho === "full" ? "sm:col-span-2" : ""}`}
+                data-invalid={invalidos.has(campo.name) || undefined}
+                className={campo.ancho === "full" ? "sm:col-span-2" : undefined}
               >
-                <Label htmlFor={`form-${campo.name}`}>
+                <FieldLabel htmlFor={`form-${campo.name}`}>
                   {campo.label}
                   {campo.requerido && <span className="text-primary"> *</span>}
-                </Label>
-                {campo.tipo === "select" ? (
+                </FieldLabel>
+                {campo.opcionesEndpoint ? (
+                  <SelectRemoto
+                    campo={campo}
+                    valor={valores[campo.name] ?? ""}
+                    onChange={(v) => {
+                      setInvalidos((prev) => {
+                        if (!prev.has(campo.name)) return prev;
+                        const sig = new Set(prev);
+                        sig.delete(campo.name);
+                        return sig;
+                      });
+                      setValores((prev) => ({ ...prev, [campo.name]: v }));
+                    }}
+                  />
+                ) : campo.tipo === "select" ? (
                   <Select
                     value={valores[campo.name] ?? ""}
-                    onValueChange={(v) =>
-                      setValores((prev) => ({ ...prev, [campo.name]: v ?? "" }))
-                    }
+                    onValueChange={(v) => {
+                      setInvalidos((prev) => {
+                        if (!prev.has(campo.name)) return prev;
+                        const sig = new Set(prev);
+                        sig.delete(campo.name);
+                        return sig;
+                      });
+                      setValores((prev) => ({ ...prev, [campo.name]: v ?? "" }));
+                    }}
+                    items={campo.opciones?.map((o) => ({ value: o.valor, label: o.etiqueta }))}
                   >
                     <SelectTrigger id={`form-${campo.name}`}>
                       <SelectValue placeholder={campo.placeholder ?? "Seleccionar…"} />
@@ -133,33 +205,44 @@ export default function FormDialog({
                   <Input
                     id={`form-${campo.name}`}
                     type={campo.tipo ?? "text"}
-                    required={campo.requerido}
+                    aria-invalid={invalidos.has(campo.name) || undefined}
                     placeholder={campo.placeholder}
                     value={valores[campo.name] ?? ""}
                     step={campo.tipo === "number" ? "any" : undefined}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      setInvalidos((prev) => {
+                        if (!prev.has(campo.name)) return prev;
+                        const sig = new Set(prev);
+                        sig.delete(campo.name);
+                        return sig;
+                      });
                       setValores((prev) => ({
                         ...prev,
                         [campo.name]: campo.mayusculas
                           ? e.target.value.toUpperCase()
                           : e.target.value,
-                      }))
-                    }
+                      }));
+                    }}
                   />
                 )}
                 {campo.ayuda && (
                   <p className="text-muted-foreground text-xs">{campo.ayuda}</p>
                 )}
-              </div>
+                {invalidos.has(campo.name) && (
+                  <FieldError>Este campo es obligatorio.</FieldError>
+                )}
+              </Field>
             ))}
             <DialogFooter className="sm:col-span-2">
               <Button type="button" variant="outline" onClick={() => setAbierto(false)}>
                 Cancelar
               </Button>
               <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>
+                {crear.isPending && <Spinner data-icon="inline-start" />}
                 {crear.isPending ? "Guardando…" : "Registrar"}
               </Button>
             </DialogFooter>
+            </FieldGroup>
           </form>
         </DialogContent>
       </Dialog>

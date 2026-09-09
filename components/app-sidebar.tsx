@@ -8,14 +8,15 @@ import {
   PackageIcon,
   Building2Icon,
   ChartColumnIcon,
+  ChevronRightIcon,
   HistoryIcon,
   LayoutDashboardIcon,
+  ListTreeIcon,
   MapIcon,
   MapPinIcon,
   FileTextIcon,
   RouteIcon,
   ShieldCheckIcon,
-  TagsIcon,
   TruckIcon,
   UsersIcon,
 } from "lucide-react";
@@ -33,16 +34,27 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
 type Rol = UsuarioSesion["rol"];
 
-interface ItemNav {
+interface SubItemNav {
   title: string;
   url: string;
+  roles?: Rol[];
+}
+
+interface ItemNav {
+  title: string;
+  // Con `items`, el item es un submenú desplegable y `url` es opcional.
+  url?: string;
   icon: React.ReactNode;
   // Roles que ven este item. Sin lista: lo ven todos los roles.
   roles?: Rol[];
+  items?: SubItemNav[];
 }
 
 const STAFF: Rol[] = ["ADMINISTRADOR", "OPERACIONES", "SUPERVISOR"];
@@ -66,10 +78,13 @@ const MAESTROS: ItemNav[] = [
   { title: "Rutas", url: "/dashboard/rutas", icon: <RouteIcon />, roles: STAFF },
   { title: "Ubicaciones", url: "/dashboard/ubicaciones", icon: <MapPinIcon />, roles: STAFF },
   {
-    title: "Tipos de servicio",
-    url: "/dashboard/tipos-servicio",
-    icon: <TagsIcon />,
+    title: "Catálogos",
+    icon: <ListTreeIcon />,
     roles: STAFF,
+    items: [
+      { title: "Tipos de vehículo", url: "/dashboard/tipos-vehiculo" },
+      { title: "Tipos de servicio", url: "/dashboard/tipos-servicio" },
+    ],
   },
 ];
 
@@ -88,6 +103,58 @@ const ADMINISTRACION: ItemNav[] = [
   },
   { title: "Reportes", url: "/dashboard/reportes", icon: <ChartColumnIcon /> },
 ];
+
+// Item con submenú desplegable; se abre solo cuando una ruta hija está activa.
+function SubMenuNav({
+  item,
+  rol,
+  pathname,
+}: {
+  item: ItemNav;
+  rol: Rol | null;
+  pathname: string;
+}) {
+  const subVisibles = (item.items ?? []).filter(
+    (sub) => !sub.roles || (rol !== null && sub.roles.includes(rol)),
+  );
+  const hayActivo = subVisibles.some((sub) => pathname.startsWith(sub.url));
+  // null = sin preferencia manual: abierto solo si hay una ruta hija activa.
+  const [manual, setManual] = React.useState<boolean | null>(null);
+  const abierto = manual ?? hayActivo;
+  const setAbierto = (fn: (prev: boolean) => boolean) => setManual(fn(abierto));
+  if (subVisibles.length === 0) return null;
+
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        tooltip={item.title}
+        onClick={() => setAbierto((prev) => !prev)}
+        aria-expanded={abierto}
+      >
+        {item.icon}
+        <span>{item.title}</span>
+        <ChevronRightIcon
+          className={`ml-auto size-4 transition-transform ${abierto ? "rotate-90" : ""}`}
+        />
+      </SidebarMenuButton>
+      {abierto && (
+        <SidebarMenuSub>
+          {subVisibles.map((sub) => (
+            <SidebarMenuSubItem key={sub.title}>
+              <SidebarMenuSubButton
+                isActive={pathname.startsWith(sub.url)}
+                className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:font-medium"
+                render={<Link href={sub.url} />}
+              >
+                <span>{sub.title}</span>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+          ))}
+        </SidebarMenuSub>
+      )}
+    </SidebarMenuItem>
+  );
+}
 
 function GrupoNav({
   label,
@@ -111,25 +178,27 @@ function GrupoNav({
       </SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          {visibles.map((item) => {
-            const activo =
-              item.url === "/dashboard"
-                ? pathname === "/dashboard"
-                : pathname.startsWith(item.url);
-            return (
+          {visibles.map((item) =>
+            item.items ? (
+              <SubMenuNav key={item.title} item={item} rol={rol} pathname={pathname} />
+            ) : (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
                   tooltip={item.title}
-                  isActive={activo}
+                  isActive={
+                    item.url === "/dashboard"
+                      ? pathname === "/dashboard"
+                      : pathname.startsWith(item.url ?? "")
+                  }
                   className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground data-[active=true]:font-medium"
-                  render={<Link href={item.url} />}
+                  render={<Link href={item.url ?? "#"} />}
                 >
                   {item.icon}
                   <span>{item.title}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            );
-          })}
+            ),
+          )}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

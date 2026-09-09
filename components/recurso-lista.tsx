@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { SearchIcon } from "lucide-react";
+import { AlertCircleIcon, InboxIcon, SearchIcon } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +47,7 @@ export default function RecursoLista<T extends { id: number }>({
   campoBusqueda = "texto",
   columnas,
   acciones,
+  icono,
 }: {
   titulo: string;
   descripcion: string;
@@ -46,6 +56,8 @@ export default function RecursoLista<T extends { id: number }>({
   campoBusqueda?: string | null;
   columnas: Columna<T>[];
   acciones?: React.ReactNode;
+  // Icono del recurso mostrado junto al titulo.
+  icono?: React.ReactNode;
 }) {
   const [busqueda, setBusqueda] = useState("");
   const [page, setPage] = useState(1);
@@ -70,21 +82,35 @@ export default function RecursoLista<T extends { id: number }>({
 
   return (
     <div className="flex flex-col gap-4 p-4 lg:p-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{titulo}</h1>
-          <p className="text-muted-foreground text-sm">
-            {descripcion}
-            {isFetching && !isLoading && (
-              <span className="ml-2 text-xs" aria-live="polite">Actualizando…</span>
-            )}
-          </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          {icono && (
+            <div className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-lg [&_svg]:size-5">
+              {icono}
+            </div>
+          )}
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-semibold tracking-tight">{titulo}</h1>
+              {paginacion && (
+                <Badge variant="secondary" className="tabular-nums">
+                  {paginacion.total}
+                </Badge>
+              )}
+            </div>
+            <p className="text-muted-foreground text-sm">
+              {descripcion}
+              {isFetching && !isLoading && (
+                <span className="ml-2 text-xs" aria-live="polite">Actualizando…</span>
+              )}
+            </p>
+          </div>
         </div>
-        {acciones}
+        <div className="max-sm:w-full max-sm:[&>button]:w-full">{acciones}</div>
       </div>
 
       {campoBusqueda && (
-        <div className="relative w-full max-w-xs">
+        <div className="relative w-full sm:max-w-xs">
           <SearchIcon className="text-muted-foreground absolute left-2.5 top-1/2 size-4 -translate-y-1/2" />
           <Input
             placeholder="Buscar…"
@@ -99,16 +125,18 @@ export default function RecursoLista<T extends { id: number }>({
       )}
 
       {error ? (
-        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3" role="alert">
-          <p className="text-sm text-destructive">
-            {error instanceof ApiError ? error.message : "No se pudieron cargar los registros."}
-          </p>
-          <Button className="mt-3" variant="outline" size="sm" onClick={() => refetch()}>
-            Reintentar
-          </Button>
-        </div>
+        <Alert variant="destructive">
+          <AlertCircleIcon />
+          <AlertTitle>No se pudieron cargar los registros</AlertTitle>
+          <AlertDescription>
+            {error instanceof ApiError ? error.message : "Ocurrió un error inesperado."}
+            <Button className="mt-2 w-fit" variant="outline" size="sm" onClick={() => refetch()}>
+              Reintentar
+            </Button>
+          </AlertDescription>
+        </Alert>
       ) : (
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-lg border shadow-xs">
         <Table>
           <TableHeader>
             <TableRow>
@@ -130,11 +158,22 @@ export default function RecursoLista<T extends { id: number }>({
               ))
             ) : filas.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={columnas.length}
-                  className="text-muted-foreground h-24 text-center"
-                >
-                  Sin registros todavía.
+                <TableCell colSpan={columnas.length} className="p-0">
+                  <Empty>
+                    <EmptyHeader>
+                      <EmptyMedia variant="icon">
+                        <InboxIcon />
+                      </EmptyMedia>
+                      <EmptyTitle>
+                        {busqueda ? "Sin resultados para la búsqueda" : "Sin registros todavía"}
+                      </EmptyTitle>
+                      <EmptyDescription>
+                        {busqueda
+                          ? "Prueba con otro término."
+                          : "Usa el botón de arriba para registrar el primero."}
+                      </EmptyDescription>
+                    </EmptyHeader>
+                  </Empty>
                 </TableCell>
               </TableRow>
             ) : (
@@ -152,7 +191,7 @@ export default function RecursoLista<T extends { id: number }>({
       )}
 
       {paginacion && paginacion.totalPaginas > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-muted-foreground text-sm">
             Página {paginacion.pagina} de {paginacion.totalPaginas} ·{" "}
             {paginacion.total} registros

@@ -2,8 +2,16 @@ import { ArrowRight, CarFront, Check, FileCheck2, ShieldCheck, Truck } from "luc
 import Link from "next/link";
 
 export const metadata = {
-  title: "Servicios | MAPE",
-  description: "Servicios de transporte, escolta y supervisión especializada de S&E MAPE E.I.R.L.",
+  title: "Servicios de Transporte, Escolta y Alquiler de Vehículos",
+  description:
+    "Alquiler de camionetas 4x4 y flota pesada, transporte de carga nacional (MATPEL y sobredimensionada) y supervisión, escolta y resguardo en ruta para minería, construcción e industria.",
+  alternates: { canonical: "/servicios" },
+  openGraph: {
+    title: "Servicios | MAPE Supervisión & Emergencias",
+    description:
+      "Alquiler de vehículos livianos y pesados, transporte de carga nacional y escolta en ruta para minería e industria.",
+    url: "/servicios",
+  },
 };
 
 const services = [
@@ -13,7 +21,7 @@ const services = [
     items: ["Camionetas 4x4 para operaciones mineras, proyectos y servicios en campo.", "Flota pesada: tractocamiones, camiones grúa y unidades especiales."],
     Icon: CarFront,
     color: "bg-[#41577e]",
-    media: { type: "image", src: "https://res.cloudinary.com/demzflxgq/image/upload/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png" },
+    media: { type: "image", src: "https://res.cloudinary.com/demzflxgq/image/upload/f_auto,q_auto,w_1600/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png" },
   },
   {
     number: "02",
@@ -48,10 +56,10 @@ const policies = ["Póliza Multiriesgo", "Póliza Robo y/o Asalto", "Póliza Res
 export default function ServicesPage() {
   return (
     <main className="bg-[#f7f5f1] text-dark">
-      <section className="relative flex min-h-[34rem] items-end overflow-clip bg-[#41577e] px-[var(--spacing-gutter)] pb-12 pt-28 text-white md:min-h-[42rem] md:pb-16">
+      <section className="relative flex min-h-[34rem] items-end overflow-clip rounded-b-xl bg-[#41577e] px-[var(--spacing-gutter)] pb-12 pt-28 text-white md:min-h-[42rem] md:pb-16">
         <div className="absolute inset-0 overflow-clip">
           <img
-            src="https://res.cloudinary.com/demzflxgq/image/upload/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png"
+            src="https://res.cloudinary.com/demzflxgq/image/upload/f_auto,q_auto,w_1600/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png"
             alt="Camioneta 4x4 de S&E MAPE para operaciones mineras"
             className="h-[112%] w-full object-cover object-[72%_center]"
             loading="eager"
@@ -76,7 +84,7 @@ export default function ServicesPage() {
             {services.map(({ number, title, items, Icon, color, media }) => (
               <article className="grid gap-7 lg:grid-cols-[minmax(20rem,1.1fr)_0.9fr] lg:items-end" data-animate="stagger-up" key={title}>
                 <div data-animate="stagger-up-item">
-                  <div className={`${color} relative aspect-[16/10] overflow-hidden rounded-sm text-white`}>
+                  <div className={`${color} relative aspect-[16/10] overflow-hidden rounded-lg text-white`}>
                     {media.type === "image" ? (
                       <img src={media.src} alt={title} className="absolute inset-0 h-full w-full object-cover" loading="lazy" data-animate="scale-in" />
                     ) : (

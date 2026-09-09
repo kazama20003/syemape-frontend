@@ -2,8 +2,16 @@ import { ArrowRight, BadgeCheck, FileCheck2, Gauge, MapPinned, Radar, ShieldChec
 import Link from "next/link";
 
 export const metadata = {
-  title: "Nosotros | MAPE",
-  description: "Conoce a S&E MAPE E.I.R.L., empresa arequipeña de transporte y servicios especializados.",
+  title: "Nosotros — Empresa Arequipeña de Transporte Especializado",
+  description:
+    "S&E MAPE E.I.R.L. es una empresa arequipeña de transporte y servicios especializados: unidades homologadas para minería, monitoreo GPS, estándares ISO 9001:2015 y personal con experiencia en ruta.",
+  alternates: { canonical: "/nosotros" },
+  openGraph: {
+    title: "Nosotros | MAPE Supervisión & Emergencias",
+    description:
+      "Empresa arequipeña de transporte y servicios especializados con unidades homologadas para minería e industria.",
+    url: "/nosotros",
+  },
 };
 
 const values = [
@@ -19,7 +27,7 @@ const values = [
 export default function AboutPage() {
   return (
     <main className="bg-[#f7f5f1] text-dark">
-      <section className="relative flex min-h-[34rem] items-end overflow-clip bg-[#263e42] px-[var(--spacing-gutter)] pb-12 pt-28 text-white md:min-h-[43rem] md:pb-16">
+      <section className="relative flex min-h-[34rem] items-end overflow-clip rounded-b-xl bg-[#263e42] px-[var(--spacing-gutter)] pb-12 pt-28 text-white md:min-h-[43rem] md:pb-16">
         <div className="absolute inset-0 overflow-clip">
           <video
             className="h-[112%] w-full object-cover"
@@ -51,7 +59,7 @@ export default function AboutPage() {
               <p className="mt-8 max-w-2xl text-base leading-relaxed" data-animate="stagger-up-item">Somos S&amp;E MAPE E.I.R.L., una empresa arequipeña con más de 4 años de experiencia en el sector de transporte y servicios especializados. Nos especializamos en brindar soluciones integrales en alquiler de vehículos livianos y pesados, supervisión y escolta en ruta, y transporte terrestre de mercancías, atendiendo principalmente a los sectores minero, de construcción e industrial a nivel nacional.</p>
               <p className="mt-5 max-w-2xl text-base leading-relaxed text-dark/75" data-animate="stagger-up-item">Nos distinguimos por nuestro compromiso con la seguridad, la eficiencia operativa y el cumplimiento de los más altos estándares de calidad, adaptándonos a los requerimientos específicos de cada cliente y contribuyendo al desarrollo seguro y oportuno de sus operaciones.</p>
             </div>
-            <div className="relative overflow-hidden p-6 text-white md:p-8" data-animate="stagger-up-item"><img src="https://res.cloudinary.com/demzflxgq/image/upload/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png" alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" /><div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/45 to-black/75"></div><div className="relative"><p className="u-text-small-caps text-white/75">Nuestro enfoque</p><p className="mt-8 text-2xl leading-tight">Seguridad, eficiencia operativa y calidad en cada decisión.</p><div className="mt-16 border-t border-white/35 pt-4 text-sm text-white/80">Contribuimos al desarrollo seguro y oportuno de las operaciones de nuestros clientes.</div></div></div>
+            <div className="relative overflow-hidden rounded-lg p-6 text-white md:p-8" data-animate="stagger-up-item"><img src="https://res.cloudinary.com/demzflxgq/image/upload/f_auto,q_auto,w_1600/v1788539055/agent_generate_image_-_A_rugged_4x4_double-cab_pickup_truck__styled_like_a_Toyota_H__fx8nft.png" alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" /><div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/45 to-black/75"></div><div className="relative"><p className="u-text-small-caps text-white/75">Nuestro enfoque</p><p className="mt-8 text-2xl leading-tight">Seguridad, eficiencia operativa y calidad en cada decisión.</p><div className="mt-16 border-t border-white/35 pt-4 text-sm text-white/80">Contribuimos al desarrollo seguro y oportuno de las operaciones de nuestros clientes.</div></div></div>
           </div>
         </div>
       </section>

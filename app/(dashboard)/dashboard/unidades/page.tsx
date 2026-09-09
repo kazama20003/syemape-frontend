@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError, api } from "@/lib/api";
+import { COLORES_VEHICULO, MuestraColor } from "@/lib/colores-vehiculo";
 
 interface Unidad {
   id: number;
@@ -84,31 +85,10 @@ const ESTADOS = ["OPERATIVA", "EN_MANTENIMIENTO", "DE_BAJA"];
 // un tracto y el manifiesto lleva DOBLE PLACA (placa del tracto + del acople).
 const ES_ACOPLE = new Set(["REMOLQUE", "SEMIRREMOLQUE"]);
 
-// Chip visual con el color declarado del vehiculo.
-const COLOR_CSS: Record<string, string> = {
-  BLANCO: "#ffffff",
-  NEGRO: "#252525",
-  GRIS: "#9ca3af",
-  "GRIS OSCURO": "#4b5563",
-  "GRIS OSCURO METALICO": "#4b5563",
-  ROJO: "#d32027",
-  AZUL: "#2563eb",
-  VERDE: "#16a34a",
-  AMARILLO: "#eab308",
-  PLATA: "#cbd5e1",
-  BEIGE: "#d6cfc2",
-};
-
+// Chip visual con el color declarado del vehiculo (catalogo compartido).
 function chipColor(nombre: string | null) {
   if (!nombre) return null;
-  const css = COLOR_CSS[nombre.toUpperCase()] ?? "#e5e5e5";
-  return (
-    <span
-      className="border-border inline-block size-3 shrink-0 rounded-full border align-middle"
-      style={{ backgroundColor: css }}
-      aria-hidden="true"
-    />
-  );
+  return <MuestraColor nombre={nombre} />;
 }
 
 function fechaLocal(valor: string) {
@@ -142,15 +122,17 @@ const ESTILO_ESTADO: Record<string, string> = {
 
 export default function UnidadesPage() {
   const [placa, setPlaca] = useState("");
+  const [color, setColor] = useState("TODOS");
   const [clase, setClase] = useState("TODAS");
   const [estado, setEstado] = useState("TODOS");
   const [page, setPage] = useState(1);
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
-    queryKey: ["unidades", { placa, clase, estado, page }],
+    queryKey: ["unidades", { placa, color, clase, estado, page }],
     queryFn: () => {
       const q = new URLSearchParams();
       if (placa) q.set("placa", placa);
+      if (color !== "TODOS") q.set("color", color);
       if (clase !== "TODAS") q.set("clase", clase);
       if (estado !== "TODOS") q.set("estadoUnidad", estado);
       q.set("page", String(page));
@@ -229,6 +211,22 @@ export default function UnidadesPage() {
             {CLASES.map((c) => (
               <SelectItem key={c} value={c}>
                 {c.charAt(0) + c.slice(1).toLowerCase()}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={color} onValueChange={(v) => { setColor(v ?? "TODOS"); setPage(1); }}>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Color" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="TODOS">Todos los colores</SelectItem>
+            {COLORES_VEHICULO.map((c) => (
+              <SelectItem key={c.nombre} value={c.nombre}>
+                <span className="flex items-center gap-2">
+                  <MuestraColor nombre={c.nombre} />
+                  {c.nombre}
+                </span>
               </SelectItem>
             ))}
           </SelectContent>

@@ -1,12 +1,12 @@
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
-import Loader from "./components/Loader";
 import Effects from "./components/Effects";
+import Preloader from "./components/Preloader";
 
 export default function HomeLayout({ children }: LayoutProps<"/">) {
   return (
     <>
-      <Loader />
+      <Preloader />
       <Effects />
       <Nav />
       {children}

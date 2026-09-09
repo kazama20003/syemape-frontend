@@ -65,7 +65,7 @@ export default function LoginForm() {
         </label>
       </div>
       {error && (
-        <p className="mt-6 rounded-sm border border-brand/30 bg-brand/5 px-4 py-3 text-[0.85rem] text-brand">
+        <p className="mt-6 rounded-lg border border-brand/30 bg-brand/5 px-4 py-3 text-[0.85rem] text-brand">
           {error}
         </p>
       )}
@@ -81,7 +81,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={cargando}
-        className="mt-10 block h-14 w-full rounded-[2px] bg-dark text-center text-[0.95rem] text-light transition-colors duration-300 hover:bg-brand disabled:opacity-60"
+        className="mt-10 block h-14 w-full rounded-lg bg-dark text-center text-[0.95rem] text-light transition-colors duration-300 hover:bg-brand disabled:opacity-60"
       >
         {cargando ? "Ingresando..." : "Iniciar sesión"}
       </button>

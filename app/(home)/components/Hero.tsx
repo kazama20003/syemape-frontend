@@ -1,11 +1,10 @@
 export default function Hero() {
   return (
     <>
-<section id="top" className="home_hero_wrap u-section u-theme-dark relative h-[100svh] min-h-[640px] overflow-clip bg-hero text-light">
+<section id="top" className="home_hero_wrap u-section u-theme-dark relative h-[100svh] min-h-[640px] overflow-clip rounded-b-xl bg-hero text-light">
 <div className="home_hero_bg absolute inset-0">
 <div className="absolute inset-0">
 <div className="bunny-bg" data-bunny-background-init="" data-player-status="playing" data-player-autoplay="true">
-<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIwIDEwODAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIHNsaWNlIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iNDkuOTk5OTk5OTk5OTk5OTklIiB5MT0iMC4wJSIgeDI9IjUwLjAwMDAwMDAwMDAwMDAxJSIgeTI9IjEwMC4wJSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNGI2MzkwIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjM2E0Zjc1Ii8+PC9saW5lYXJHcmFkaWVudD4KPGZpbHRlciBpZD0ibiI+PGZlVHVyYnVsZW5jZSBiYXNlRnJlcXVlbmN5PSIwLjgiIG51bU9jdGF2ZXM9IjIiIHNlZWQ9IjMiLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIC4wNiAwIi8+PC9maWx0ZXI+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiBmaWxsPSJ1cmwoI2cpIi8+PGcgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC44NSI+PGNpcmNsZSBjeD0iMTAwMCIgY3k9IjMyMCIgcj0iMTcwIi8+PGNpcmNsZSBjeD0iODEzLjAiIGN5PSIzNzkuNSIgcj0iMTI3LjUiLz48Y2lyY2xlIGN4PSIxMTk1LjUiIGN5PSIzNzEuMCIgcj0iMTM2LjAiLz48Y2lyY2xlIGN4PSIxMDY4LjAiIGN5PSIyMzUuMCIgcj0iMTE4Ljk5OTk5OTk5OTk5OTk5Ii8+PHJlY3QgeD0iNzI4LjAiIHk9IjM1NC4wIiB3aWR0aD0iNTc4LjAiIGhlaWdodD0iMTUzLjAiIHJ4PSI2OC4wIi8+PC9nPjxwYXRoIGQ9Ik03NjAgMTA4MCBDIDc4MCA3MjAsIDExODAgNzIwLCAxMjAwIDEwODAgWiIgZmlsbD0iI2Q5YTU4ZiIvPgo8cmVjdCB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiBmaWx0ZXI9InVybCgjbikiLz4KPHRleHQgeD0iOTYwLjAiIHk9IjEwNjYiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWkiIGZvbnQtc2l6ZT0iMjMiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsLjU1KSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+aGVybyB2aWRlbyBwb3N0ZXIg4oCUIHJlcGxhY2Ugd2l0aCBwaG90bzwvdGV4dD4KPC9zdmc+" alt="" className="bunny-bg__placeholder" loading="eager"/>
 <video className="bunny-bg__video" preload="auto" width="1920" height="1080" playsInline muted autoPlay loop src="https://res.cloudinary.com/demzflxgq/video/upload/v1788385315/16352581_2560_1440_60fps_jgr9ib.mp4">
 </video>
 </div>
@@ -14,7 +13,7 @@ export default function Hero() {
 <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/25 via-transparent to-transparent">
 </div>
 <div className="u-container absolute left-0 top-[28%] w-full max-w-[44rem]">
-<span className="inline-block rounded-[4px] border border-white/45 bg-white/10 px-3.5 py-[8px] text-[0.85rem] backdrop-blur-sm">Transporte &amp; Servicios Especializados</span>
+<span className="inline-block rounded-lg border border-white/45 bg-white/10 px-3.5 py-[8px] text-[0.85rem] backdrop-blur-sm">Transporte &amp; Servicios Especializados</span>
 <h1 className="mt-4 text-[length:var(--text-fluid-h1)] leading-[1.02]">Supervisión y transporte <br/>para rutas seguras</h1>
 <p className="mt-5 max-w-[36rem] text-[0.95rem] font-bold leading-[1.6] text-white/95">Somos S&amp;E MAPE E.I.R.L.: alquiler de vehículos livianos y pesados, escolta en ruta y transporte de carga para minería, construcción e industria.</p>
 <div className="mt-7 flex flex-wrap gap-2">
@@ -67,7 +66,7 @@ export default function Hero() {
 <div className="pointer-events-none absolute bottom-4 right-4 w-[29rem]">
 <div className="showreel_player" data-mini-showreel-player="home" data-mini-showreel-status="not-active">
 <div className="bunny-player h-full w-full" data-bunny-player-init="" data-player-status="idle" data-player-muted="false">
-<video className="bunny-player__video" src="https://res.cloudinary.com/demzflxgq/video/upload/v1788380445/15651883_1920_1080_60fps_s4lntf.mp4" preload="metadata" width="1920" height="1080" playsInline poster="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAwIDEwMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIHNsaWNlIj4KPGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iNDkuOTk5OTk5OTk5OTk5OTklIiB5MT0iMC4wJSIgeDI9IjUwLjAwMDAwMDAwMDAwMDAxJSIgeTI9IjEwMC4wJSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjYzljM2I4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNmI2YTYzIi8+PC9saW5lYXJHcmFkaWVudD4KPGZpbHRlciBpZD0ibiI+PGZlVHVyYnVsZW5jZSBiYXNlRnJlcXVlbmN5PSIwLjgiIG51bU9jdGF2ZXM9IjIiIHNlZWQ9IjMiLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIC4wNiAwIi8+PC9maWx0ZXI+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTYwMCIgaGVpZ2h0PSIxMDAwIiBmaWxsPSJ1cmwoI2cpIi8+PHJlY3QgeD0iMTE1MCIgeT0iMTUwIiB3aWR0aD0iMzgwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iIzJmNWQ0ZCIgb3BhY2l0eT0iLjU1Ii8+PGNpcmNsZSBjeD0iMzYwIiBjeT0iNTIwIiByPSI5MCIgZmlsbD0iI2Y0ZWZlNiIgb3BhY2l0eT0iLjgiLz48ZyBmaWxsPSIjZThlNmUzIj48Y2lyY2xlIGN4PSI4MDAiIGN5PSIzODAiIHI9Ijc1LjYiLz48cmVjdCB4PSI3MDcuNiIgeT0iNDU1LjYiIHdpZHRoPSIxODQuOCIgaGVpZ2h0PSIzNzguMCIgcng9IjQyLjAiLz48L2c+CjxyZWN0IHdpZHRoPSIxNjAwIiBoZWlnaHQ9IjEwMDAiIGZpbHRlcj0idXJsKCNuKSIvPgo8dGV4dCB4PSI4MDAuMCIgeT0iOTg2IiBmb250LWZhbWlseT0ic3lzdGVtLXVpIiBmb250LXNpemU9IjE5IiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LC41NSkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPmNsaW5pYyBpbnRlcnZpZXcgdmlkZW8gdGh1bWJuYWlsIOKAlCByZXBsYWNlIHdpdGggcGhvdG88L3RleHQ+Cjwvc3ZnPg==">
+<video className="bunny-player__video" src="https://res.cloudinary.com/demzflxgq/video/upload/v1788380445/15651883_1920_1080_60fps_s4lntf.mp4" preload="metadata" width="1920" height="1080" playsInline>
 </video>
 <button type="button" className="bunny-player__center" data-player-control="playpause" aria-label="Play / pause">
 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="ico-play">

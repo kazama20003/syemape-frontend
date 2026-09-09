@@ -1,5 +1,7 @@
 "use client";
 
+import { MapPinIcon } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
 import FormDialog from "@/components/form-dialog";
@@ -39,6 +41,7 @@ const columnas: Columna<Ubicacion>[] = [
 export default function Page() {
   return (
     <RecursoLista<Ubicacion>
+      icono={<MapPinIcon />}
       titulo="Ubicaciones"
       descripcion="Bases, orígenes, destinos y puestos de control con GPS."
       endpoint="/ubicaciones"

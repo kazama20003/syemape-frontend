@@ -1,5 +1,7 @@
 "use client";
 
+import { UsersIcon } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
 import FormDialog from "@/components/form-dialog";
@@ -46,6 +48,7 @@ const columnas: Columna<Personal>[] = [
 export default function Page() {
   return (
     <RecursoLista<Personal>
+      icono={<UsersIcon />}
       titulo="Personal"
       descripcion="Conductores, supervisores y tripulación."
       endpoint="/personal"

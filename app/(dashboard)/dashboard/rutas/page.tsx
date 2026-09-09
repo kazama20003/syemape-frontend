@@ -1,5 +1,7 @@
 "use client";
 
+import { RouteIcon } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
 import FormDialog from "@/components/form-dialog";
@@ -23,6 +25,7 @@ const columnas: Columna<Ruta>[] = [
 export default function Page() {
   return (
     <RecursoLista<Ruta>
+      icono={<RouteIcon />}
       titulo="Rutas"
       descripcion="Trayectos origen → destino reutilizables."
       endpoint="/rutas"
@@ -34,8 +37,8 @@ export default function Page() {
           endpoint="/rutas"
           campos={[
             { name: "nombre", label: "Nombre", requerido: true, placeholder: "Arequipa - Quellaveco", ancho: "full" },
-            { name: "origen", label: "Origen", requerido: true, placeholder: "Arequipa" },
-            { name: "destino", label: "Destino", requerido: true, placeholder: "Quellaveco" },
+            { name: "ubicacionOrigenId", label: "Origen (ubicación)", requerido: true, opcionesEndpoint: "/ubicaciones" },
+            { name: "ubicacionDestinoId", label: "Destino (ubicación)", requerido: true, opcionesEndpoint: "/ubicaciones" },
             { name: "distanciaKm", label: "Distancia (km)", tipo: "number", placeholder: "245" },
             { name: "duracionEstimadaHoras", label: "Duración estimada (h)", tipo: "number", placeholder: "5.5" },
             { name: "descripcion", label: "Descripción", ancho: "full", placeholder: "Vía Imata - Crucero Alto…" },

@@ -19,7 +19,7 @@ export default function Guidance() {
 <div className="flex flex-col justify-end md:pl-4 md:pt-24">
 <p className="max-w-[380px] text-[0.53rem] leading-[1.6] opacity-90">Reyou’s treatments can help the people you care about reconnect with that light – and in doing so, make all of your lives a little brighter.</p>
 <p className="mt-4 text-[0.53rem] opacity-90">Connect with us – we can help.</p>
-<a href="#contact" className="mt-6 inline-block w-max rounded-[3px] bg-dark px-3 py-[7px] text-[0.66rem] text-light transition-colors hover:bg-brand">Contact Us</a>
+<a href="#contact" className="mt-6 inline-block w-max rounded-lg bg-dark px-3 py-[7px] text-[0.66rem] text-light transition-colors hover:bg-brand">Contact Us</a>
 </div>
 </div>
 </div>
