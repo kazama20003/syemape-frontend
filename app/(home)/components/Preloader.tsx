@@ -7,7 +7,10 @@ import { Archivo_Black, Poppins } from "next/font/google";
 const archivoBlack = Archivo_Black({ weight: "400", subsets: ["latin"], display: "block" });
 const poppinsBlack = Poppins({ weight: "900", subsets: ["latin"], display: "block" });
 
-const COUNT_SECONDS = 2.9;
+// El preloader conserva la animación original, pero ya no retiene la página
+// más tiempo del necesario: sale cuando el hero tiene su primer fotograma.
+const MIN_LOADING_SECONDS = 2.7;
+const MAX_LOADING_SECONDS = 3.2;
 
 // SVG del logo MAPE (vectores importados del diseño claude.ai/design)
 const LOGO_SVG = `
@@ -64,7 +67,7 @@ export default function Preloader() {
         : Promise.resolve();
     const waitFonts = Promise.race([
       fontLoads,
-      new Promise((resolve) => setTimeout(resolve, 800)),
+      new Promise((resolve) => setTimeout(resolve, 350)),
     ]);
     waitFonts.finally(() => {
       if (!cancelled) setReady(true);
@@ -76,39 +79,67 @@ export default function Preloader() {
 
   useLayoutEffect(() => {
     if (!ready) return;
+    let videoReady = false;
+    let minimumReached = false;
+    let exited = false;
+
+    const exit = () => {
+      if (exited) return;
+      exited = true;
+      if (statusRef.current) statusRef.current.textContent = "Listo";
+      gsap.to(rootRef.current, {
+        yPercent: -100,
+        duration: 0.85,
+        ease: "power4.inOut",
+        onComplete: () => setHidden(true),
+      });
+    };
+
+    const tryExit = () => {
+      if (minimumReached && videoReady) exit();
+    };
+
+    const heroVideo = document.querySelector<HTMLVideoElement>("[data-preloader-hero-video]");
+    const onVideoReady = () => {
+      videoReady = true;
+      tryExit();
+    };
+    videoReady = (heroVideo?.readyState ?? 0) >= HTMLMediaElement.HAVE_CURRENT_DATA;
+    heroVideo?.addEventListener("loadeddata", onVideoReady, { once: true });
+    heroVideo?.addEventListener("canplay", onVideoReady, { once: true });
+
     const ctx = gsap.context(() => {
       const counter = { value: 0 };
-      const timeline = gsap.timeline({ onComplete: () => setHidden(true) });
-
-      timeline
+      gsap.timeline()
         .set(rootRef.current, { autoAlpha: 1, yPercent: 0 })
         .set(progressRef.current, { scaleX: 0 })
         .to(counter, {
           value: 100,
-          duration: COUNT_SECONDS,
+          duration: MIN_LOADING_SECONDS,
           ease: "power3.out",
           onUpdate: () => {
             const value = Math.round(counter.value);
-            if (percentageRef.current) {
-              percentageRef.current.textContent = String(value).padStart(3, "0");
-            }
-            if (statusRef.current && value === 100) statusRef.current.textContent = "Listo";
+            if (percentageRef.current) percentageRef.current.textContent = String(value).padStart(3, "0");
           },
         }, 0)
         .to(progressRef.current, {
           scaleX: 1,
-          duration: COUNT_SECONDS,
+          duration: MIN_LOADING_SECONDS,
           ease: "power2.inOut",
         }, 0)
-        // El logo termina de asentarse antes de que la pantalla salga hacia arriba.
-        .to(rootRef.current, {
-          yPercent: -100,
-          duration: 1.15,
-          ease: "power4.inOut",
-        }, "+=0.25");
+        .call(() => {
+          minimumReached = true;
+          tryExit();
+        });
     }, rootRef);
 
-    return () => ctx.revert();
+    const fallbackTimer = setTimeout(exit, MAX_LOADING_SECONDS * 1000);
+    return () => {
+      ctx.revert();
+      clearTimeout(fallbackTimer);
+      heroVideo?.removeEventListener("loadeddata", onVideoReady);
+      heroVideo?.removeEventListener("canplay", onVideoReady);
+    };
   }, [ready]);
 
   if (hidden) return null;
