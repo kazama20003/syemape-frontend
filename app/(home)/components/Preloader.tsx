@@ -1,15 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import { Archivo_Black, Poppins } from "next/font/google";
 
 const archivoBlack = Archivo_Black({ weight: "400", subsets: ["latin"], display: "block" });
 const poppinsBlack = Poppins({ weight: "900", subsets: ["latin"], display: "block" });
 
-// Duraciones (ms) — mismas del diseño original: contador 2.9s, cortina a los 3.05s
-const COUNT_MS = 2900;
-const CURTAIN_AT_MS = 3050;
-const UNMOUNT_AT_MS = 4200;
+const COUNT_SECONDS = 2.9;
 
 // SVG del logo MAPE (vectores importados del diseño claude.ai/design)
 const LOGO_SVG = `
@@ -46,23 +44,29 @@ const LOGO_SVG = `
 </svg>`;
 
 export default function Preloader() {
-  const [pct, setPct] = useState(0);
   const [hidden, setHidden] = useState(false);
   const [ready, setReady] = useState(false);
-  const rafRef = useRef<number>(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const percentageRef = useRef<HTMLSpanElement>(null);
+  const statusRef = useRef<HTMLSpanElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
 
   // La animación arranca solo cuando las fuentes reales ya están disponibles,
   // para que las letras nunca se vean con la fuente fallback.
   useEffect(() => {
     let cancelled = false;
+    const fontLoads =
+      "fonts" in document
+        ? Promise.all([
+            document.fonts.load(`400 52px ${archivoBlack.style.fontFamily}`),
+            document.fonts.load(`900 50px ${poppinsBlack.style.fontFamily}`),
+          ]).catch(() => undefined)
+        : Promise.resolve();
     const waitFonts = Promise.race([
-      Promise.all([
-        document.fonts.load(`400 52px ${archivoBlack.style.fontFamily}`),
-        document.fonts.load(`900 50px ${poppinsBlack.style.fontFamily}`),
-      ]),
+      fontLoads,
       new Promise((resolve) => setTimeout(resolve, 800)),
     ]);
-    waitFonts.then(() => {
+    waitFonts.finally(() => {
       if (!cancelled) setReady(true);
     });
     return () => {
@@ -70,34 +74,50 @@ export default function Preloader() {
     };
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ready) return;
-    const t0 = performance.now();
-    const tick = (now: number) => {
-      const x = Math.min(1, (now - t0) / COUNT_MS);
-      const e = 1 - Math.pow(1 - x, 3);
-      setPct(Math.round(e * 100));
-      if (x < 1) rafRef.current = requestAnimationFrame(tick);
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    const unmountTimer = setTimeout(() => setHidden(true), UNMOUNT_AT_MS);
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      clearTimeout(unmountTimer);
-    };
+    const ctx = gsap.context(() => {
+      const counter = { value: 0 };
+      const timeline = gsap.timeline({ onComplete: () => setHidden(true) });
+
+      timeline
+        .set(rootRef.current, { autoAlpha: 1, yPercent: 0 })
+        .set(progressRef.current, { scaleX: 0 })
+        .to(counter, {
+          value: 100,
+          duration: COUNT_SECONDS,
+          ease: "power3.out",
+          onUpdate: () => {
+            const value = Math.round(counter.value);
+            if (percentageRef.current) {
+              percentageRef.current.textContent = String(value).padStart(3, "0");
+            }
+            if (statusRef.current && value === 100) statusRef.current.textContent = "Listo";
+          },
+        }, 0)
+        .to(progressRef.current, {
+          scaleX: 1,
+          duration: COUNT_SECONDS,
+          ease: "power2.inOut",
+        }, 0)
+        // El logo termina de asentarse antes de que la pantalla salga hacia arriba.
+        .to(rootRef.current, {
+          yPercent: -100,
+          duration: 1.15,
+          ease: "power4.inOut",
+        }, "+=0.25");
+    }, rootRef);
+
+    return () => ctx.revert();
   }, [ready]);
 
   if (hidden) return null;
 
   return (
     <div
+      ref={rootRef}
       aria-hidden="true"
-      className={`pl-root fixed inset-0 z-[999] flex items-center justify-center bg-white text-[#111] ${archivoBlack.className}`}
-      style={
-        ready
-          ? { animation: `plCurtain 1s cubic-bezier(.76,0,.24,1) ${CURTAIN_AT_MS / 1000}s both` }
-          : undefined
-      }
+      className={`pl-root fixed inset-0 z-[999] flex items-center justify-center bg-white text-[#111] will-change-transform ${archivoBlack.className}`}
     >
       <style>{`
         .pl-root svg text { font-family: ${archivoBlack.style.fontFamily} !important; }
@@ -108,8 +128,6 @@ export default function Preloader() {
         @keyframes plMape{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(-10% 0 -10% 0)}}
         @keyframes plRise{from{transform:translateY(110px)}to{transform:none}}
         @keyframes plSettle{0%,78%{transform:scale(1)}100%{transform:scale(.94)}}
-        @keyframes plCurtain{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
-        @keyframes plLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}
       `}</style>
 
       {ready && <div dangerouslySetInnerHTML={{ __html: LOGO_SVG }} />}
@@ -125,7 +143,7 @@ export default function Preloader() {
           fontVariantNumeric: "tabular-nums",
         }}
       >
-        <span>{String(pct).padStart(3, "0")}</span>
+        <span ref={percentageRef}>000</span>
         <span style={{ fontSize: ".35em", color: "#ed0404" }}>%</span>
       </div>
 
@@ -139,13 +157,13 @@ export default function Preloader() {
           color: "#777",
         }}
       >
-        {pct < 100 ? "Cargando" : "Listo"}
+        <span ref={statusRef}>Cargando</span>
       </div>
 
       {ready && (
         <div
+          ref={progressRef}
           className="absolute inset-x-0 bottom-0 h-[3px] bg-[#ed0404] origin-left"
-          style={{ animation: "plLine 2.9s cubic-bezier(.65,0,.35,1) 0s both" }}
         />
       )}
     </div>
