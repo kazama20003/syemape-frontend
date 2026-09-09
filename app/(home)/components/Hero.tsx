@@ -5,7 +5,7 @@ export default function Hero() {
 <div className="home_hero_bg absolute inset-0">
 <div className="absolute inset-0">
 <div className="bunny-bg" data-bunny-background-init="" data-player-status="playing" data-player-autoplay="true">
-<video className="bunny-bg__video" preload="auto" width="1920" height="1080" playsInline muted autoPlay loop src="https://res.cloudinary.com/demzflxgq/video/upload/v1788385315/16352581_2560_1440_60fps_jgr9ib.mp4">
+<video data-preloader-hero-video className="bunny-bg__video" preload="auto" width="1920" height="1080" playsInline muted autoPlay loop src="https://res.cloudinary.com/demzflxgq/video/upload/v1788385315/16352581_2560_1440_60fps_jgr9ib.mp4">
 </video>
 </div>
 </div>

@@ -96,6 +96,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={cn("antialiased", kufam.variable, overpass.variable, archivoBlack.variable, spaceGrotesk.variable)}>
+      <head>
+        <link rel="preload" href="/mape-logo.svg" as="image" type="image/svg+xml" fetchPriority="high" />
+      </head>
       <body>
         <script
           type="application/ld+json"

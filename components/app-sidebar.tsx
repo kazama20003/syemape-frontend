@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   AlertTriangleIcon,
@@ -12,7 +13,6 @@ import {
   HistoryIcon,
   LayoutDashboardIcon,
   ListTreeIcon,
-  MapIcon,
   MapPinIcon,
   FileTextIcon,
   RouteIcon,
@@ -228,17 +228,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="hover:bg-transparent active:bg-transparent"
               render={<Link href="/dashboard" />}
             >
-              <div className="bg-primary text-primary-foreground flex size-8 shrink-0 items-center justify-center rounded-md">
-                <MapIcon className="size-4" />
-              </div>
-              <div className="grid flex-1 leading-tight">
-                <span className="truncate text-base font-bold tracking-tight">
-                  mape<span className="text-primary">.</span>
-                </span>
-                <span className="text-muted-foreground truncate text-[0.65rem] uppercase tracking-[0.18em]">
-                  S&amp;E MAPE E.I.R.L.
-                </span>
-              </div>
+              <Image
+                src="/mape-logo.svg"
+                alt="MAPE Supervisión & Emergencias"
+                width={1090}
+                height={960}
+                unoptimized
+                className="h-11 w-auto max-w-[10rem] shrink-0 object-contain object-left"
+              />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
