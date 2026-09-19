@@ -8,7 +8,6 @@ import {
   CameraIcon,
   FileBadgeIcon,
   IdCardIcon,
-  ImageIcon,
   SlidersHorizontalIcon,
   Trash2Icon,
   WrenchIcon,
@@ -164,8 +163,7 @@ export default function UnidadForm() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [form, setForm] = useState<FormUnidad>(VACIO);
-  const [fotos, setFotos] = useState<string[]>([]);
-  const [fotoNueva, setFotoNueva] = useState("");
+  const [fotos, setFotos] = useState<File[]>([]);
   const [invalidos, setInvalidos] = useState<Set<string>>(new Set());
 
   const set = (campo: keyof FormUnidad) => (valor: string) => {
@@ -199,8 +197,21 @@ export default function UnidadForm() {
   };
 
   const crear = useMutation({
-    mutationFn: (body: Record<string, unknown>) =>
-      api("/unidades", { method: "POST", body: JSON.stringify(body) }),
+    mutationFn: async (body: Record<string, unknown>) => {
+      const creada = await api<{ datos: { id: number } }>("/unidades", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      if (fotos.length === 0) return creada;
+
+      const archivos = new FormData();
+      fotos.forEach((foto) => archivos.append("files", foto));
+      await api(`/unidades/${creada.datos.id}/fotos`, {
+        method: "POST",
+        body: archivos,
+      });
+      return creada;
+    },
     onSuccess: () => {
       toast.success(`Unidad ${form.placa.toUpperCase()} registrada.`);
       queryClient.invalidateQueries({ queryKey: ["unidades"] });
@@ -210,14 +221,22 @@ export default function UnidadForm() {
       toast.error(e instanceof ApiError ? e.message : "Error inesperado."),
   });
 
-  const agregarFoto = () => {
-    const url = fotoNueva.trim();
-    if (!/^https?:\/\//.test(url)) {
-      toast.error("La foto debe ser una URL http(s).");
-      return;
+  const seleccionarFotos = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nuevas = Array.from(event.target.files ?? []);
+    const invalidas = nuevas.filter(
+      (foto) => !foto.type.startsWith("image/") || foto.size > 10 * 1024 * 1024,
+    );
+    const validas = nuevas.filter((foto) => !invalidas.includes(foto));
+    const disponibles = 20 - fotos.length;
+
+    if (invalidas.length > 0) {
+      toast.error("Cada foto debe ser una imagen de hasta 10 MB.");
     }
-    setFotos((prev) => [...prev, url]);
-    setFotoNueva("");
+    if (validas.length > disponibles) {
+      toast.error("Una unidad admite como máximo 20 fotos.");
+    }
+    setFotos((prev) => [...prev, ...validas.slice(0, disponibles)]);
+    event.target.value = "";
   };
 
   const enviar = (e: React.FormEvent) => {
@@ -268,7 +287,6 @@ export default function UnidadForm() {
       proximoMantenimientoFecha: form.proximoMantenimientoFecha || undefined,
       proximoMantenimientoKilometraje: num(form.proximoMantenimientoKilometraje),
       mantenimientoObservacion: form.mantenimientoObservacion || undefined,
-      fotos,
     });
   };
 
@@ -445,38 +463,31 @@ export default function UnidadForm() {
         {campoTexto("cuenta", "Cuenta / proyecto", { placeholder: "CERRO VERDE" })}
         {campoTexto("clienteAsociado", "Cliente asociado", { placeholder: "HAGEMSA" })}
         <div className="flex flex-col gap-2 sm:col-span-2 lg:col-span-3 xl:col-span-4">
-          <FieldLabel htmlFor="foto">URL de foto (frontal, lateral, interior…)</FieldLabel>
-          <div className="flex gap-2">
-            <Input
-              id="foto"
-              placeholder="https://…"
-              value={fotoNueva}
-              onChange={(e) => setFotoNueva(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  agregarFoto();
-                }
-              }}
-            />
-            <Button type="button" variant="outline" onClick={agregarFoto}>
-              <ImageIcon data-icon="inline-start" /> Agregar
-            </Button>
-          </div>
-          {fotos.length > 0 && (
+           <FieldLabel htmlFor="fotos">Fotos de la unidad</FieldLabel>
+           <div className="flex gap-2">
+             <Input
+               id="fotos"
+               type="file"
+               accept="image/*"
+               multiple
+               onChange={seleccionarFotos}
+             />
+           </div>
+           <p className="text-muted-foreground text-xs">Selecciona hasta 20 imágenes JPG, PNG o WebP de 10 MB como máximo.</p>
+           {fotos.length > 0 && (
             <ul className="flex flex-col gap-1">
-              {fotos.map((f, i) => (
+               {fotos.map((f, i) => (
                 <li
                   key={i}
                   className="bg-muted flex items-center justify-between gap-2 rounded-md px-2 py-1 text-xs"
                 >
-                  <span className="truncate">{f}</span>
+                   <span className="truncate">{f.name} · {(f.size / 1024 / 1024).toFixed(1)} MB</span>
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
                     className="size-6 shrink-0"
-                    onClick={() => setFotos((prev) => prev.filter((_, j) => j !== i))}
+                     onClick={() => setFotos((prev) => prev.filter((_, j) => j !== i))}
                     aria-label={`Quitar foto ${i + 1}`}
                   >
                     <Trash2Icon className="size-3.5" />
