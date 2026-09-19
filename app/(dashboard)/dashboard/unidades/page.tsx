@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { Link2Icon, PlusIcon, SearchIcon } from "lucide-react";
+import { ImageIcon, Link2Icon, PlusIcon, SearchIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "cn";
@@ -48,6 +48,7 @@ interface Unidad {
   mtcVigencia: string | null;
   estadoUnidad: string;
   estadoActivo: string;
+  fotos: string[];
 }
 
 // --- Categorias vehiculares (MTC): color distintivo por categoria para
@@ -260,6 +261,7 @@ export default function UnidadesPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Foto</TableHead>
               <TableHead>Placa</TableHead>
               <TableHead>Categoría</TableHead>
               <TableHead>Vehículo</TableHead>
@@ -272,7 +274,7 @@ export default function UnidadesPage() {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: 6 }).map((_, j) => (
+                  {Array.from({ length: 7 }).map((_, j) => (
                     <TableCell key={j}>
                       <Skeleton className="h-5 w-full" />
                     </TableCell>
@@ -281,7 +283,7 @@ export default function UnidadesPage() {
               ))
             ) : unidades.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-muted-foreground h-24 text-center">
+                <TableCell colSpan={7} className="text-muted-foreground h-24 text-center">
                   No hay unidades que coincidan.
                 </TableCell>
               </TableRow>
@@ -290,6 +292,19 @@ export default function UnidadesPage() {
                 const esAcople = ES_ACOPLE.has(u.clase);
                 return (
                   <TableRow key={u.id}>
+                    <TableCell>
+                      {u.fotos[0] ? (
+                        <img
+                          src={u.fotos[0]}
+                          alt={`Unidad ${u.placa}`}
+                          className="size-10 rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="bg-muted text-muted-foreground grid size-10 place-items-center rounded-md">
+                          <ImageIcon className="size-4" />
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-semibold">{u.placa}</span>
