@@ -4,7 +4,7 @@ import { UsersIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
-import FormDialog from "@/components/form-dialog";
+import FormDialog, { type CampoForm } from "@/components/form-dialog";
 
 interface Personal {
   id: number;
@@ -53,59 +53,33 @@ export default function Page() {
       descripcion="Conductores, supervisores y tripulación."
       endpoint="/personal"
       columnas={columnas}
+      accionFila={(persona) => (
+        <FormDialog recurso="Personal" descripcion="Ficha de conductor, supervisor o tripulación." endpoint="/personal" registroId={persona.id} campos={campos} />
+      )}
       acciones={
         <FormDialog
           recurso="Personal"
           descripcion="Ficha de conductor, supervisor o tripulación."
           endpoint="/personal"
           textoBoton="Nuevo personal"
-          campos={[
-            { name: "primerNombre", label: "Primer nombre", requerido: true, mayusculas: true },
-            { name: "segundoNombre", label: "Segundo nombre", mayusculas: true },
-            { name: "primerApellido", label: "Primer apellido", requerido: true, mayusculas: true },
-            { name: "segundoApellido", label: "Segundo apellido", mayusculas: true },
-            {
-              name: "tipoDocumento",
-              label: "Tipo de documento",
-              tipo: "select",
-              opciones: [
-                { valor: "DNI", etiqueta: "DNI" },
-                { valor: "CE", etiqueta: "Carnet de extranjería" },
-                { valor: "PASAPORTE", etiqueta: "Pasaporte" },
-              ],
-            },
-            { name: "numeroDocumento", label: "N° de documento", requerido: true, placeholder: "40420485" },
-            {
-              name: "tipo",
-              label: "Rol operativo",
-              tipo: "select",
-              opciones: [
-                { valor: "CONDUCTOR", etiqueta: "Conductor" },
-                { valor: "COPILOTO", etiqueta: "Copiloto" },
-                { valor: "SUPERVISOR", etiqueta: "Supervisor" },
-                { valor: "ESCOLTA", etiqueta: "Escolta" },
-              ],
-            },
-            { name: "apelativo", label: "Apelativo (radio)", placeholder: "COMANDO 1" },
-            { name: "telefono", label: "Celular", tipo: "tel", placeholder: "917 874 745" },
-            { name: "licenciaConducir", label: "Licencia", placeholder: "H40420485" },
-            {
-              name: "categoriaLicencia",
-              label: "Categoría de licencia",
-              tipo: "select",
-              opciones: [
-                { valor: "A I", etiqueta: "A I" },
-                { valor: "A IIA", etiqueta: "A IIA" },
-                { valor: "A IIB", etiqueta: "A IIB" },
-                { valor: "A IIIA", etiqueta: "A IIIA" },
-                { valor: "A IIIB", etiqueta: "A IIIB" },
-                { valor: "A IIIC", etiqueta: "A IIIC" },
-              ],
-            },
-            { name: "licenciaVencimiento", label: "Vigencia de licencia", tipo: "date" },
-          ]}
+          campos={campos}
         />
       }
     />
   );
 }
+
+const campos: CampoForm[] = [
+  { name: "primerNombre", label: "Primer nombre", requerido: true, mayusculas: true },
+  { name: "segundoNombre", label: "Segundo nombre", mayusculas: true },
+  { name: "primerApellido", label: "Primer apellido", requerido: true, mayusculas: true },
+  { name: "segundoApellido", label: "Segundo apellido", mayusculas: true },
+  { name: "tipoDocumento", label: "Tipo de documento", tipo: "select", opciones: [{ valor: "DNI", etiqueta: "DNI" }, { valor: "CE", etiqueta: "Carnet de extranjería" }, { valor: "PASAPORTE", etiqueta: "Pasaporte" }] },
+  { name: "numeroDocumento", label: "N° de documento", requerido: true, placeholder: "40420485" },
+  { name: "tipo", label: "Rol operativo", tipo: "select", opciones: [{ valor: "CONDUCTOR", etiqueta: "Conductor" }, { valor: "COPILOTO", etiqueta: "Copiloto" }, { valor: "SUPERVISOR", etiqueta: "Supervisor" }, { valor: "ESCOLTA", etiqueta: "Escolta" }] },
+  { name: "apelativo", label: "Apelativo (radio)", placeholder: "COMANDO 1" },
+  { name: "telefono", label: "Celular", tipo: "tel", placeholder: "917 874 745" },
+  { name: "licenciaConducir", label: "Licencia", placeholder: "H40420485" },
+  { name: "categoriaLicencia", label: "Categoría de licencia", tipo: "select", opciones: [{ valor: "A I", etiqueta: "A I" }, { valor: "A IIA", etiqueta: "A IIA" }, { valor: "A IIB", etiqueta: "A IIB" }, { valor: "A IIIA", etiqueta: "A IIIA" }, { valor: "A IIIB", etiqueta: "A IIIB" }, { valor: "A IIIC", etiqueta: "A IIIC" }] },
+  { name: "licenciaVencimiento", label: "Vigencia de licencia", tipo: "date" },
+];

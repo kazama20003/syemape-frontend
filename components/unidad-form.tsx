@@ -52,7 +52,10 @@ interface TipoVehiculoMaestro {
   nombre: string;
   claseSugerida: string | null;
   categoriaSugerida: string | null;
+  estadoActivo: string;
 }
+interface Cuenta { id: number; nombre: string; estadoActivo: string; }
+interface Proyecto { id: number; cuentaId: number; nombre: string; estadoActivo: string; }
 const COMBUSTIBLES = ["DIESEL", "GASOLINA", "GLP", "GNV", "ELECTRICO", "HIBRIDO"];
 
 interface FormUnidad {
@@ -71,7 +74,8 @@ interface FormUnidad {
   registroMtc: string;
   mtcVigencia: string;
   materialesPeligrosos: string;
-  cuenta: string;
+  cuentaId: string;
+  proyectoId: string;
   clienteAsociado: string;
   capacidadCarga: string;
   pesoBrutoVehicular: string;
@@ -105,7 +109,8 @@ const VACIO: FormUnidad = {
   registroMtc: "",
   mtcVigencia: "",
   materialesPeligrosos: "",
-  cuenta: "",
+  cuentaId: "",
+  proyectoId: "",
   clienteAsociado: "",
   capacidadCarga: "",
   pesoBrutoVehicular: "",
@@ -182,10 +187,17 @@ export default function UnidadForm() {
       api<{ datos: TipoVehiculoMaestro[] }>("/tipos-vehiculo?pageSize=200"),
     staleTime: 60_000,
   });
-  const tiposVehiculo = tiposData?.datos ?? [];
+  const tiposVehiculo = (tiposData?.datos ?? []).filter(
+    (tipo) => tipo.estadoActivo === "ACTIVO",
+  );
+  const { data: cuentasData } = useQuery({ queryKey: ["cuentas", "catalogo"], queryFn: () => api<{ datos: Cuenta[] }>("/cuentas?pageSize=200"), staleTime: 60_000 });
+  const { data: proyectosData } = useQuery({ queryKey: ["proyectos", "catalogo", form.cuentaId], queryFn: () => api<{ datos: Proyecto[] }>(`/proyectos?pageSize=200${form.cuentaId ? `&cuentaId=${form.cuentaId}` : ""}`), staleTime: 60_000 });
+  const cuentas = (cuentasData?.datos ?? []).filter((cuenta) => cuenta.estadoActivo === "ACTIVO");
+  const proyectos = (proyectosData?.datos ?? []).filter((proyecto) => proyecto.estadoActivo === "ACTIVO");
+  const setCuenta = (valor: string) => setForm((prev) => ({ ...prev, cuentaId: valor, proyectoId: "" }));
 
-  // Al elegir un tipo del maestro se autocompletan clase y categoría MTC
-  // (siguen siendo editables para casos excepcionales).
+  // La clasificación de una unidad se deriva del tipo configurado en el
+  // catálogo; no se debe poder alterar desde el alta de la unidad.
   const setTipoVehiculo = (valor: string) => {
     const tipo = tiposVehiculo.find((t) => t.codigo === valor);
     setForm((prev) => ({
@@ -271,7 +283,8 @@ export default function UnidadForm() {
       registroMtc: form.registroMtc || undefined,
       mtcVigencia: form.mtcVigencia || undefined,
       materialesPeligrosos: form.materialesPeligrosos || undefined,
-      cuenta: form.cuenta || undefined,
+      cuentaId: num(form.cuentaId),
+      proyectoId: num(form.proyectoId),
       clienteAsociado: form.clienteAsociado || undefined,
       capacidadCarga: num(form.capacidadCarga),
       pesoBrutoVehicular: num(form.pesoBrutoVehicular),
@@ -319,6 +332,7 @@ export default function UnidadForm() {
     opciones: { valor: string; etiqueta: string }[],
     props: {
       requerido?: boolean;
+      deshabilitado?: boolean;
       onChange?: (v: string) => void;
       renderItem?: (o: { valor: string; etiqueta: string }) => React.ReactNode;
     } = {},
@@ -340,11 +354,13 @@ export default function UnidadForm() {
           value={form[campo]}
           onValueChange={(v) => onChange(v ?? "")}
           items={conNinguno.map((o) => ({ value: o.valor, label: o.etiqueta }))}
+          disabled={props.deshabilitado}
         >
           <SelectTrigger
             id={campo}
             className="w-full"
             aria-invalid={invalidos.has(campo) || undefined}
+            disabled={props.deshabilitado}
           >
             <SelectValue placeholder="Seleccionar…" />
           </SelectTrigger>
@@ -374,7 +390,7 @@ export default function UnidadForm() {
       <SeccionCard
         icono={<IdCardIcon />}
         titulo="Identificación"
-        descripcion="Placa, tipo y clasificación vehicular de la unidad."
+        descripcion="Placa y tipo de vehículo. La clase y categoría MTC se heredan del catálogo."
       >
         {campoTexto("placa", "Placa", { placeholder: "VCA-821", requerido: true })}
         {campoSelect(
@@ -383,11 +399,21 @@ export default function UnidadForm() {
           tiposVehiculo.map((t) => ({ valor: t.codigo, etiqueta: t.nombre })),
           { onChange: setTipoVehiculo },
         )}
-        {campoSelect("clase", "Clase", CLASES, { requerido: true })}
+        {campoSelect("clase", "Clase", CLASES, {
+          requerido: true,
+          deshabilitado: Boolean(
+            tiposVehiculo.find((t) => t.codigo === form.tipoVehiculo)?.claseSugerida,
+          ),
+        })}
         {campoSelect(
           "categoriaVehicular",
           "Categoría vehicular (MTC)",
           CATEGORIAS.map((c) => ({ valor: c, etiqueta: c })),
+          {
+            deshabilitado: Boolean(
+              tiposVehiculo.find((t) => t.codigo === form.tipoVehiculo)?.categoriaSugerida,
+            ),
+          },
         )}
       </SeccionCard>
 
@@ -458,9 +484,10 @@ export default function UnidadForm() {
       <SeccionCard
         icono={<CameraIcon />}
         titulo="Asignación y fotos"
-        descripcion="Cuenta o proyecto donde opera y registro fotográfico."
+        descripcion="Cuenta y proyecto del catálogo donde opera, y registro fotográfico."
       >
-        {campoTexto("cuenta", "Cuenta / proyecto", { placeholder: "CERRO VERDE" })}
+        {campoSelect("cuentaId", "Cuenta", cuentas.map((cuenta) => ({ valor: String(cuenta.id), etiqueta: cuenta.nombre })), { onChange: setCuenta })}
+        {campoSelect("proyectoId", "Proyecto", proyectos.map((proyecto) => ({ valor: String(proyecto.id), etiqueta: proyecto.nombre })), { deshabilitado: !form.cuentaId })}
         {campoTexto("clienteAsociado", "Cliente asociado", { placeholder: "HAGEMSA" })}
         <div className="flex flex-col gap-2 sm:col-span-2 lg:col-span-3 xl:col-span-4">
            <FieldLabel htmlFor="fotos">Fotos de la unidad</FieldLabel>

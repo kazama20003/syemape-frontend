@@ -20,6 +20,8 @@ const ETIQUETAS: Record<string, string> = {
   unidades: "Unidades",
   personal: "Personal",
   clientes: "Clientes",
+  cuentas: "Cuentas",
+  proyectos: "Proyectos",
   rutas: "Rutas",
   ubicaciones: "Ubicaciones",
   "tipos-servicio": "Tipos de servicio",

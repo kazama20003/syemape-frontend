@@ -75,6 +75,8 @@ const MAESTROS: ItemNav[] = [
   { title: "Unidades", url: "/dashboard/unidades", icon: <TruckIcon />, roles: STAFF },
   { title: "Personal", url: "/dashboard/personal", icon: <UsersIcon />, roles: STAFF },
   { title: "Clientes", url: "/dashboard/clientes", icon: <Building2Icon />, roles: STAFF },
+  { title: "Cuentas", url: "/dashboard/cuentas", icon: <Building2Icon />, roles: STAFF },
+  { title: "Proyectos", url: "/dashboard/proyectos", icon: <ListTreeIcon />, roles: STAFF },
   { title: "Rutas", url: "/dashboard/rutas", icon: <RouteIcon />, roles: STAFF },
   { title: "Ubicaciones", url: "/dashboard/ubicaciones", icon: <MapPinIcon />, roles: STAFF },
   {

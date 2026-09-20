@@ -1,0 +1,9 @@
+"use client";
+import { FolderKanbanIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import RecursoLista, { type Columna } from "@/components/recurso-lista";
+import FormDialog, { type CampoForm } from "@/components/form-dialog";
+interface Proyecto { id: number; codigo: string; nombre: string; descripcion: string | null; estadoActivo: string; cuenta: { nombre: string }; }
+const campos: CampoForm[] = [{ name: "cuentaId", label: "Cuenta", opcionesEndpoint: "/cuentas", requerido: true }, { name: "codigo", label: "Código", requerido: true }, { name: "nombre", label: "Nombre", requerido: true }, { name: "descripcion", label: "Descripción", ancho: "full" }, { name: "estadoActivo", label: "Estado", tipo: "select", opciones: [{ valor: "ACTIVO", etiqueta: "Activo" }, { valor: "INACTIVO", etiqueta: "Inactivo" }] }];
+const columnas: Columna<Proyecto>[] = [{ titulo: "Cuenta", render: (p) => p.cuenta.nombre }, { titulo: "Código", render: (p) => <code className="text-xs">{p.codigo}</code> }, { titulo: "Nombre", render: (p) => <span className="font-medium">{p.nombre}</span> }, { titulo: "Descripción", render: (p) => p.descripcion ?? "—" }, { titulo: "Estado", render: (p) => <Badge variant={p.estadoActivo === "ACTIVO" ? "default" : "secondary"}>{p.estadoActivo}</Badge> }];
+export default function Page() { return <RecursoLista icono={<FolderKanbanIcon />} titulo="Proyectos" descripcion="Catálogo de proyectos dependientes de cada cuenta." endpoint="/proyectos" columnas={columnas} accionFila={(proyecto) => <FormDialog recurso="Proyecto" descripcion="Proyecto asociado a una cuenta." endpoint="/proyectos" registroId={proyecto.id} campos={campos.filter((campo) => campo.name !== "cuentaId")} />} acciones={<FormDialog recurso="Proyecto" descripcion="Proyecto asociado a una cuenta." endpoint="/proyectos" textoBoton="Nuevo proyecto" campos={campos} />} />; }
