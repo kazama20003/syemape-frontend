@@ -4,7 +4,7 @@ import { TagsIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
-import FormDialog from "@/components/form-dialog";
+import FormDialog, { type CampoForm } from "@/components/form-dialog";
 
 interface TipoVehiculo {
   id: number;
@@ -50,21 +50,26 @@ export default function Page() {
       descripcion="Catálogo maestro de tipos de vehículo con su clase y categoría MTC sugeridas."
       endpoint="/tipos-vehiculo"
       columnas={columnas}
+      accionFila={(tipo) => (
+        <FormDialog recurso="Tipo de vehículo" descripcion="Tipo de vehículo del maestro; la clase y categoría se autocompletan al registrar unidades." endpoint="/tipos-vehiculo" registroId={tipo.id} campos={campos} />
+      )}
       acciones={
         <FormDialog
           recurso="Tipo de vehículo"
           descripcion="Tipo de vehículo del maestro; la clase y categoría se autocompletan al registrar unidades."
           endpoint="/tipos-vehiculo"
           textoBoton="Nuevo tipo"
-          campos={[
-            { name: "nombre", label: "Nombre", requerido: true, placeholder: "Camión grúa", ancho: "full" },
-            { name: "codigo", label: "Código (opcional)", placeholder: "Se genera del nombre", ancho: "full" },
-            { name: "claseSugerida", label: "Clase sugerida", tipo: "select", opciones: CLASES },
-            { name: "categoriaSugerida", label: "Categoría MTC sugerida", tipo: "select", opciones: CATEGORIAS },
-            { name: "descripcion", label: "Descripción", ancho: "full" },
-          ]}
+          campos={campos}
         />
       }
     />
   );
 }
+
+const campos: CampoForm[] = [
+  { name: "nombre", label: "Nombre", requerido: true, placeholder: "Camión grúa", ancho: "full" },
+  { name: "codigo", label: "Código (opcional)", placeholder: "Se genera del nombre", ancho: "full" },
+  { name: "claseSugerida", label: "Clase sugerida", tipo: "select", opciones: CLASES },
+  { name: "categoriaSugerida", label: "Categoría MTC sugerida", tipo: "select", opciones: CATEGORIAS },
+  { name: "descripcion", label: "Descripción", ancho: "full" },
+];

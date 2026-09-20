@@ -100,8 +100,15 @@ function useCatalogo<T>(endpoint: string, extra = "") {
     queryFn: () => api<{ datos: T[] }>(`${endpoint}?pageSize=200${extra}`),
     staleTime: 60_000,
   });
-  return data?.datos ?? [];
+  return (data?.datos ?? []).filter((item) => {
+    if (typeof item !== "object" || item === null || !("estadoActivo" in item)) {
+      return true;
+    }
+    return item.estadoActivo === "ACTIVO";
+  });
 }
+interface Cuenta { id: number; nombre: string; }
+interface Proyecto { id: number; cuentaId: number; nombre: string; }
 
 function SeccionCard({
   icono,
@@ -148,6 +155,7 @@ export default function OrdenServicioForm() {
   const supervisores = useCatalogo<Persona>("/personal", "&tipo=SUPERVISOR");
   const clientes = useCatalogo<Cliente>("/clientes");
   const tiposServicio = useCatalogo<TipoServicio>("/tipos-servicio");
+  const cuentas = useCatalogo<Cuenta>("/cuentas");
 
   const [form, setForm] = useState({
     fechaServicio: "",
@@ -157,6 +165,8 @@ export default function OrdenServicioForm() {
     ubicacionDestinoId: "",
     tipoServicioId: "",
     clienteId: "",
+    cuentaId: "",
+    proyectoId: "",
     estadoCarga: "",
     combustible: "",
     viaticos: "",
@@ -196,6 +206,8 @@ export default function OrdenServicioForm() {
         : prev.ubicacionDestinoId,
     }));
   };
+  const proyectos = useCatalogo<Proyecto>("/proyectos", form.cuentaId ? `&cuentaId=${form.cuentaId}` : "");
+  const setCuenta = (valor: string) => setForm((prev) => ({ ...prev, cuentaId: valor, proyectoId: "" }));
 
   const crear = useMutation({
     mutationFn: (body: Record<string, unknown>) =>
@@ -241,6 +253,8 @@ export default function OrdenServicioForm() {
       rutaId: num(form.rutaId),
       tipoServicioId: num(form.tipoServicioId),
       clienteId: num(form.clienteId),
+      cuentaId: num(form.cuentaId),
+      proyectoId: num(form.proyectoId),
       estadoCarga: form.estadoCarga || undefined,
       combustible: form.combustible || undefined,
       viaticos: form.viaticos || undefined,
@@ -401,6 +415,8 @@ export default function OrdenServicioForm() {
             "Cliente",
             clientes.map((c) => ({ valor: String(c.id), etiqueta: c.razonSocial })),
           )}
+          {campoSelect("cuentaId", "Cuenta", cuentas.map((c) => ({ valor: String(c.id), etiqueta: c.nombre })), { onChange: setCuenta })}
+          {campoSelect("proyectoId", "Proyecto", proyectos.map((p) => ({ valor: String(p.id), etiqueta: p.nombre })), { deshabilitado: !form.cuentaId })}
         </FieldGroup>
       </SeccionCard>
 
