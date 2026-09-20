@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { PlusIcon } from "lucide-react";
+import { PencilIcon, PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -85,31 +85,58 @@ function mensajeDe(error: unknown): string {
   return "Ocurrió un error inesperado.";
 }
 
-// Dialogo generico "Nuevo <recurso>": arma el formulario desde la definicion
-// de campos, hace POST al endpoint e invalida el listado para refrescarlo.
+// Dialogo generico para crear o editar recursos desde la definicion de campos.
 export default function FormDialog({
   recurso,
   descripcion,
   endpoint,
   campos,
   textoBoton,
+  registroId,
 }: {
   recurso: string;
   descripcion: string;
   endpoint: string;
-  campos: CampoForm[];
+  campos: readonly CampoForm[];
   textoBoton?: string;
+  registroId?: number;
 }) {
   const queryClient = useQueryClient();
   const [abierto, setAbierto] = useState(false);
   const [valores, setValores] = useState<Record<string, string>>({});
   const [invalidos, setInvalidos] = useState<Set<string>>(new Set());
+  const editando = registroId !== undefined;
 
-  const crear = useMutation({
+  const { data: registro, isLoading: cargandoRegistro } = useQuery({
+    queryKey: [endpoint, registroId],
+    queryFn: () => api<{ datos: Record<string, unknown> }>(`${endpoint}/${registroId}`),
+    enabled: abierto && editando,
+  });
+
+  useEffect(() => {
+    if (!registro?.datos) return;
+    setValores(
+      campos.reduce<Record<string, string>>((valores, campo) => {
+        const valor = registro.datos[campo.name];
+        valores[campo.name] =
+          valor == null
+            ? ""
+            : campo.tipo === "date" && typeof valor === "string"
+              ? valor.slice(0, 10)
+              : String(valor);
+        return valores;
+      }, {}),
+    );
+  }, [campos, registro]);
+
+  const guardar = useMutation({
     mutationFn: (body: Record<string, unknown>) =>
-      api(endpoint, { method: "POST", body: JSON.stringify(body) }),
+      api(editando ? `${endpoint}/${registroId}` : endpoint, {
+        method: editando ? "PATCH" : "POST",
+        body: JSON.stringify(body),
+      }),
     onSuccess: () => {
-      toast.success(`${recurso} registrado.`);
+      toast.success(`${recurso} ${editando ? "actualizado" : "registrado"}.`);
       setAbierto(false);
       setValores({});
       queryClient.invalidateQueries({ queryKey: [endpoint] });
@@ -136,20 +163,32 @@ export default function FormDialog({
       body[campo.name] =
         campo.tipo === "number" || campo.opcionesEndpoint ? Number(bruto) : bruto;
     }
-    crear.mutate(body);
+    guardar.mutate(body);
+  };
+
+  const abrir = () => {
+    setValores({});
+    setInvalidos(new Set());
+    setAbierto(true);
   };
 
   return (
     <>
-      <Button onClick={() => setAbierto(true)}>
-        <PlusIcon /> {textoBoton ?? `Nuevo ${recurso.toLowerCase()}`}
+      <Button variant={editando ? "outline" : "default"} size={editando ? "sm" : "default"} onClick={abrir}>
+        {editando ? <PencilIcon /> : <PlusIcon />}
+        {textoBoton ?? (editando ? "Editar" : `Nuevo ${recurso.toLowerCase()}`)}
       </Button>
       <Dialog open={abierto} onOpenChange={setAbierto}>
         <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Nuevo {recurso.toLowerCase()}</DialogTitle>
+            <DialogTitle>{editando ? "Editar" : "Nuevo"} {recurso.toLowerCase()}</DialogTitle>
             <DialogDescription>{descripcion}</DialogDescription>
           </DialogHeader>
+          {cargandoRegistro ? (
+            <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+              <Spinner /> Cargando datos...
+            </div>
+          ) : (
           <form onSubmit={enviar}>
             <FieldGroup className="grid gap-4 sm:grid-cols-2">
             {campos.map((campo) => (
@@ -237,13 +276,14 @@ export default function FormDialog({
               <Button type="button" variant="outline" onClick={() => setAbierto(false)}>
                 Cancelar
               </Button>
-              <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>
-                {crear.isPending && <Spinner data-icon="inline-start" />}
-                {crear.isPending ? "Guardando…" : "Registrar"}
+              <Button type="submit" disabled={guardar.isPending} focusableWhenDisabled>
+                {guardar.isPending && <Spinner data-icon="inline-start" />}
+                {guardar.isPending ? "Guardando…" : editando ? "Guardar cambios" : "Registrar"}
               </Button>
             </DialogFooter>
             </FieldGroup>
           </form>
+          )}
         </DialogContent>
       </Dialog>
     </>

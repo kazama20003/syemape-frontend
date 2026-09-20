@@ -47,6 +47,7 @@ export default function RecursoLista<T extends { id: number }>({
   campoBusqueda = "texto",
   columnas,
   acciones,
+  accionFila,
   icono,
 }: {
   titulo: string;
@@ -56,6 +57,7 @@ export default function RecursoLista<T extends { id: number }>({
   campoBusqueda?: string | null;
   columnas: Columna<T>[];
   acciones?: React.ReactNode;
+  accionFila?: (fila: T) => React.ReactNode;
   // Icono del recurso mostrado junto al titulo.
   icono?: React.ReactNode;
 }) {
@@ -143,6 +145,7 @@ export default function RecursoLista<T extends { id: number }>({
               {columnas.map((c) => (
                 <TableHead key={c.titulo}>{c.titulo}</TableHead>
               ))}
+              {accionFila && <TableHead className="text-right">Acciones</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -154,11 +157,16 @@ export default function RecursoLista<T extends { id: number }>({
                       <Skeleton className="h-5 w-full" />
                     </TableCell>
                   ))}
+                  {accionFila && (
+                    <TableCell>
+                      <Skeleton className="ml-auto h-8 w-16" />
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : filas.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columnas.length} className="p-0">
+                <TableCell colSpan={columnas.length + (accionFila ? 1 : 0)} className="p-0">
                   <Empty>
                     <EmptyHeader>
                       <EmptyMedia variant="icon">
@@ -182,6 +190,9 @@ export default function RecursoLista<T extends { id: number }>({
                   {columnas.map((c) => (
                     <TableCell key={c.titulo}>{c.render(fila)}</TableCell>
                   ))}
+                  {accionFila && (
+                    <TableCell className="text-right">{accionFila(fila)}</TableCell>
+                  )}
                 </TableRow>
               ))
             )}

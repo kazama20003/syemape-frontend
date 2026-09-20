@@ -4,7 +4,7 @@ import { TagsIcon } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
-import FormDialog from "@/components/form-dialog";
+import FormDialog, { type CampoForm } from "@/components/form-dialog";
 
 interface TipoServicio {
   id: number;
@@ -34,19 +34,24 @@ export default function Page() {
       descripcion="Catálogo de servicios que presta la empresa."
       endpoint="/tipos-servicio"
       columnas={columnas}
+      accionFila={(tipo) => (
+        <FormDialog recurso="Tipo de servicio" descripcion="Categoría de servicio que presta la empresa." endpoint="/tipos-servicio" registroId={tipo.id} campos={campos} />
+      )}
       acciones={
         <FormDialog
           recurso="Tipo de servicio"
           descripcion="Categoría de servicio que presta la empresa."
           endpoint="/tipos-servicio"
           textoBoton="Nuevo tipo"
-          campos={[
-            { name: "nombre", label: "Nombre", requerido: true, placeholder: "Supervisión en ruta", ancho: "full" },
-            { name: "codigo", label: "Código (opcional)", placeholder: "Se genera del nombre", ancho: "full" },
-            { name: "descripcion", label: "Descripción", ancho: "full" },
-          ]}
+          campos={campos}
         />
       }
     />
   );
 }
+
+const campos: CampoForm[] = [
+  { name: "nombre", label: "Nombre", requerido: true, placeholder: "Supervisión en ruta", ancho: "full" },
+  { name: "codigo", label: "Código (opcional)", placeholder: "Se genera del nombre", ancho: "full" },
+  { name: "descripcion", label: "Descripción", ancho: "full" },
+];
