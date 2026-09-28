@@ -94,6 +94,47 @@ export async function api<T = unknown>(
   return cuerpo as T;
 }
 
+// --- Descarga de archivos (blob) ---
+// api() siempre hace res.json(), asi que para binarios (PDF) usamos este fetch
+// aparte que respeta el header Authorization y dispara la descarga.
+
+export async function descargarArchivo(
+  ruta: string,
+  nombrePorDefecto: string,
+): Promise<void> {
+  const token = obtenerToken();
+  const res = await fetch(`${API_URL}${ruta}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+
+  if (res.status === 401 && typeof window !== "undefined") {
+    limpiarSesion();
+    const next = encodeURIComponent(
+      window.location.pathname + window.location.search,
+    );
+    window.location.href = `/login?next=${next}`;
+    throw new ApiError(401, null, "Sesion expirada.");
+  }
+  if (!res.ok) {
+    throw new ApiError(res.status, null, `Error ${res.status}`);
+  }
+
+  // Respeta el nombre del header Content-Disposition si el backend lo envia.
+  const dispo = res.headers.get("Content-Disposition") ?? "";
+  const coincidencia = /filename="?([^"]+)"?/.exec(dispo);
+  const nombre = coincidencia?.[1] ?? nombrePorDefecto;
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
 // --- Autenticacion ---
 
 export async function iniciarSesion(

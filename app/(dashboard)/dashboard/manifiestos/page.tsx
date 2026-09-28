@@ -7,7 +7,9 @@ import { toast } from "sonner";
 import {
   BanIcon,
   CheckCircle2Icon,
+  DownloadIcon,
   FileTextIcon,
+  Loader2Icon,
   MoreHorizontalIcon,
   PlusIcon,
   SendIcon,
@@ -34,7 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
-import { ApiError, api } from "@/lib/api";
+import { ApiError, api, descargarArchivo } from "@/lib/api";
 
 const COLOR_ESTADO: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   BORRADOR: "outline",
@@ -149,6 +151,44 @@ function AccionesManifiesto({ manifiesto }: { manifiesto: Manifiesto }) {
   );
 }
 
+// Botón para descargar el manifiesto en PDF. Disponible en cualquier estado.
+function DescargarPdf({ manifiesto }: { manifiesto: Manifiesto }) {
+  const [descargando, setDescargando] = useState(false);
+
+  const descargar = async () => {
+    setDescargando(true);
+    try {
+      await descargarArchivo(
+        `/manifiestos/${manifiesto.id}/pdf`,
+        `${manifiesto.numero}.pdf`,
+      );
+    } catch (e) {
+      toast.error(
+        e instanceof ApiError ? e.message : "No se pudo descargar el PDF.",
+      );
+    } finally {
+      setDescargando(false);
+    }
+  };
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={descargar}
+      disabled={descargando}
+      aria-label={`Descargar PDF de ${manifiesto.numero}`}
+      title="Descargar PDF"
+    >
+      {descargando ? (
+        <Loader2Icon className="animate-spin" />
+      ) : (
+        <DownloadIcon />
+      )}
+    </Button>
+  );
+}
+
 const columnas: Columna<Manifiesto>[] = [
   { titulo: "Número", render: (m) => <span className="font-medium">{m.numero}</span> },
   { titulo: "Fecha", render: (m) => new Date(m.fechaServicio).toLocaleDateString("es-PE") },
@@ -160,7 +200,15 @@ const columnas: Columna<Manifiesto>[] = [
     titulo: "Estado",
     render: (m) => <Badge variant={COLOR_ESTADO[m.estado] ?? "outline"}>{m.estado.replace("_", " ")}</Badge>,
   },
-  { titulo: "", render: (m) => <AccionesManifiesto manifiesto={m} /> },
+  {
+    titulo: "",
+    render: (m) => (
+      <div className="flex items-center justify-end gap-1">
+        <DescargarPdf manifiesto={m} />
+        <AccionesManifiesto manifiesto={m} />
+      </div>
+    ),
+  },
 ];
 
 export default function Page() {
