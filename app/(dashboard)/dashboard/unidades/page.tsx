@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { ImageIcon, Link2Icon, PlusIcon, SearchIcon } from "lucide-react";
+import { ImageIcon, Link2Icon, PencilIcon, PlusIcon, SearchIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "cn";
@@ -29,7 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ApiError, api } from "@/lib/api";
+import { ApiError, api, obtenerUsuario } from "@/lib/api";
 import { COLORES_VEHICULO, MuestraColor } from "@/lib/colores-vehiculo";
 
 interface Unidad {
@@ -127,6 +127,7 @@ export default function UnidadesPage() {
   const [clase, setClase] = useState("TODAS");
   const [estado, setEstado] = useState("TODOS");
   const [page, setPage] = useState(1);
+  const puedeEditar = ["ADMINISTRADOR", "OPERACIONES"].includes(obtenerUsuario()?.rol ?? "");
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["unidades", { placa, color, clase, estado, page }],
@@ -268,13 +269,14 @@ export default function UnidadesPage() {
               <TableHead>Capacidad</TableHead>
               <TableHead>MTC</TableHead>
               <TableHead>Estado</TableHead>
+              {puedeEditar && <TableHead className="text-right">Administrar</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: 7 }).map((_, j) => (
+                  {Array.from({ length: puedeEditar ? 8 : 7 }).map((_, j) => (
                     <TableCell key={j}>
                       <Skeleton className="h-5 w-full" />
                     </TableCell>
@@ -283,7 +285,7 @@ export default function UnidadesPage() {
               ))
             ) : unidades.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-muted-foreground h-24 text-center">
+                <TableCell colSpan={puedeEditar ? 8 : 7} className="text-muted-foreground h-24 text-center">
                   No hay unidades que coincidan.
                 </TableCell>
               </TableRow>
@@ -372,6 +374,15 @@ export default function UnidadesPage() {
                         {u.estadoUnidad.replace("_", " ")}
                       </Badge>
                     </TableCell>
+                    {puedeEditar && <TableCell className="text-right">
+                      <Link
+                        href={`/dashboard/unidades/${u.id}/editar`}
+                        className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+                        aria-label={`Editar unidad ${u.placa}`}
+                      >
+                        <PencilIcon /> Editar
+                      </Link>
+                    </TableCell>}
                   </TableRow>
                 );
               })

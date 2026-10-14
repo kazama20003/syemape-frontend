@@ -163,11 +163,42 @@ function SeccionCard({
   );
 }
 
-// Formulario de alta del maestro de unidades con sus características y resumen de mantenimiento.
-export default function UnidadForm() {
+// Formulario de alta y edición del maestro de unidades.
+export default function UnidadForm({ unidadId }: { unidadId?: number }) {
+  const editando = unidadId !== undefined;
+  const unidadQuery = useQuery({
+    queryKey: ["unidad", unidadId],
+    queryFn: () => api<{ datos: Record<string, unknown> }>(`/unidades/${unidadId}`),
+    enabled: editando,
+  });
+
+  if (editando && unidadQuery.isLoading) return <div className="rounded-lg border p-6 text-sm text-muted-foreground">Cargando datos de la unidad…</div>;
+  if (editando && (unidadQuery.isError || !unidadQuery.data)) return <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">{unidadQuery.error instanceof ApiError ? unidadQuery.error.message : "No se pudo cargar la unidad."}<Button className="ml-3" variant="outline" size="sm" onClick={() => unidadQuery.refetch()}>Reintentar</Button></div>;
+
+  return <UnidadFormContenido unidadId={unidadId} unidadActual={unidadQuery.data?.datos} />;
+}
+
+function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; unidadActual?: Record<string, unknown> }) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [form, setForm] = useState<FormUnidad>(VACIO);
+  const editando = unidadId !== undefined;
+  const [form, setForm] = useState<FormUnidad>(() => {
+    if (!unidadActual) return VACIO;
+    const valor = (campo: string) => String(unidadActual[campo] ?? "");
+    const fecha = (campo: string) => valor(campo).slice(0, 10);
+    return {
+      placa: valor("placa"), clase: valor("clase"), tipoVehiculo: valor("tipoVehiculo"), categoriaVehicular: valor("categoriaVehicular"),
+      marca: valor("marca"), modelo: valor("modelo"), anio: valor("anio"), anioFabricacion: valor("anioFabricacion"), color: valor("color"),
+      numeroEjes: valor("numeroEjes"), numeroMotor: valor("numeroMotor"), numeroVin: valor("numeroVin"), registroMtc: valor("registroMtc"),
+      mtcVigencia: fecha("mtcVigencia"), materialesPeligrosos: valor("materialesPeligrosos"), cuentaId: valor("cuentaId"), proyectoId: valor("proyectoId"),
+      clienteAsociado: valor("clienteAsociado"), capacidadCarga: valor("capacidadCarga"), pesoBrutoVehicular: valor("pesoBrutoVehicular"), tara: valor("tara"),
+      capacidadPasajeros: valor("capacidadPasajeros"), volumenCarga: valor("volumenCarga"), tipoCarroceria: valor("tipoCarroceria"),
+      numeroSerieCarroceria: valor("numeroSerieCarroceria"), tipoCombustible: valor("tipoCombustible"), kilometraje: valor("kilometraje"),
+      ultimoMantenimientoFecha: fecha("ultimoMantenimientoFecha"), ultimoMantenimientoKilometraje: valor("ultimoMantenimientoKilometraje"),
+      proximoMantenimientoFecha: fecha("proximoMantenimientoFecha"), proximoMantenimientoKilometraje: valor("proximoMantenimientoKilometraje"),
+      mantenimientoObservacion: valor("mantenimientoObservacion"),
+    };
+  });
   const [fotos, setFotos] = useState<File[]>([]);
   const [invalidos, setInvalidos] = useState<Set<string>>(new Set());
 
@@ -208,25 +239,27 @@ export default function UnidadForm() {
     }));
   };
 
-  const crear = useMutation({
+  const guardar = useMutation({
     mutationFn: async (body: Record<string, unknown>) => {
-      const creada = await api<{ datos: { id: number } }>("/unidades", {
-        method: "POST",
+      const respuesta = await api<{ datos: { id: number } }>(editando ? `/unidades/${unidadId}` : "/unidades", {
+        method: editando ? "PATCH" : "POST",
         body: JSON.stringify(body),
       });
-      if (fotos.length === 0) return creada;
+      const id = editando ? unidadId : respuesta.datos.id;
+      if (fotos.length === 0 || id === undefined) return respuesta;
 
       const archivos = new FormData();
       fotos.forEach((foto) => archivos.append("files", foto));
-      await api(`/unidades/${creada.datos.id}/fotos`, {
+      await api(`/unidades/${id}/fotos`, {
         method: "POST",
         body: archivos,
       });
-      return creada;
+      return respuesta;
     },
     onSuccess: () => {
-      toast.success(`Unidad ${form.placa.toUpperCase()} registrada.`);
+      toast.success(editando ? `Unidad ${form.placa.toUpperCase()} actualizada.` : `Unidad ${form.placa.toUpperCase()} registrada.`);
       queryClient.invalidateQueries({ queryKey: ["unidades"] });
+      queryClient.invalidateQueries({ queryKey: ["activos"] });
       router.push("/dashboard/unidades");
     },
     onError: (e) =>
@@ -266,40 +299,41 @@ export default function UnidadForm() {
       return;
     }
     setInvalidos(new Set());
-    const num = (v: string) => (v === "" ? undefined : Number(v));
-    crear.mutate({
+    const num = (v: string) => (v === "" ? (editando ? null : undefined) : Number(v));
+    const opcional = (v: string) => v || (editando ? null : undefined);
+    guardar.mutate({
       placa: form.placa,
       clase: form.clase,
-      tipoVehiculo: form.tipoVehiculo || undefined,
-      categoriaVehicular: form.categoriaVehicular || undefined,
-      marca: form.marca || undefined,
-      modelo: form.modelo || undefined,
+      tipoVehiculo: opcional(form.tipoVehiculo),
+      categoriaVehicular: opcional(form.categoriaVehicular),
+      marca: opcional(form.marca),
+      modelo: opcional(form.modelo),
       anio: num(form.anio),
       anioFabricacion: num(form.anioFabricacion),
-      color: form.color || undefined,
+      color: opcional(form.color),
       numeroEjes: num(form.numeroEjes),
-      numeroMotor: form.numeroMotor || undefined,
-      numeroVin: form.numeroVin || undefined,
-      registroMtc: form.registroMtc || undefined,
-      mtcVigencia: form.mtcVigencia || undefined,
-      materialesPeligrosos: form.materialesPeligrosos || undefined,
+      numeroMotor: opcional(form.numeroMotor),
+      numeroVin: opcional(form.numeroVin),
+      registroMtc: opcional(form.registroMtc),
+      mtcVigencia: opcional(form.mtcVigencia),
+      materialesPeligrosos: opcional(form.materialesPeligrosos),
       cuentaId: num(form.cuentaId),
       proyectoId: num(form.proyectoId),
-      clienteAsociado: form.clienteAsociado || undefined,
+      clienteAsociado: opcional(form.clienteAsociado),
       capacidadCarga: num(form.capacidadCarga),
       pesoBrutoVehicular: num(form.pesoBrutoVehicular),
       tara: num(form.tara),
       capacidadPasajeros: num(form.capacidadPasajeros),
       volumenCarga: num(form.volumenCarga),
-      tipoCarroceria: form.tipoCarroceria || undefined,
-      numeroSerieCarroceria: form.numeroSerieCarroceria || undefined,
-      tipoCombustible: form.tipoCombustible || undefined,
+      tipoCarroceria: opcional(form.tipoCarroceria),
+      numeroSerieCarroceria: opcional(form.numeroSerieCarroceria),
+      tipoCombustible: opcional(form.tipoCombustible),
       kilometraje: num(form.kilometraje),
-      ultimoMantenimientoFecha: form.ultimoMantenimientoFecha || undefined,
+      ultimoMantenimientoFecha: opcional(form.ultimoMantenimientoFecha),
       ultimoMantenimientoKilometraje: num(form.ultimoMantenimientoKilometraje),
-      proximoMantenimientoFecha: form.proximoMantenimientoFecha || undefined,
+      proximoMantenimientoFecha: opcional(form.proximoMantenimientoFecha),
       proximoMantenimientoKilometraje: num(form.proximoMantenimientoKilometraje),
-      mantenimientoObservacion: form.mantenimientoObservacion || undefined,
+      mantenimientoObservacion: opcional(form.mantenimientoObservacion),
     });
   };
 
@@ -500,7 +534,8 @@ export default function UnidadForm() {
                onChange={seleccionarFotos}
              />
            </div>
-           <p className="text-muted-foreground text-xs">Selecciona hasta 20 imágenes JPG, PNG o WebP de 10 MB como máximo.</p>
+           <p className="text-muted-foreground text-xs">Selecciona hasta 20 imágenes JPG, PNG o WebP de 10 MB como máximo. Las nuevas se agregan a las existentes.</p>
+           {Array.isArray(unidadActual?.fotos) && unidadActual.fotos.length > 0 ? <p className="text-muted-foreground text-xs">La unidad ya tiene {unidadActual.fotos.length} foto(s).</p> : null}
            {fotos.length > 0 && (
             <ul className="flex flex-col gap-1">
                {fotos.map((f, i) => (
@@ -533,9 +568,9 @@ export default function UnidadForm() {
         <Button type="button" variant="outline" onClick={() => router.push("/dashboard/unidades")}>
           Cancelar
         </Button>
-        <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>
-          {crear.isPending && <Spinner data-icon="inline-start" />}
-          {crear.isPending ? "Guardando…" : "Registrar unidad"}
+        <Button type="submit" disabled={guardar.isPending} focusableWhenDisabled>
+          {guardar.isPending && <Spinner data-icon="inline-start" />}
+          {guardar.isPending ? "Guardando…" : editando ? "Guardar cambios" : "Registrar unidad"}
         </Button>
       </div>
     </form>
