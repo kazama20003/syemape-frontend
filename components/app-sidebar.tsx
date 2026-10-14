@@ -21,7 +21,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 
-import { cerrarSesion, obtenerUsuario, type UsuarioSesion } from "@/lib/api";
+import { cerrarSesion, useUsuarioSesion, type UsuarioSesion } from "@/lib/api";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -60,7 +60,7 @@ interface ItemNav {
 const STAFF: Rol[] = ["ADMINISTRADOR", "OPERACIONES", "SUPERVISOR"];
 
 const OPERACION: ItemNav[] = [
-  { title: "Dashboard", url: "/dashboard", icon: <LayoutDashboardIcon /> },
+  { title: "Inicio", url: "/dashboard", icon: <LayoutDashboardIcon /> },
   { title: "Manifiestos", url: "/dashboard/manifiestos", icon: <FileTextIcon /> },
   {
     title: "Incidencias",
@@ -71,8 +71,8 @@ const OPERACION: ItemNav[] = [
 ];
 
 const MAESTROS: ItemNav[] = [
-  { title: "Activos", url: "/dashboard/activos", icon: <PackageIcon />, roles: STAFF },
-  { title: "Unidades", url: "/dashboard/unidades", icon: <TruckIcon />, roles: STAFF },
+  { title: "Equipos y recursos", url: "/dashboard/activos", icon: <PackageIcon />, roles: STAFF },
+  { title: "Vehículos", url: "/dashboard/unidades", icon: <TruckIcon />, roles: STAFF },
   { title: "Personal", url: "/dashboard/personal", icon: <UsersIcon />, roles: STAFF },
   { title: "Clientes", url: "/dashboard/clientes", icon: <Building2Icon />, roles: STAFF },
   { title: "Cuentas", url: "/dashboard/cuentas", icon: <Building2Icon />, roles: STAFF },
@@ -208,11 +208,7 @@ function GrupoNav({
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [sesion, setSesion] = React.useState<UsuarioSesion | null>(null);
-  React.useEffect(() => {
-    setSesion(obtenerUsuario());
-  }, []);
-
+  const sesion = useUsuarioSesion();
   const rol = sesion?.rol ?? null;
   const user = {
     name: sesion?.nombre ?? "Usuario",
@@ -245,7 +241,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent>
         <GrupoNav label="Operación" items={OPERACION} rol={rol} />
-        <GrupoNav label="Maestros" items={MAESTROS} rol={rol} />
+        <GrupoNav label="Gestión" items={MAESTROS} rol={rol} />
         <GrupoNav label="Administración" items={ADMINISTRACION} rol={rol} />
       </SidebarContent>
 

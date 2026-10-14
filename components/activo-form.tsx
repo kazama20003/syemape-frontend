@@ -37,7 +37,7 @@ export default function ActivoForm({ activo }: { activo?: ActivoEditable }) {
         body: JSON.stringify({ codigo, nombre, tipo, descripcion: descripcion || (editando ? null : undefined) }),
       }),
     onSuccess: () => {
-      toast.success(editando ? `Activo ${codigo} actualizado.` : `Activo ${codigo} registrado.`);
+      toast.success(editando ? `Recurso ${codigo} actualizado.` : `Recurso ${codigo} registrado.`);
       setAbierto(false);
       setCodigo("");
       setNombre("");
@@ -52,14 +52,14 @@ export default function ActivoForm({ activo }: { activo?: ActivoEditable }) {
   return (
     <>
       <Button variant={editando ? "outline" : "default"} size={editando ? "sm" : "default"} onClick={() => setAbierto(true)} aria-label={editando ? `Editar activo ${activo?.codigo}` : undefined}>
-        {editando ? <><PencilIcon /> Editar</> : <><PlusIcon /> Nuevo activo</>}
+        {editando ? <><PencilIcon /> Editar recurso</> : <><PlusIcon /> Agregar recurso</>}
       </Button>
       <Dialog open={abierto} onOpenChange={setAbierto}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>{editando ? `Editar activo ${activo?.codigo}` : "Nuevo activo"}</DialogTitle>
+            <DialogTitle>{editando ? `Editar recurso ${activo?.codigo}` : "Agregar equipo o recurso"}</DialogTitle>
             <DialogDescription>
-              {editando ? "Actualiza los datos del recurso seleccionado." : "Registra equipos, herramientas, infraestructura u otros recursos de MAPE. Los vehículos se administran desde Unidades."}
+              {editando ? "Actualiza los datos de este equipo o recurso." : "Agrega radios, herramientas, equipos e instalaciones. Para registrar vehículos, entra en Vehículos."}
             </DialogDescription>
           </DialogHeader>
           <form
@@ -98,7 +98,7 @@ export default function ActivoForm({ activo }: { activo?: ActivoEditable }) {
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setAbierto(false)}>Cancelar</Button>
-              <Button type="submit" disabled={guardar.isPending} focusableWhenDisabled>{guardar.isPending ? "Guardando..." : editando ? "Guardar cambios" : "Registrar activo"}</Button>
+              <Button type="submit" disabled={guardar.isPending} focusableWhenDisabled>{guardar.isPending ? "Guardando..." : editando ? "Guardar cambios" : "Agregar recurso"}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
