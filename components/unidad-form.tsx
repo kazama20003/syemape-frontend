@@ -234,8 +234,8 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
     setForm((prev) => ({
       ...prev,
       tipoVehiculo: valor,
-      clase: tipo?.claseSugerida ?? prev.clase,
-      categoriaVehicular: tipo?.categoriaSugerida || prev.categoriaVehicular,
+      clase: tipo?.claseSugerida ?? "",
+      categoriaVehicular: tipo?.categoriaSugerida ?? "",
     }));
   };
 
@@ -288,7 +288,7 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
     e.preventDefault();
     const sinValor = [
       ["placa", form.placa.trim()],
-      ["clase", form.clase],
+      ["tipoVehiculo", form.tipoVehiculo],
     ]
       .filter(([, v]) => !v)
       .map(([k]) => k as string);
@@ -296,6 +296,12 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
       setInvalidos(new Set(sinValor));
       toast.error("Completa todos los campos obligatorios.");
       document.getElementById(sinValor[0])?.focus();
+      return;
+    }
+    const tipoSeleccionado = tiposVehiculo.find((tipo) => tipo.codigo === form.tipoVehiculo);
+    if (!tipoSeleccionado?.claseSugerida) {
+      toast.error("El tipo seleccionado no tiene una clase configurada. Complétala en Tipos de vehículo.");
+      document.getElementById("tipoVehiculo")?.focus();
       return;
     }
     setInvalidos(new Set());
@@ -367,6 +373,8 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
     props: {
       requerido?: boolean;
       deshabilitado?: boolean;
+      ayuda?: string;
+      valor?: string;
       onChange?: (v: string) => void;
       renderItem?: (o: { valor: string; etiqueta: string }) => React.ReactNode;
     } = {},
@@ -385,7 +393,7 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
           {props.requerido && <span className="text-primary"> *</span>}
         </FieldLabel>
         <Select
-          value={form[campo]}
+          value={props.valor ?? form[campo]}
           onValueChange={(v) => onChange(v ?? "")}
           items={conNinguno.map((o) => ({ value: o.valor, label: o.etiqueta }))}
           disabled={props.deshabilitado}
@@ -414,6 +422,7 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
             </SelectGroup>
           </SelectContent>
         </Select>
+        {props.ayuda && <p className="text-muted-foreground text-xs">{props.ayuda}</p>}
         {invalidos.has(campo) && <FieldError>Este campo es obligatorio.</FieldError>}
       </Field>
     );
@@ -424,29 +433,30 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
       <SeccionCard
         icono={<IdCardIcon />}
         titulo="Identificación"
-        descripcion="La placa identifica la unidad. El tipo se elige del catálogo y puede sugerir la clase operativa y la categoría vehicular MTC."
+        descripcion="Elige el tipo administrado en el catálogo. La clase operativa se completa desde allí; la categoría MTC se completa si está configurada."
       >
         {campoTexto("placa", "Placa", { placeholder: "VCA-821", requerido: true })}
         {campoSelect(
           "tipoVehiculo",
           "Tipo de vehículo (catálogo)",
           tiposVehiculo.map((t) => ({ valor: t.codigo, etiqueta: t.nombre })),
-          { onChange: setTipoVehiculo },
+          { requerido: true, onChange: setTipoVehiculo },
         )}
-        {campoSelect("clase", "Clase operativa", CLASES, {
-          requerido: true,
-          deshabilitado: Boolean(
-            tiposVehiculo.find((t) => t.codigo === form.tipoVehiculo)?.claseSugerida,
-          ),
+        {campoSelect("clase", "Clase operativa (del catálogo)", CLASES, {
+          deshabilitado: true,
+          valor: tiposVehiculo.find((t) => t.codigo === form.tipoVehiculo)?.claseSugerida ?? "",
+          ayuda: form.tipoVehiculo && !tiposVehiculo.find((t) => t.codigo === form.tipoVehiculo)?.claseSugerida
+            ? "Falta configurar la clase sugerida en Tipos de vehículo."
+            : "Se completa al elegir el tipo de vehículo.",
         })}
         {campoSelect(
           "categoriaVehicular",
-          "Categoría MTC",
+          "Categoría MTC (del catálogo)",
           CATEGORIAS.map((c) => ({ valor: c, etiqueta: c })),
           {
-            deshabilitado: Boolean(
-              tiposVehiculo.find((t) => t.codigo === form.tipoVehiculo)?.categoriaSugerida,
-            ),
+            deshabilitado: true,
+            valor: tiposVehiculo.find((t) => t.codigo === form.tipoVehiculo)?.categoriaSugerida ?? "",
+            ayuda: "Se completa desde el catálogo cuando el tipo tiene una categoría sugerida.",
           },
         )}
       </SeccionCard>
