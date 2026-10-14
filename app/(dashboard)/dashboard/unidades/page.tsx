@@ -170,15 +170,14 @@ export default function UnidadesPage() {
     <div className="flex flex-col gap-4 p-4 lg:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Unidades</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Vehículos</h1>
           <p className="text-muted-foreground text-sm">
-            Flota de vehículos: categoría vehicular MTC, acoples con doble placa y
-            estado operativo.
+            Consulta y administra la flota, sus placas, documentos y mantenimiento.
             {isFetching && !isLoading && <span className="ml-2 text-xs" aria-live="polite">Actualizando…</span>}
           </p>
         </div>
         <Link href="/dashboard/unidades/nueva" className={cn(buttonVariants())}>
-          <PlusIcon /> Nueva unidad
+          <PlusIcon /> Agregar vehículo
         </Link>
       </div>
 

@@ -16,6 +16,27 @@ export interface UsuarioSesion {
   clienteId: number | null;
 }
 
+export function useUsuarioSesion(): UsuarioSesion | null {
+  const raw = useSyncExternalStore(
+    (notify) => {
+      window.addEventListener("storage", notify);
+      window.addEventListener("mape-session-change", notify);
+      return () => {
+        window.removeEventListener("storage", notify);
+        window.removeEventListener("mape-session-change", notify);
+      };
+    },
+    () => localStorage.getItem(USUARIO_KEY),
+    () => null,
+  );
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw) as UsuarioSesion;
+  } catch {
+    return null;
+  }
+}
+
 // --- Persistencia de sesion (localStorage + cookie para el middleware) ---
 
 export function guardarSesion(token: string, usuario: UsuarioSesion) {

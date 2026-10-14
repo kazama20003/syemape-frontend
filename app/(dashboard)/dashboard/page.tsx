@@ -6,6 +6,7 @@ import {
   AlertTriangleIcon,
   ArrowRightIcon,
   FileTextIcon,
+  PackageIcon,
   PlusIcon,
   TruckIcon,
   UsersIcon,
@@ -124,9 +125,9 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Panel de operación</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Inicio</h1>
           <p className="text-muted-foreground text-sm">
-            Resumen en vivo de la flota, el personal y los servicios de S&amp;E MAPE.
+            Revisa tus vehículos, equipo, personal y servicios desde un solo lugar.
           </p>
         </div>
         <Link href="/dashboard/manifiestos/nueva" className={cn(buttonVariants())}>
@@ -167,6 +168,39 @@ export default function DashboardPage() {
           cargando={incidencias.isLoading}
           href="/dashboard/incidencias"
         />
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <Link href="/dashboard/unidades" className="group">
+          <Card className="h-full transition-shadow group-hover:shadow-md">
+            <CardHeader>
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-lg [&_svg]:size-5">
+                  <TruckIcon />
+                </div>
+                <div>
+                  <CardTitle>Vehículos</CardTitle>
+                  <CardDescription className="mt-1">Placas, documentos, asignaciones y mantenimiento de la flota.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+        </Link>
+        <Link href="/dashboard/activos" className="group">
+          <Card className="h-full transition-shadow group-hover:shadow-md">
+            <CardHeader>
+              <div className="flex items-start gap-3">
+                <div className="bg-primary/10 text-primary grid size-10 shrink-0 place-items-center rounded-lg [&_svg]:size-5">
+                  <PackageIcon />
+                </div>
+                <div>
+                  <CardTitle>Equipos y recursos</CardTitle>
+                  <CardDescription className="mt-1">Radios, herramientas y otros equipos de trabajo. Los vehículos se administran por separado.</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
       <Card>
