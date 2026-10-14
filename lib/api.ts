@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from "react";
+
 // Cliente HTTP del backend syemape (puerto 3020, prefijo /api).
 
 export const API_URL =
@@ -21,12 +23,14 @@ export function guardarSesion(token: string, usuario: UsuarioSesion) {
   localStorage.setItem(USUARIO_KEY, JSON.stringify(usuario));
   // La cookie solo la lee el middleware de Next para proteger /dashboard.
   document.cookie = `${TOKEN_KEY}=${token}; path=/; max-age=${60 * 60 * 8}; samesite=lax`;
+  window.dispatchEvent(new Event("mape-session-change"));
 }
 
 export function limpiarSesion() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USUARIO_KEY);
   document.cookie = `${TOKEN_KEY}=; path=/; max-age=0`;
+  if (typeof window !== "undefined") window.dispatchEvent(new Event("mape-session-change"));
 }
 
 export function obtenerToken(): string | null {
@@ -43,6 +47,22 @@ export function obtenerUsuario(): UsuarioSesion | null {
   } catch {
     return null;
   }
+}
+
+// Evita diferencias de hidratación al leer roles guardados en localStorage.
+export function usePuedeEditar(): boolean {
+  return useSyncExternalStore(
+    (notify) => {
+      window.addEventListener("storage", notify);
+      window.addEventListener("mape-session-change", notify);
+      return () => {
+        window.removeEventListener("storage", notify);
+        window.removeEventListener("mape-session-change", notify);
+      };
+    },
+    () => ["ADMINISTRADOR", "OPERACIONES"].includes(obtenerUsuario()?.rol ?? ""),
+    () => false,
+  );
 }
 
 // --- Fetch con token; si el token expiro, limpia la sesion y manda a login

@@ -424,16 +424,16 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
       <SeccionCard
         icono={<IdCardIcon />}
         titulo="Identificación"
-        descripcion="Placa y tipo de vehículo. La clase y categoría MTC se heredan del catálogo."
+        descripcion="La placa identifica la unidad. El tipo se elige del catálogo y puede sugerir la clase operativa y la categoría vehicular MTC."
       >
         {campoTexto("placa", "Placa", { placeholder: "VCA-821", requerido: true })}
         {campoSelect(
           "tipoVehiculo",
-          "Tipo de vehículo",
+          "Tipo de vehículo (catálogo)",
           tiposVehiculo.map((t) => ({ valor: t.codigo, etiqueta: t.nombre })),
           { onChange: setTipoVehiculo },
         )}
-        {campoSelect("clase", "Clase", CLASES, {
+        {campoSelect("clase", "Clase operativa", CLASES, {
           requerido: true,
           deshabilitado: Boolean(
             tiposVehiculo.find((t) => t.codigo === form.tipoVehiculo)?.claseSugerida,
@@ -441,7 +441,7 @@ function UnidadFormContenido({ unidadId, unidadActual }: { unidadId?: number; un
         })}
         {campoSelect(
           "categoriaVehicular",
-          "Categoría vehicular (MTC)",
+          "Categoría MTC",
           CATEGORIAS.map((c) => ({ valor: c, etiqueta: c })),
           {
             deshabilitado: Boolean(

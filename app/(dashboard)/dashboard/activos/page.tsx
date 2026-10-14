@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { SearchIcon } from "lucide-react";
-import { ApiError, api, obtenerUsuario } from "@/lib/api";
+import { ApiError, api, usePuedeEditar } from "@/lib/api";
 import ActivoForm from "@/components/activo-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export default function ActivosPage() {
   const [tipo, setTipo] = useState("TODOS");
   const [estado, setEstado] = useState("TODOS");
   const [page, setPage] = useState(1);
-  const puedeEditar = ["ADMINISTRADOR", "OPERACIONES"].includes(obtenerUsuario()?.rol ?? "");
+  const puedeEditar = usePuedeEditar();
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["activos", { texto, tipo, estado, page }],
     queryFn: () => {
