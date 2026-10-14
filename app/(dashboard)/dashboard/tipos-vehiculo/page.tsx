@@ -47,16 +47,16 @@ export default function Page() {
     <RecursoLista<TipoVehiculo>
       icono={<TagsIcon />}
       titulo="Tipos de vehículo"
-      descripcion="Catálogo maestro de tipos de vehículo con su clase y categoría MTC sugeridas."
+      descripcion="Administra los tipos y su clase operativa. La clase configurada se completa automáticamente al asignar el tipo a una unidad."
       endpoint="/tipos-vehiculo"
       columnas={columnas}
       accionFila={(tipo) => (
-        <FormDialog recurso="Tipo de vehículo" descripcion="Tipo de vehículo del maestro; la clase y categoría se autocompletan al registrar unidades." endpoint="/tipos-vehiculo" registroId={tipo.id} campos={campos} />
+        <FormDialog recurso="Tipo de vehículo" descripcion="Define una clase operativa para que se complete automáticamente en las unidades que usan este tipo." endpoint="/tipos-vehiculo" registroId={tipo.id} campos={campos} />
       )}
       acciones={
         <FormDialog
           recurso="Tipo de vehículo"
-          descripcion="Tipo de vehículo del maestro; la clase y categoría se autocompletan al registrar unidades."
+          descripcion="Define una clase operativa para que se complete automáticamente en las unidades que usan este tipo."
           endpoint="/tipos-vehiculo"
           textoBoton="Nuevo tipo"
           campos={campos}
@@ -69,7 +69,7 @@ export default function Page() {
 const campos: CampoForm[] = [
   { name: "nombre", label: "Nombre", requerido: true, placeholder: "Camión grúa", ancho: "full" },
   { name: "codigo", label: "Código (opcional)", placeholder: "Se genera del nombre", ancho: "full" },
-  { name: "claseSugerida", label: "Clase sugerida", tipo: "select", opciones: CLASES },
+  { name: "claseSugerida", label: "Clase operativa", tipo: "select", opciones: CLASES, requerido: true },
   { name: "categoriaSugerida", label: "Categoría MTC sugerida", tipo: "select", opciones: CATEGORIAS },
   { name: "descripcion", label: "Descripción", ancho: "full" },
 ];
