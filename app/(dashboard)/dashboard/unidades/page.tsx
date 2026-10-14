@@ -29,7 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ApiError, api, obtenerUsuario } from "@/lib/api";
+import { ApiError, api, usePuedeEditar } from "@/lib/api";
 import { COLORES_VEHICULO, MuestraColor } from "@/lib/colores-vehiculo";
 
 interface Unidad {
@@ -127,7 +127,7 @@ export default function UnidadesPage() {
   const [clase, setClase] = useState("TODAS");
   const [estado, setEstado] = useState("TODOS");
   const [page, setPage] = useState(1);
-  const puedeEditar = ["ADMINISTRADOR", "OPERACIONES"].includes(obtenerUsuario()?.rol ?? "");
+  const puedeEditar = usePuedeEditar();
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["unidades", { placa, color, clase, estado, page }],
