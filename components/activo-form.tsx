@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { PlusIcon } from "lucide-react";
+import { PencilIcon, PlusIcon } from "lucide-react";
 import { toast } from "sonner";
 import { ApiError, api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -13,22 +13,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const TIPOS = ["EQUIPO", "HERRAMIENTA", "INFRAESTRUCTURA", "OTRO"];
 
-export default function ActivoForm() {
+interface ActivoEditable {
+  id: number;
+  codigo: string;
+  nombre: string;
+  tipo: string;
+  descripcion: string | null;
+}
+
+export default function ActivoForm({ activo }: { activo?: ActivoEditable }) {
+  const editando = Boolean(activo);
   const queryClient = useQueryClient();
   const [abierto, setAbierto] = useState(false);
-  const [codigo, setCodigo] = useState("");
-  const [nombre, setNombre] = useState("");
-  const [tipo, setTipo] = useState("");
-  const [descripcion, setDescripcion] = useState("");
+  const [codigo, setCodigo] = useState(activo?.codigo ?? "");
+  const [nombre, setNombre] = useState(activo?.nombre ?? "");
+  const [tipo, setTipo] = useState(activo?.tipo ?? "");
+  const [descripcion, setDescripcion] = useState(activo?.descripcion ?? "");
 
-  const crear = useMutation({
+  const guardar = useMutation({
     mutationFn: () =>
-      api("/activos", {
-        method: "POST",
-        body: JSON.stringify({ codigo, nombre, tipo, descripcion: descripcion || undefined }),
+      api(editando ? `/activos/${activo!.id}` : "/activos", {
+        method: editando ? "PATCH" : "POST",
+        body: JSON.stringify({ codigo, nombre, tipo, descripcion: descripcion || (editando ? null : undefined) }),
       }),
     onSuccess: () => {
-      toast.success(`Activo ${codigo} registrado.`);
+      toast.success(editando ? `Activo ${codigo} actualizado.` : `Activo ${codigo} registrado.`);
       setAbierto(false);
       setCodigo("");
       setNombre("");
@@ -42,15 +51,15 @@ export default function ActivoForm() {
 
   return (
     <>
-      <Button onClick={() => setAbierto(true)}>
-        <PlusIcon /> Nuevo activo
+      <Button variant={editando ? "outline" : "default"} size={editando ? "sm" : "default"} onClick={() => setAbierto(true)} aria-label={editando ? `Editar activo ${activo?.codigo}` : undefined}>
+        {editando ? <><PencilIcon /> Editar</> : <><PlusIcon /> Nuevo activo</>}
       </Button>
       <Dialog open={abierto} onOpenChange={setAbierto}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Nuevo activo</DialogTitle>
+            <DialogTitle>{editando ? `Editar activo ${activo?.codigo}` : "Nuevo activo"}</DialogTitle>
             <DialogDescription>
-              Registra equipos, herramientas, infraestructura u otros recursos de MAPE. Los vehículos se registran desde Unidades.
+              {editando ? "Actualiza los datos del recurso seleccionado." : "Registra equipos, herramientas, infraestructura u otros recursos de MAPE. Los vehículos se administran desde Unidades."}
             </DialogDescription>
           </DialogHeader>
           <form
@@ -63,7 +72,7 @@ export default function ActivoForm() {
                 document.getElementById(id)?.focus();
                 return;
               }
-              crear.mutate();
+              guardar.mutate();
             }}
           >
             <div className="grid gap-2">
@@ -89,7 +98,7 @@ export default function ActivoForm() {
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setAbierto(false)}>Cancelar</Button>
-              <Button type="submit" disabled={crear.isPending} focusableWhenDisabled>{crear.isPending ? "Guardando..." : "Registrar activo"}</Button>
+              <Button type="submit" disabled={guardar.isPending} focusableWhenDisabled>{guardar.isPending ? "Guardando..." : editando ? "Guardar cambios" : "Registrar activo"}</Button>
             </DialogFooter>
           </form>
         </DialogContent>
