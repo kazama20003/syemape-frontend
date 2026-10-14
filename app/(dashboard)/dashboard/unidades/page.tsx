@@ -31,6 +31,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError, api, usePuedeEditar } from "@/lib/api";
 import { COLORES_VEHICULO, MuestraColor } from "@/lib/colores-vehiculo";
+import AnularRecursoButton from "@/components/anular-recurso-button";
 
 interface Unidad {
   id: number;
@@ -49,6 +50,8 @@ interface Unidad {
   estadoUnidad: string;
   estadoActivo: string;
   fotos: string[];
+  fechaCreacion: string;
+  fechaModificacion: string | null;
 }
 
 // --- Categorias vehiculares (MTC): color distintivo por categoria para
@@ -95,6 +98,12 @@ function chipColor(nombre: string | null) {
 function fechaLocal(valor: string) {
   const [anio, mes, dia] = valor.slice(0, 10).split("-").map(Number);
   return new Date(anio, mes - 1, dia).toLocaleDateString("es-PE");
+}
+
+function fechaHoraLocal(valor: string | null) {
+  if (!valor) return "—";
+  const fecha = new Date(valor);
+  return Number.isNaN(fecha.getTime()) ? "—" : fecha.toLocaleString("es-PE");
 }
 
 function BadgeCategoria({ categoria }: { categoria: string | null }) {
@@ -269,6 +278,8 @@ export default function UnidadesPage() {
               <TableHead>Capacidad</TableHead>
               <TableHead>MTC</TableHead>
               <TableHead>Estado</TableHead>
+              <TableHead>Registrado</TableHead>
+              <TableHead>Última modificación</TableHead>
               {puedeEditar && <TableHead className="text-right">Administrar</TableHead>}
             </TableRow>
           </TableHeader>
@@ -276,7 +287,7 @@ export default function UnidadesPage() {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: puedeEditar ? 8 : 7 }).map((_, j) => (
+                  {Array.from({ length: puedeEditar ? 10 : 9 }).map((_, j) => (
                     <TableCell key={j}>
                       <Skeleton className="h-5 w-full" />
                     </TableCell>
@@ -285,7 +296,7 @@ export default function UnidadesPage() {
               ))
             ) : unidades.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={puedeEditar ? 8 : 7} className="text-muted-foreground h-24 text-center">
+                <TableCell colSpan={puedeEditar ? 10 : 9} className="text-muted-foreground h-24 text-center">
                   No hay unidades que coincidan.
                 </TableCell>
               </TableRow>
@@ -374,14 +385,19 @@ export default function UnidadesPage() {
                         {u.estadoUnidad.replace("_", " ")}
                       </Badge>
                     </TableCell>
+                    <TableCell className="whitespace-nowrap text-xs">{fechaHoraLocal(u.fechaCreacion)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-xs">{fechaHoraLocal(u.fechaModificacion)}</TableCell>
                     {puedeEditar && <TableCell className="text-right">
-                      <Link
-                        href={`/dashboard/unidades/${u.id}/editar`}
-                        className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-                        aria-label={`Editar unidad ${u.placa}`}
-                      >
-                        <PencilIcon /> Editar
-                      </Link>
+                      <div className="flex justify-end gap-2">
+                        <Link
+                          href={`/dashboard/unidades/${u.id}/editar`}
+                          className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+                          aria-label={`Editar unidad ${u.placa}`}
+                        >
+                          <PencilIcon /> Editar
+                        </Link>
+                        <AnularRecursoButton endpoint={`/unidades/${u.id}`} queryKey="unidades" recurso="Unidad" nombre={u.placa} />
+                      </div>
                     </TableCell>}
                   </TableRow>
                 );

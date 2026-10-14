@@ -5,6 +5,7 @@ import { TagsIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import RecursoLista, { type Columna } from "@/components/recurso-lista";
 import FormDialog, { type CampoForm } from "@/components/form-dialog";
+import AnularRecursoButton from "@/components/anular-recurso-button";
 
 interface TipoVehiculo {
   id: number;
@@ -14,6 +15,14 @@ interface TipoVehiculo {
   claseSugerida: string | null;
   categoriaSugerida: string | null;
   estadoActivo: string;
+  fechaCreacion: string;
+  fechaModificacion: string | null;
+}
+
+function fechaHoraLocal(valor: string | null) {
+  if (!valor) return "—";
+  const fecha = new Date(valor);
+  return Number.isNaN(fecha.getTime()) ? "—" : fecha.toLocaleString("es-PE");
 }
 
 const CLASES = [
@@ -34,6 +43,8 @@ const columnas: Columna<TipoVehiculo>[] = [
   { titulo: "Clase sugerida", render: (t) => t.claseSugerida ?? "—" },
   { titulo: "Categoría MTC", render: (t) => t.categoriaSugerida ?? "—" },
   { titulo: "Descripción", render: (t) => t.descripcion ?? "—" },
+  { titulo: "Registrado", render: (t) => <span className="whitespace-nowrap text-xs">{fechaHoraLocal(t.fechaCreacion)}</span> },
+  { titulo: "Última modificación", render: (t) => <span className="whitespace-nowrap text-xs">{fechaHoraLocal(t.fechaModificacion)}</span> },
   {
     titulo: "Estado",
     render: (t) => (
@@ -51,7 +62,10 @@ export default function Page() {
       endpoint="/tipos-vehiculo"
       columnas={columnas}
       accionFila={(tipo) => (
-        <FormDialog recurso="Tipo de vehículo" descripcion="Define una clase operativa para que se complete automáticamente en las unidades que usan este tipo." endpoint="/tipos-vehiculo" registroId={tipo.id} campos={campos} />
+        <div className="flex justify-end gap-2">
+          <FormDialog recurso="Tipo de vehículo" descripcion="Define una clase operativa para que se complete automáticamente en las unidades que usan este tipo." endpoint="/tipos-vehiculo" registroId={tipo.id} campos={campos} />
+          <AnularRecursoButton endpoint={`/tipos-vehiculo/${tipo.id}`} queryKey="/tipos-vehiculo" recurso="Tipo de vehículo" nombre={tipo.nombre} />
+        </div>
       )}
       acciones={
         <FormDialog
