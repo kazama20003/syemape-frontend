@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import AnularRecursoButton from "@/components/anular-recurso-button";
 
 interface Activo {
   id: number;
@@ -19,6 +20,14 @@ interface Activo {
   tipo: string;
   descripcion: string | null;
   estadoOperativo: string;
+  fechaCreacion: string;
+  fechaModificacion: string | null;
+}
+
+function fechaHoraLocal(valor: string | null) {
+  if (!valor) return "—";
+  const fecha = new Date(valor);
+  return Number.isNaN(fecha.getTime()) ? "—" : fecha.toLocaleString("es-PE");
 }
 
 const TIPOS = ["UNIDAD", "EQUIPO", "HERRAMIENTA", "INFRAESTRUCTURA", "OTRO"];
@@ -65,7 +74,7 @@ export default function ActivosPage() {
         <Select value={tipo} onValueChange={(value) => { setTipo(value ?? "TODOS"); setPage(1); }}><SelectTrigger className="w-44"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="TODOS">Todos los tipos</SelectItem>{TIPOS.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent></Select>
         <Select value={estado} onValueChange={(value) => { setEstado(value ?? "TODOS"); setPage(1); }}><SelectTrigger className="w-52"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="TODOS">Todos los estados</SelectItem>{ESTADOS.map((item) => <SelectItem key={item} value={item}>{item.replaceAll("_", " ")}</SelectItem>)}</SelectContent></Select>
       </div>
-      {error ? <div className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3" role="alert"><p className="text-sm text-destructive">{error instanceof ApiError ? error.message : "No se pudieron cargar los activos."}</p><Button className="mt-3" variant="outline" size="sm" onClick={() => refetch()}>Reintentar</Button></div> : <div className="overflow-hidden rounded-lg border"><Table><TableHeader><TableRow><TableHead>Código</TableHead><TableHead>Activo</TableHead><TableHead>Tipo</TableHead><TableHead>Estado operativo</TableHead>{puedeEditar && <TableHead className="text-right">Administrar</TableHead>}</TableRow></TableHeader><TableBody>{isLoading ? Array.from({ length: 5 }).map((_, index) => <TableRow key={index}>{Array.from({ length: puedeEditar ? 5 : 4 }).map((__, cell) => <TableCell key={cell}><Skeleton className="h-5 w-full" /></TableCell>)}</TableRow>) : activos.length === 0 ? <TableRow><TableCell colSpan={puedeEditar ? 5 : 4} className="text-muted-foreground h-24 text-center">No hay activos que coincidan.</TableCell></TableRow> : activos.map((activo) => <TableRow key={activo.id}><TableCell className="font-mono font-medium">{activo.codigo}</TableCell><TableCell><div className="font-medium">{activo.nombre}</div>{activo.descripcion && <div className="text-muted-foreground text-xs">{activo.descripcion}</div>}</TableCell><TableCell><Badge variant="outline">{activo.tipo}</Badge></TableCell><TableCell><Badge variant="outline" className={ESTILOS_ESTADO[activo.estadoOperativo] ?? ""}>{activo.estadoOperativo.replaceAll("_", " ")}</Badge></TableCell>{puedeEditar && <TableCell className="text-right"><ActivoForm activo={activo} /></TableCell>}</TableRow>)}</TableBody></Table></div>}
+      {error ? <div className="rounded-md border border-destructive/30 bg-destructive/5 px-4 py-3" role="alert"><p className="text-sm text-destructive">{error instanceof ApiError ? error.message : "No se pudieron cargar los activos."}</p><Button className="mt-3" variant="outline" size="sm" onClick={() => refetch()}>Reintentar</Button></div> : <div className="overflow-hidden rounded-lg border"><Table><TableHeader><TableRow><TableHead>Código</TableHead><TableHead>Activo</TableHead><TableHead>Tipo</TableHead><TableHead>Estado operativo</TableHead><TableHead>Registrado</TableHead><TableHead>Última modificación</TableHead>{puedeEditar && <TableHead className="text-right">Administrar</TableHead>}</TableRow></TableHeader><TableBody>{isLoading ? Array.from({ length: 5 }).map((_, index) => <TableRow key={index}>{Array.from({ length: puedeEditar ? 7 : 6 }).map((__, cell) => <TableCell key={cell}><Skeleton className="h-5 w-full" /></TableCell>)}</TableRow>) : activos.length === 0 ? <TableRow><TableCell colSpan={puedeEditar ? 7 : 6} className="text-muted-foreground h-24 text-center">No hay activos que coincidan.</TableCell></TableRow> : activos.map((activo) => <TableRow key={activo.id}><TableCell className="font-mono font-medium">{activo.codigo}</TableCell><TableCell><div className="font-medium">{activo.nombre}</div>{activo.descripcion && <div className="text-muted-foreground text-xs">{activo.descripcion}</div>}</TableCell><TableCell><Badge variant="outline">{activo.tipo}</Badge></TableCell><TableCell><Badge variant="outline" className={ESTILOS_ESTADO[activo.estadoOperativo] ?? ""}>{activo.estadoOperativo.replaceAll("_", " ")}</Badge></TableCell><TableCell className="whitespace-nowrap text-xs">{fechaHoraLocal(activo.fechaCreacion)}</TableCell><TableCell className="whitespace-nowrap text-xs">{fechaHoraLocal(activo.fechaModificacion)}</TableCell>{puedeEditar && <TableCell className="text-right"><div className="flex justify-end gap-2"><ActivoForm activo={activo} /><AnularRecursoButton endpoint={`/activos/${activo.id}`} queryKey="activos" recurso="Activo" nombre={activo.codigo} /></div></TableCell>}</TableRow>)}</TableBody></Table></div>}
       {paginacion && paginacion.totalPaginas > 1 && <div className="flex items-center justify-between"><p className="text-muted-foreground text-sm">Página {paginacion.pagina} de {paginacion.totalPaginas} · {paginacion.total} activos</p><div className="flex gap-2"><Button variant="outline" size="sm" disabled={!paginacion.tieneAnterior} onClick={() => setPage((current) => current - 1)}>Anterior</Button><Button variant="outline" size="sm" disabled={!paginacion.tieneSiguiente} onClick={() => setPage((current) => current + 1)}>Siguiente</Button></div></div>}
     </div>
   );
